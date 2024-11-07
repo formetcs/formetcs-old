@@ -1,0 +1,685 @@
+module Signale;
+
+export *;
+import * from BasisTypen;
+import * from Basisobjekte;
+import * from Metaobject;
+
+
+// Enums
+data ENUMAnschaltdauer = ENUMAnschaltdauer_unused | ENUMAnschaltdauer_60_s | ENUMAnschaltdauer_90_s | ENUMAnschaltdauer_G | ENUMAnschaltdauer_T;
+
+data ENUMAuto_Einstellung = ENUMAuto_Einstellung_unused | ENUMAuto_Einstellung_Sb | ENUMAuto_Einstellung_ZL;
+
+data ENUMBedienart = ENUMBedienart_unused | ENUMBedienart_wb | ENUMBedienart_wb_zb | ENUMBedienart_zb;
+
+data ENUMBefestigung_Art = ENUMBefestigung_Art_unused | ENUMBefestigung_Art_Fundament | ENUMBefestigung_Art_Pfosten | ENUMBefestigung_Art_Schienenfuss | ENUMBefestigung_Art_Mast | ENUMBefestigung_Art_Rahmen | ENUMBefestigung_Art_Signal_Anordnung_Arbeitsbuehne | ENUMBefestigung_Art_Signal_Anordnung_Mast | ENUMBefestigung_Art_Signal_Anordnung_Sonstige | ENUMBefestigung_Art_Signalausleger | ENUMBefestigung_Art_Signalbruecke | ENUMBefestigung_Art_sonstige;
+
+data ENUMBeleuchtet = ENUMBeleuchtet_unused | ENUMBeleuchtet_angestrahlt | ENUMBeleuchtet_innenbeleuchtet | ENUMBeleuchtet_nein;
+
+data ENUMDurchfahrt = ENUMDurchfahrt_unused | ENUMDurchfahrt_erlaubt | ENUMDurchfahrt_nur_mit_Sh1 | ENUMDurchfahrt_verboten;
+
+data ENUMFiktives_Signal_Funktion = ENUMFiktives_Signal_Funktion_unused | ENUMFiktives_Signal_Funktion_FAP_Start | ENUMFiktives_Signal_Funktion_FAP_Ziel | ENUMFiktives_Signal_Funktion_Rangier_Start_Ziel_ohne_Signal | ENUMFiktives_Signal_Funktion_sonstige | ENUMFiktives_Signal_Funktion_Zug_Start_Awanst | ENUMFiktives_Signal_Funktion_Zug_Start_Mittelweiche | ENUMFiktives_Signal_Funktion_Zug_Start_ohne_Signal | ENUMFiktives_Signal_Funktion_Zug_Ziel_Awanst | ENUMFiktives_Signal_Funktion_Zug_Ziel_ohne_Signal | ENUMFiktives_Signal_Funktion_Zug_Ziel_Strecke;
+
+data ENUMRahmen_Art = ENUMRahmen_Art_unused | ENUMRahmen_Art_Bezeichnungsschild | ENUMRahmen_Art_Blechtafel | ENUMRahmen_Art_Keramikkoerper | ENUMRahmen_Art_Schirm | ENUMRahmen_Art_Zusatzanzeiger | ENUMRahmen_Art_sonstige;
+
+data ENUMSignal_Art = ENUMSignal_Art_unused | ENUMSignal_Art_andere | ENUMSignal_Art_Hauptsignal | ENUMSignal_Art_Hauptsperrsignal | ENUMSignal_Art_Mehrabschnittssignal | ENUMSignal_Art_Mehrabschnittssperrsignal | ENUMSignal_Art_Sperrsignal | ENUMSignal_Art_Ueberwachungssignal | ENUMSignal_Art_Vorsignal | ENUMSignal_Art_Vorsignalwiederholer | ENUMSignal_Art_Zugdeckungssignal;
+
+data ENUMSignal_Befestigungsart = ENUMSignal_Befestigungsart_unused | ENUMSignal_Befestigungsart_Bahnsteig | ENUMSignal_Befestigungsart_Fundament | ENUMSignal_Befestigungsart_Konstruktionsteil | ENUMSignal_Befestigungsart_OL_Kettenwerk | ENUMSignal_Befestigungsart_OL_Mast | ENUMSignal_Befestigungsart_Prellbock | ENUMSignal_Befestigungsart_Signalausleger | ENUMSignal_Befestigungsart_Signalbruecke | ENUMSignal_Befestigungsart_Sonderkonstruktion | ENUMSignal_Befestigungsart_Dach | ENUMSignal_Befestigungsart_Mast | ENUMSignal_Befestigungsart_Pfahl | ENUMSignal_Befestigungsart_Wand;
+
+data ENUMSignal_Funktion = ENUMSignal_Funktion_unused | ENUMSignal_Funktion_Alleinstehendes_Zusatzsignal | ENUMSignal_Funktion_andere | ENUMSignal_Funktion_Ausfahr_Signal | ENUMSignal_Funktion_Zug_Ziel_Signal | ENUMSignal_Funktion_Ausfahr_Zwischen_Signal | ENUMSignal_Funktion_Block_Signal | ENUMSignal_Funktion_Deckungs_Signal | ENUMSignal_Funktion_Einfahr_Ausfahr_Signal | ENUMSignal_Funktion_Einfahr_Block_Signal | ENUMSignal_Funktion_Einfahr_Signal | ENUMSignal_Funktion_Gruppenausfahr_Gruppenzwischen_Signal | ENUMSignal_Funktion_Gruppenausfahr_Signal | ENUMSignal_Funktion_Gruppenzwischen_Signal | ENUMSignal_Funktion_Nachrueck_Signal | ENUMSignal_Funktion_Zugdeckungs_Signal | ENUMSignal_Funktion_Zwischen_Signal;
+
+data ENUMSignalsystem = ENUMSignalsystem_unused | ENUMSignalsystem_Bue | ENUMSignalsystem_HV | ENUMSignalsystem_Ks;
+
+data ENUMSonstige_Zulaessige_Anordnung = ENUMSonstige_Zulaessige_Anordnung_unused | ENUMSonstige_Zulaessige_Anordnung_Anordnung_des_Signals_rechts_am_Gleis | ENUMSonstige_Zulaessige_Anordnung_Anordnung_des_Signals_rechts_am_Gleis_ohne_Schachbretttafel | ENUMSonstige_Zulaessige_Anordnung_Nichtgeltung_fuer_Fahrten_auf_dem_Gegengleis;
+
+data ENUMStreuscheibe_Art = ENUMStreuscheibe_Art_unused | ENUMStreuscheibe_Art_HRL | ENUMStreuscheibe_Art_HG | ENUMStreuscheibe_Art_HN | ENUMStreuscheibe_Art_ORL | ENUMStreuscheibe_Art_VRL;
+
+data ENUMStreuscheibe_Betriebsstellung = ENUMStreuscheibe_Betriebsstellung_unused | ENUMStreuscheibe_Betriebsstellung_HG1 | ENUMStreuscheibe_Betriebsstellung_HG2 | ENUMStreuscheibe_Betriebsstellung_HG3 | ENUMStreuscheibe_Betriebsstellung_HG4 | ENUMStreuscheibe_Betriebsstellung_HL | ENUMStreuscheibe_Betriebsstellung_HN | ENUMStreuscheibe_Betriebsstellung_HR | ENUMStreuscheibe_Betriebsstellung_OL | ENUMStreuscheibe_Betriebsstellung_OR | ENUMStreuscheibe_Betriebsstellung_VL | ENUMStreuscheibe_Betriebsstellung_VR;
+
+data ENUMTunnelsignal = ENUMTunnelsignal_unused | ENUMTunnelsignal_nein | ENUMTunnelsignal_ohne_Dauernachtschaltung | ENUMTunnelsignal_mit_Dauernachtschaltung;
+
+
+
+// Functions to print the enum values
+def String printAnschaltdauer(ENUMAnschaltdauer e) =
+  case e {
+    ENUMAnschaltdauer_unused => "";
+    ENUMAnschaltdauer_60_s => "60_s";
+    ENUMAnschaltdauer_90_s => "90_s";
+    ENUMAnschaltdauer_G => "G";
+    ENUMAnschaltdauer_T => "T";
+  };
+
+def String printAuto_Einstellung(ENUMAuto_Einstellung e) =
+  case e {
+    ENUMAuto_Einstellung_unused => "";
+    ENUMAuto_Einstellung_Sb => "Sb";
+    ENUMAuto_Einstellung_ZL => "ZL";
+  };
+
+def String printBedienart(ENUMBedienart e) =
+  case e {
+    ENUMBedienart_unused => "";
+    ENUMBedienart_wb => "wb";
+    ENUMBedienart_wb_zb => "wb_zb";
+    ENUMBedienart_zb => "zb";
+  };
+
+def String printBefestigung_Art(ENUMBefestigung_Art e) =
+  case e {
+    ENUMBefestigung_Art_unused => "";
+    ENUMBefestigung_Art_Fundament => "Fundament";
+    ENUMBefestigung_Art_Pfosten => "Pfosten";
+    ENUMBefestigung_Art_Schienenfuss => "Schienenfuss";
+    ENUMBefestigung_Art_Mast => "Mast";
+    ENUMBefestigung_Art_Rahmen => "Rahmen";
+    ENUMBefestigung_Art_Signal_Anordnung_Arbeitsbuehne => "Signal_Anordnung_Arbeitsbuehne";
+    ENUMBefestigung_Art_Signal_Anordnung_Mast => "Signal_Anordnung_Mast";
+    ENUMBefestigung_Art_Signal_Anordnung_Sonstige => "Signal_Anordnung_Sonstige";
+    ENUMBefestigung_Art_Signalausleger => "Signalausleger";
+    ENUMBefestigung_Art_Signalbruecke => "Signalbruecke";
+    ENUMBefestigung_Art_sonstige => "sonstige";
+  };
+
+def String printBeleuchtet(ENUMBeleuchtet e) =
+  case e {
+    ENUMBeleuchtet_unused => "";
+    ENUMBeleuchtet_angestrahlt => "angestrahlt";
+    ENUMBeleuchtet_innenbeleuchtet => "innenbeleuchtet";
+    ENUMBeleuchtet_nein => "nein";
+  };
+
+def String printDurchfahrt(ENUMDurchfahrt e) =
+  case e {
+    ENUMDurchfahrt_unused => "";
+    ENUMDurchfahrt_erlaubt => "erlaubt";
+    ENUMDurchfahrt_nur_mit_Sh1 => "nur_mit_Sh1";
+    ENUMDurchfahrt_verboten => "verboten";
+  };
+
+def String printFiktives_Signal_Funktion(ENUMFiktives_Signal_Funktion e) =
+  case e {
+    ENUMFiktives_Signal_Funktion_unused => "";
+    ENUMFiktives_Signal_Funktion_FAP_Start => "FAP_Start";
+    ENUMFiktives_Signal_Funktion_FAP_Ziel => "FAP_Ziel";
+    ENUMFiktives_Signal_Funktion_Rangier_Start_Ziel_ohne_Signal => "Rangier_Start_Ziel_ohne_Signal";
+    ENUMFiktives_Signal_Funktion_sonstige => "sonstige";
+    ENUMFiktives_Signal_Funktion_Zug_Start_Awanst => "Zug_Start_Awanst";
+    ENUMFiktives_Signal_Funktion_Zug_Start_Mittelweiche => "Zug_Start_Mittelweiche";
+    ENUMFiktives_Signal_Funktion_Zug_Start_ohne_Signal => "Zug_Start_ohne_Signal";
+    ENUMFiktives_Signal_Funktion_Zug_Ziel_Awanst => "Zug_Ziel_Awanst";
+    ENUMFiktives_Signal_Funktion_Zug_Ziel_ohne_Signal => "Zug_Ziel_ohne_Signal";
+    ENUMFiktives_Signal_Funktion_Zug_Ziel_Strecke => "Zug_Ziel_Strecke";
+  };
+
+def String printRahmen_Art(ENUMRahmen_Art e) =
+  case e {
+    ENUMRahmen_Art_unused => "";
+    ENUMRahmen_Art_Bezeichnungsschild => "Bezeichnungsschild";
+    ENUMRahmen_Art_Blechtafel => "Blechtafel";
+    ENUMRahmen_Art_Keramikkoerper => "Keramikkoerper";
+    ENUMRahmen_Art_Schirm => "Schirm";
+    ENUMRahmen_Art_Zusatzanzeiger => "Zusatzanzeiger";
+    ENUMRahmen_Art_sonstige => "sonstige";
+  };
+
+def String printSignal_Art(ENUMSignal_Art e) =
+  case e {
+    ENUMSignal_Art_unused => "";
+    ENUMSignal_Art_andere => "andere";
+    ENUMSignal_Art_Hauptsignal => "Hauptsignal";
+    ENUMSignal_Art_Hauptsperrsignal => "Hauptsperrsignal";
+    ENUMSignal_Art_Mehrabschnittssignal => "Mehrabschnittssignal";
+    ENUMSignal_Art_Mehrabschnittssperrsignal => "Mehrabschnittssperrsignal";
+    ENUMSignal_Art_Sperrsignal => "Sperrsignal";
+    ENUMSignal_Art_Ueberwachungssignal => "Ueberwachungssignal";
+    ENUMSignal_Art_Vorsignal => "Vorsignal";
+    ENUMSignal_Art_Vorsignalwiederholer => "Vorsignalwiederholer";
+    ENUMSignal_Art_Zugdeckungssignal => "Zugdeckungssignal";
+  };
+
+def String printSignal_Befestigungsart(ENUMSignal_Befestigungsart e) =
+  case e {
+    ENUMSignal_Befestigungsart_unused => "";
+    ENUMSignal_Befestigungsart_Bahnsteig => "Bahnsteig";
+    ENUMSignal_Befestigungsart_Fundament => "Fundament";
+    ENUMSignal_Befestigungsart_Konstruktionsteil => "Konstruktionsteil";
+    ENUMSignal_Befestigungsart_OL_Kettenwerk => "OL_Kettenwerk";
+    ENUMSignal_Befestigungsart_OL_Mast => "OL_Mast";
+    ENUMSignal_Befestigungsart_Prellbock => "Prellbock";
+    ENUMSignal_Befestigungsart_Signalausleger => "Signalausleger";
+    ENUMSignal_Befestigungsart_Signalbruecke => "Signalbruecke";
+    ENUMSignal_Befestigungsart_Sonderkonstruktion => "Sonderkonstruktion";
+    ENUMSignal_Befestigungsart_Dach => "Dach";
+    ENUMSignal_Befestigungsart_Mast => "Mast";
+    ENUMSignal_Befestigungsart_Pfahl => "Pfahl";
+    ENUMSignal_Befestigungsart_Wand => "Wand";
+  };
+
+def String printSignal_Funktion(ENUMSignal_Funktion e) =
+  case e {
+    ENUMSignal_Funktion_unused => "";
+    ENUMSignal_Funktion_Alleinstehendes_Zusatzsignal => "Alleinstehendes_Zusatzsignal";
+    ENUMSignal_Funktion_andere => "andere";
+    ENUMSignal_Funktion_Ausfahr_Signal => "Ausfahr_Signal";
+    ENUMSignal_Funktion_Zug_Ziel_Signal => "Zug_Ziel_Signal";
+    ENUMSignal_Funktion_Ausfahr_Zwischen_Signal => "Ausfahr_Zwischen_Signal";
+    ENUMSignal_Funktion_Block_Signal => "Block_Signal";
+    ENUMSignal_Funktion_Deckungs_Signal => "Deckungs_Signal";
+    ENUMSignal_Funktion_Einfahr_Ausfahr_Signal => "Einfahr_Ausfahr_Signal";
+    ENUMSignal_Funktion_Einfahr_Block_Signal => "Einfahr_Block_Signal";
+    ENUMSignal_Funktion_Einfahr_Signal => "Einfahr_Signal";
+    ENUMSignal_Funktion_Gruppenausfahr_Gruppenzwischen_Signal => "Gruppenausfahr_Gruppenzwischen_Signal";
+    ENUMSignal_Funktion_Gruppenausfahr_Signal => "Gruppenausfahr_Signal";
+    ENUMSignal_Funktion_Gruppenzwischen_Signal => "Gruppenzwischen_Signal";
+    ENUMSignal_Funktion_Nachrueck_Signal => "Nachrueck_Signal";
+    ENUMSignal_Funktion_Zugdeckungs_Signal => "Zugdeckungs_Signal";
+    ENUMSignal_Funktion_Zwischen_Signal => "Zwischen_Signal";
+  };
+
+def String printSignalsystem(ENUMSignalsystem e) =
+  case e {
+    ENUMSignalsystem_unused => "";
+    ENUMSignalsystem_Bue => "Bue";
+    ENUMSignalsystem_HV => "HV";
+    ENUMSignalsystem_Ks => "Ks";
+  };
+
+def String printSonstige_Zulaessige_Anordnung(ENUMSonstige_Zulaessige_Anordnung e) =
+  case e {
+    ENUMSonstige_Zulaessige_Anordnung_unused => "";
+    ENUMSonstige_Zulaessige_Anordnung_Anordnung_des_Signals_rechts_am_Gleis => "Anordnung_des_Signals_rechts_am_Gleis";
+    ENUMSonstige_Zulaessige_Anordnung_Anordnung_des_Signals_rechts_am_Gleis_ohne_Schachbretttafel => "Anordnung_des_Signals_rechts_am_Gleis_ohne_Schachbretttafel";
+    ENUMSonstige_Zulaessige_Anordnung_Nichtgeltung_fuer_Fahrten_auf_dem_Gegengleis => "Nichtgeltung_fuer_Fahrten_auf_dem_Gegengleis";
+  };
+
+def String printStreuscheibe_Art(ENUMStreuscheibe_Art e) =
+  case e {
+    ENUMStreuscheibe_Art_unused => "";
+    ENUMStreuscheibe_Art_HRL => "HRL";
+    ENUMStreuscheibe_Art_HG => "HG";
+    ENUMStreuscheibe_Art_HN => "HN";
+    ENUMStreuscheibe_Art_ORL => "ORL";
+    ENUMStreuscheibe_Art_VRL => "VRL";
+  };
+
+def String printStreuscheibe_Betriebsstellung(ENUMStreuscheibe_Betriebsstellung e) =
+  case e {
+    ENUMStreuscheibe_Betriebsstellung_unused => "";
+    ENUMStreuscheibe_Betriebsstellung_HG1 => "HG1";
+    ENUMStreuscheibe_Betriebsstellung_HG2 => "HG2";
+    ENUMStreuscheibe_Betriebsstellung_HG3 => "HG3";
+    ENUMStreuscheibe_Betriebsstellung_HG4 => "HG4";
+    ENUMStreuscheibe_Betriebsstellung_HL => "HL";
+    ENUMStreuscheibe_Betriebsstellung_HN => "HN";
+    ENUMStreuscheibe_Betriebsstellung_HR => "HR";
+    ENUMStreuscheibe_Betriebsstellung_OL => "OL";
+    ENUMStreuscheibe_Betriebsstellung_OR => "OR";
+    ENUMStreuscheibe_Betriebsstellung_VL => "VL";
+    ENUMStreuscheibe_Betriebsstellung_VR => "VR";
+  };
+
+def String printTunnelsignal(ENUMTunnelsignal e) =
+  case e {
+    ENUMTunnelsignal_unused => "";
+    ENUMTunnelsignal_nein => "nein";
+    ENUMTunnelsignal_ohne_Dauernachtschaltung => "ohne_Dauernachtschaltung";
+    ENUMTunnelsignal_mit_Dauernachtschaltung => "mit_Dauernachtschaltung";
+  };
+
+
+
+//Attribute group Signal_Fiktiv used in Signal
+interface Signal_Fiktiv {
+  Maybe<ENUMAuto_Einstellung> getAuto_Einstellung();
+  Unit setAuto_Einstellung(Maybe<ENUMAuto_Einstellung> i);
+  ENUMFiktives_Signal_Funktion getFiktives_Signal_Funktion();
+  Unit setFiktives_Signal_Funktion(ENUMFiktives_Signal_Funktion i);
+}
+
+//Attribute group Signal_Real used in Signal
+interface Signal_Real {
+  Maybe<ENUMBedienart> getSignal_Real_Aktiv_Schirm_Bedienart();
+  Unit setSignal_Real_Aktiv_Schirm_Bedienart(Maybe<ENUMBedienart> i);
+  Maybe<TText> getSignal_Real_Aktiv_Schirm_Richtpunkt();
+  Unit setSignal_Real_Aktiv_Schirm_Richtpunkt(Maybe<TText> i);
+  Maybe<Bool> getSignal_Real_Aktiv_Schirm_Dunkelschaltung();
+  Unit setSignal_Real_Aktiv_Schirm_Dunkelschaltung(Maybe<Bool> i);
+  Maybe<TMeter> getSignal_Real_Aktiv_Schirm_Richtpunktentfernung();
+  Unit setSignal_Real_Aktiv_Schirm_Richtpunktentfernung(Maybe<TMeter> i);
+  Maybe<ENUMSignalsystem> getSignal_Real_Aktiv_Schirm_Signalsystem();
+  Unit setSignal_Real_Aktiv_Schirm_Signalsystem(Maybe<ENUMSignalsystem> i);
+  Maybe<ENUMStreuscheibe_Art> getSignal_Real_Aktiv_Schirm_Streuscheibe_Art();
+  Unit setSignal_Real_Aktiv_Schirm_Streuscheibe_Art(Maybe<ENUMStreuscheibe_Art> i);
+  Maybe<ENUMStreuscheibe_Betriebsstellung> getSignal_Real_Aktiv_Schirm_Streuscheibe_Betriebsstellung();
+  Unit setSignal_Real_Aktiv_Schirm_Streuscheibe_Betriebsstellung(Maybe<ENUMStreuscheibe_Betriebsstellung> i);
+  Maybe<ENUMSignal_Art> getSignal_Real_Aktiv_Schirm_Signal_Art();
+  Unit setSignal_Real_Aktiv_Schirm_Signal_Art(Maybe<ENUMSignal_Art> i);
+  Maybe<TGUID> getSignal_Real_Aktiv_ID_Stellelement();
+  Unit setSignal_Real_Aktiv_ID_Stellelement(Maybe<TGUID> i);
+  Maybe<TMeter> getSignal_Real_Aktiv_Signalsicht_Mindest();
+  Unit setSignal_Real_Aktiv_Signalsicht_Mindest(Maybe<TMeter> i);
+  Maybe<TMeter> getSignal_Real_Aktiv_Signalsicht_Soll();
+  Unit setSignal_Real_Aktiv_Signalsicht_Soll(Maybe<TMeter> i);
+  Maybe<TMeter> getSignal_Real_Aktiv_Signalsicht_Erreichbar();
+  Unit setSignal_Real_Aktiv_Signalsicht_Erreichbar(Maybe<TMeter> i);
+  Maybe<ENUMTunnelsignal> getSignal_Real_Aktiv_Tunnelsignal();
+  Unit setSignal_Real_Aktiv_Tunnelsignal(Maybe<ENUMTunnelsignal> i);
+  Maybe<ENUMSignal_Funktion> getSignal_Real_Aktiv_Signal_Funktion();
+  Unit setSignal_Real_Aktiv_Signal_Funktion(Maybe<ENUMSignal_Funktion> i);
+  Maybe<ENUMAuto_Einstellung> getSignal_Real_Aktiv_Auto_Einstellung();
+  Unit setSignal_Real_Aktiv_Auto_Einstellung(Maybe<ENUMAuto_Einstellung> i);
+  Maybe<ENUMSonstige_Zulaessige_Anordnung> getSignal_Real_Aktiv_Sonstige_Zulaessige_Anordnung();
+  Unit setSignal_Real_Aktiv_Sonstige_Zulaessige_Anordnung(Maybe<ENUMSonstige_Zulaessige_Anordnung> i);
+  ENUMSignal_Befestigungsart getSignal_Befestigungsart();
+  Unit setSignal_Befestigungsart(ENUMSignal_Befestigungsart i);
+}
+
+// Data type to choice between Signal_Fiktiv and Signal_Real
+data SignalFiktivReal = SignalUnknown | SignalFiktiv(Signal_Fiktiv sfiktiv) | SignalReal(Signal_Real sreal);
+
+//Signal
+interface Signal extends Punkt_Objekt {
+  Maybe<CBezeichnung_Element> getBezeichnung();
+  Unit setBezeichnung(Maybe<CBezeichnung_Element> i);
+  Maybe<TGUID> getSignal_Fstr_Aus_Inselgleis_ID_RaFahrt_Gleichzeitig_Verbot();
+  Unit setSignal_Fstr_Aus_Inselgleis_ID_RaFahrt_Gleichzeitig_Verbot(Maybe<TGUID> i);
+  Maybe<TGUID> getSignal_Fstr_Aus_Inselgleis_ID_ZgFahrt_Gleichzeitig_Verbot();
+  Unit setSignal_Fstr_Aus_Inselgleis_ID_ZgFahrt_Gleichzeitig_Verbot(Maybe<TGUID> i);
+  Maybe<Bool> getSignal_Fstr_S_Gegengleis();
+  Unit setSignal_Fstr_S_Gegengleis(Maybe<Bool> i);
+  Maybe<TGUID> getSignal_Fstr_S_ID_Anrueckverschluss();
+  Unit setSignal_Fstr_S_ID_Anrueckverschluss(Maybe<TGUID> i);
+  Maybe<Bool> getSignal_Fstr_DA_Manuell();
+  Unit setSignal_Fstr_DA_Manuell(Maybe<Bool> i);
+  Maybe<ENUMDurchfahrt> getSignal_Fstr_Durchfahrt();
+  Unit setSignal_Fstr_Durchfahrt(Maybe<ENUMDurchfahrt> i);
+  Maybe<TGUID> getSignal_Fstr_ID_RaZiel_Erlaubnisabhaengig();
+  Unit setSignal_Fstr_ID_RaZiel_Erlaubnisabhaengig(Maybe<TGUID> i);
+  Maybe<Bool> getSignal_Fstr_Rangierstrasse_Restaufloesung();
+  Unit setSignal_Fstr_Rangierstrasse_Restaufloesung(Maybe<Bool> i);
+  Maybe<TMeter> getSignal_PZB_PZB_Schutzstrecke_Soll();
+  Unit setSignal_PZB_PZB_Schutzstrecke_Soll(Maybe<TMeter> i);
+  SignalFiktivReal getSignalFiktivReal();
+  Unit setSignalFiktivReal(SignalFiktivReal i);
+}
+
+//Signal_Befestigung
+interface Signal_Befestigung extends Punkt_Objekt {
+  Maybe<TGUID> getID_Signal_Befestigung();
+  Unit setID_Signal_Befestigung(Maybe<TGUID> i);
+  List<TGUID> getID_Regelzeichnung();
+  Unit setID_Regelzeichnung(List<TGUID> i);
+  ENUMBefestigung_Art getSignal_Befestigung_Allg_Befestigung_Art();
+  Unit setSignal_Befestigung_Allg_Befestigung_Art(ENUMBefestigung_Art i);
+  Maybe<TMeter> getSignal_Befestigung_Allg_Hoehe_Fundamentoberkante();
+  Unit setSignal_Befestigung_Allg_Hoehe_Fundamentoberkante(Maybe<TMeter> i);
+  Maybe<TMeter> getSignal_Befestigung_Allg_Obere_Lichtpunkthoehe();
+  Unit setSignal_Befestigung_Allg_Obere_Lichtpunkthoehe(Maybe<TMeter> i);
+}
+
+//Signal_Rahmen
+interface Signal_Rahmen extends Basis_Objekt {
+  TGUID getID_Signal_Befestigung();
+  Unit setID_Signal_Befestigung(TGUID i);
+  Maybe<TGUID> getID_Signal_Nachordnung();
+  Unit setID_Signal_Nachordnung(Maybe<TGUID> i);
+  ENUMRahmen_Art getRahmen_Art();
+  Unit setRahmen_Art(ENUMRahmen_Art i);
+  TGUID getID_Signal();
+  Unit setID_Signal(TGUID i);
+}
+
+//Signal_Signalbegriff
+interface Signal_Signalbegriff extends Basis_Objekt {
+  TGUID getID_Signal_Rahmen();
+  Unit setID_Signal_Rahmen(TGUID i);
+  String getSignalbegriff_ID();
+  Unit setSignalbegriff_ID(String i);
+  Maybe<Bool> getSignal_Signalbegriff_Allg_Geschaltet();
+  Unit setSignal_Signalbegriff_Allg_Geschaltet(Maybe<Bool> i);
+  Maybe<ENUMBeleuchtet> getSignal_Signalbegriff_Allg_Beleuchtet();
+  Unit setSignal_Signalbegriff_Allg_Beleuchtet(Maybe<ENUMBeleuchtet> i);
+  Maybe<ENUMAnschaltdauer> getSignal_Signalbegriff_Allg_Anschaltdauer();
+  Unit setSignal_Signalbegriff_Allg_Anschaltdauer(Maybe<ENUMAnschaltdauer> i);
+}
+
+
+
+
+class Signal_Fiktiv implements Signal_Fiktiv {
+  Maybe<ENUMAuto_Einstellung> m_Auto_Einstellung = Nothing;
+  ENUMFiktives_Signal_Funktion m_Fiktives_Signal_Funktion = ENUMFiktives_Signal_Funktion_unused;
+
+  Maybe<ENUMAuto_Einstellung> getAuto_Einstellung() { return m_Auto_Einstellung; }
+  Unit setAuto_Einstellung(Maybe<ENUMAuto_Einstellung> i) { m_Auto_Einstellung = i; }
+  ENUMFiktives_Signal_Funktion getFiktives_Signal_Funktion() { return m_Fiktives_Signal_Funktion; }
+  Unit setFiktives_Signal_Funktion(ENUMFiktives_Signal_Funktion i) { m_Fiktives_Signal_Funktion = i; }
+}
+
+class Signal_Real implements Signal_Real {
+  Maybe<ENUMBedienart> m_Signal_Real_Aktiv_Schirm_Bedienart = Nothing;
+  Maybe<TText> m_Signal_Real_Aktiv_Schirm_Richtpunkt = Nothing;
+  Maybe<Bool> m_Signal_Real_Aktiv_Schirm_Dunkelschaltung = Nothing;
+  Maybe<TMeter> m_Signal_Real_Aktiv_Schirm_Richtpunktentfernung = Nothing;
+  Maybe<ENUMSignalsystem> m_Signal_Real_Aktiv_Schirm_Signalsystem = Nothing;
+  Maybe<ENUMStreuscheibe_Art> m_Signal_Real_Aktiv_Schirm_Streuscheibe_Art = Nothing;
+  Maybe<ENUMStreuscheibe_Betriebsstellung> m_Signal_Real_Aktiv_Schirm_Streuscheibe_Betriebsstellung = Nothing;
+  Maybe<ENUMSignal_Art> m_Signal_Real_Aktiv_Schirm_Signal_Art = Nothing;
+  Maybe<TGUID> m_Signal_Real_Aktiv_ID_Stellelement = Nothing;
+  Maybe<TMeter> m_Signal_Real_Aktiv_Signalsicht_Mindest = Nothing;
+  Maybe<TMeter> m_Signal_Real_Aktiv_Signalsicht_Soll = Nothing;
+  Maybe<TMeter> m_Signal_Real_Aktiv_Signalsicht_Erreichbar = Nothing;
+  Maybe<ENUMTunnelsignal> m_Signal_Real_Aktiv_Tunnelsignal = Nothing;
+  Maybe<ENUMSignal_Funktion> m_Signal_Real_Aktiv_Signal_Funktion = Nothing;
+  Maybe<ENUMAuto_Einstellung> m_Signal_Real_Aktiv_Auto_Einstellung = Nothing;
+  Maybe<ENUMSonstige_Zulaessige_Anordnung> m_Signal_Real_Aktiv_Sonstige_Zulaessige_Anordnung = Nothing;
+  ENUMSignal_Befestigungsart m_Signal_Befestigungsart = ENUMSignal_Befestigungsart_unused;
+
+  Maybe<ENUMBedienart> getSignal_Real_Aktiv_Schirm_Bedienart() { return m_Signal_Real_Aktiv_Schirm_Bedienart; }
+  Unit setSignal_Real_Aktiv_Schirm_Bedienart(Maybe<ENUMBedienart> i) { m_Signal_Real_Aktiv_Schirm_Bedienart = i; }
+  Maybe<TText> getSignal_Real_Aktiv_Schirm_Richtpunkt() { return m_Signal_Real_Aktiv_Schirm_Richtpunkt; }
+  Unit setSignal_Real_Aktiv_Schirm_Richtpunkt(Maybe<TText> i) { m_Signal_Real_Aktiv_Schirm_Richtpunkt = i; }
+  Maybe<Bool> getSignal_Real_Aktiv_Schirm_Dunkelschaltung() { return m_Signal_Real_Aktiv_Schirm_Dunkelschaltung; }
+  Unit setSignal_Real_Aktiv_Schirm_Dunkelschaltung(Maybe<Bool> i) { m_Signal_Real_Aktiv_Schirm_Dunkelschaltung = i; }
+  Maybe<TMeter> getSignal_Real_Aktiv_Schirm_Richtpunktentfernung() { return m_Signal_Real_Aktiv_Schirm_Richtpunktentfernung; }
+  Unit setSignal_Real_Aktiv_Schirm_Richtpunktentfernung(Maybe<TMeter> i) { m_Signal_Real_Aktiv_Schirm_Richtpunktentfernung = i; }
+  Maybe<ENUMSignalsystem> getSignal_Real_Aktiv_Schirm_Signalsystem() { return m_Signal_Real_Aktiv_Schirm_Signalsystem; }
+  Unit setSignal_Real_Aktiv_Schirm_Signalsystem(Maybe<ENUMSignalsystem> i) { m_Signal_Real_Aktiv_Schirm_Signalsystem = i; }
+  Maybe<ENUMStreuscheibe_Art> getSignal_Real_Aktiv_Schirm_Streuscheibe_Art() { return m_Signal_Real_Aktiv_Schirm_Streuscheibe_Art; }
+  Unit setSignal_Real_Aktiv_Schirm_Streuscheibe_Art(Maybe<ENUMStreuscheibe_Art> i) { m_Signal_Real_Aktiv_Schirm_Streuscheibe_Art = i; }
+  Maybe<ENUMStreuscheibe_Betriebsstellung> getSignal_Real_Aktiv_Schirm_Streuscheibe_Betriebsstellung() { return m_Signal_Real_Aktiv_Schirm_Streuscheibe_Betriebsstellung; }
+  Unit setSignal_Real_Aktiv_Schirm_Streuscheibe_Betriebsstellung(Maybe<ENUMStreuscheibe_Betriebsstellung> i) { m_Signal_Real_Aktiv_Schirm_Streuscheibe_Betriebsstellung = i; }
+  Maybe<ENUMSignal_Art> getSignal_Real_Aktiv_Schirm_Signal_Art() { return m_Signal_Real_Aktiv_Schirm_Signal_Art; }
+  Unit setSignal_Real_Aktiv_Schirm_Signal_Art(Maybe<ENUMSignal_Art> i) { m_Signal_Real_Aktiv_Schirm_Signal_Art = i; }
+  Maybe<TGUID> getSignal_Real_Aktiv_ID_Stellelement() { return m_Signal_Real_Aktiv_ID_Stellelement; }
+  Unit setSignal_Real_Aktiv_ID_Stellelement(Maybe<TGUID> i) { m_Signal_Real_Aktiv_ID_Stellelement = i; }
+  Maybe<TMeter> getSignal_Real_Aktiv_Signalsicht_Mindest() { return m_Signal_Real_Aktiv_Signalsicht_Mindest; }
+  Unit setSignal_Real_Aktiv_Signalsicht_Mindest(Maybe<TMeter> i) { m_Signal_Real_Aktiv_Signalsicht_Mindest = i; }
+  Maybe<TMeter> getSignal_Real_Aktiv_Signalsicht_Soll() { return m_Signal_Real_Aktiv_Signalsicht_Soll; }
+  Unit setSignal_Real_Aktiv_Signalsicht_Soll(Maybe<TMeter> i) { m_Signal_Real_Aktiv_Signalsicht_Soll = i; }
+  Maybe<TMeter> getSignal_Real_Aktiv_Signalsicht_Erreichbar() { return m_Signal_Real_Aktiv_Signalsicht_Erreichbar; }
+  Unit setSignal_Real_Aktiv_Signalsicht_Erreichbar(Maybe<TMeter> i) { m_Signal_Real_Aktiv_Signalsicht_Erreichbar = i; }
+  Maybe<ENUMTunnelsignal> getSignal_Real_Aktiv_Tunnelsignal() { return m_Signal_Real_Aktiv_Tunnelsignal; }
+  Unit setSignal_Real_Aktiv_Tunnelsignal(Maybe<ENUMTunnelsignal> i) { m_Signal_Real_Aktiv_Tunnelsignal = i; }
+  Maybe<ENUMSignal_Funktion> getSignal_Real_Aktiv_Signal_Funktion() { return m_Signal_Real_Aktiv_Signal_Funktion; }
+  Unit setSignal_Real_Aktiv_Signal_Funktion(Maybe<ENUMSignal_Funktion> i) { m_Signal_Real_Aktiv_Signal_Funktion = i; }
+  Maybe<ENUMAuto_Einstellung> getSignal_Real_Aktiv_Auto_Einstellung() { return m_Signal_Real_Aktiv_Auto_Einstellung; }
+  Unit setSignal_Real_Aktiv_Auto_Einstellung(Maybe<ENUMAuto_Einstellung> i) { m_Signal_Real_Aktiv_Auto_Einstellung = i; }
+  Maybe<ENUMSonstige_Zulaessige_Anordnung> getSignal_Real_Aktiv_Sonstige_Zulaessige_Anordnung() { return m_Signal_Real_Aktiv_Sonstige_Zulaessige_Anordnung; }
+  Unit setSignal_Real_Aktiv_Sonstige_Zulaessige_Anordnung(Maybe<ENUMSonstige_Zulaessige_Anordnung> i) { m_Signal_Real_Aktiv_Sonstige_Zulaessige_Anordnung = i; }
+  ENUMSignal_Befestigungsart getSignal_Befestigungsart() { return m_Signal_Befestigungsart; }
+  Unit setSignal_Befestigungsart(ENUMSignal_Befestigungsart i) { m_Signal_Befestigungsart = i; }
+}
+
+
+
+
+class SignalImpl implements Signal {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Basis_Objekt
+  List<TGUID> m_ID_Bearbeitungsvermerk = Nil;
+  Maybe<TText> m_ObjektreferenzenDB_GDI_Referenz = Nothing;
+  Maybe<TText> m_ObjektreferenzenTechnischer_Platz = Nothing;
+  Maybe<ENUMObjektzustand_Besonders> m_Basis_Objekt_Allg_Objektzustand_Besonders = Nothing;
+  Maybe<TGUID> m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = Nothing;
+  Maybe<Date> m_Basis_Objekt_Allg_Datum_Regelwerk = Nothing;
+
+  // Fields from Punkt_Objekt
+  List<Punkt_Objekt_Strecke> m_Punkt_Objekt_Strecke = Nil;
+  List<Punkt_Objekt_TOP_Kante> m_Punkt_Objekt_TOP_Kante = Nil;
+
+  // Fields from Signal
+  Maybe<CBezeichnung_Element> m_Bezeichnung = Nothing;
+  Maybe<TGUID> m_Signal_Fstr_Aus_Inselgleis_ID_RaFahrt_Gleichzeitig_Verbot = Nothing;
+  Maybe<TGUID> m_Signal_Fstr_Aus_Inselgleis_ID_ZgFahrt_Gleichzeitig_Verbot = Nothing;
+  Maybe<Bool> m_Signal_Fstr_S_Gegengleis = Nothing;
+  Maybe<TGUID> m_Signal_Fstr_S_ID_Anrueckverschluss = Nothing;
+  Maybe<Bool> m_Signal_Fstr_DA_Manuell = Nothing;
+  Maybe<ENUMDurchfahrt> m_Signal_Fstr_Durchfahrt = Nothing;
+  Maybe<TGUID> m_Signal_Fstr_ID_RaZiel_Erlaubnisabhaengig = Nothing;
+  Maybe<Bool> m_Signal_Fstr_Rangierstrasse_Restaufloesung = Nothing;
+  Maybe<TMeter> m_Signal_PZB_PZB_Schutzstrecke_Soll = Nothing;
+  SignalFiktivReal m_SignalFiktivReal = SignalUnknown;
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_Signal; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Basis_Objekt
+  List<TGUID> getID_Bearbeitungsvermerk() { return m_ID_Bearbeitungsvermerk; }
+  Unit setID_Bearbeitungsvermerk(List<TGUID> i) { m_ID_Bearbeitungsvermerk = i; }
+  Maybe<TText> getObjektreferenzenDB_GDI_Referenz() { return m_ObjektreferenzenDB_GDI_Referenz; }
+  Unit setObjektreferenzenDB_GDI_Referenz(Maybe<TText> r) { m_ObjektreferenzenDB_GDI_Referenz = r; }
+  Maybe<TText> getObjektreferenzenTechnischer_Platz() { return m_ObjektreferenzenTechnischer_Platz; }
+  Unit setObjektreferenzenTechnischer_Platz(Maybe<TText> p) { m_ObjektreferenzenTechnischer_Platz = p; }
+  Maybe<ENUMObjektzustand_Besonders> getBasis_Objekt_Allg_Objektzustand_Besonders() { return m_Basis_Objekt_Allg_Objektzustand_Besonders; }
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(Maybe<ENUMObjektzustand_Besonders> o) { m_Basis_Objekt_Allg_Objektzustand_Besonders = o; }
+  Maybe<TGUID> getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders() { return m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders; }
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(Maybe<TGUID> i) { m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = i; }
+  Maybe<Date> getBasis_Objekt_Allg_Datum_Regelwerk() { return m_Basis_Objekt_Allg_Datum_Regelwerk; }
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Maybe<Date> d) { m_Basis_Objekt_Allg_Datum_Regelwerk = d; }
+
+  // Methods from Punkt_Objekt
+  List<Punkt_Objekt_Strecke> getPunkt_Objekt_Strecke() { return m_Punkt_Objekt_Strecke; }
+  Unit setPunkt_Objekt_Strecke(List<Punkt_Objekt_Strecke> i) { m_Punkt_Objekt_Strecke = i; }
+  List<Punkt_Objekt_TOP_Kante> getPunkt_Objekt_TOP_Kante() { return m_Punkt_Objekt_TOP_Kante; }
+  Unit setPunkt_Objekt_TOP_Kante(List<Punkt_Objekt_TOP_Kante> a) { m_Punkt_Objekt_TOP_Kante = a; }
+
+  // Methods from Signal
+  Maybe<CBezeichnung_Element> getBezeichnung() { return m_Bezeichnung; }
+  Unit setBezeichnung(Maybe<CBezeichnung_Element> i) { m_Bezeichnung = i; }
+  Maybe<TGUID> getSignal_Fstr_Aus_Inselgleis_ID_RaFahrt_Gleichzeitig_Verbot() { return m_Signal_Fstr_Aus_Inselgleis_ID_RaFahrt_Gleichzeitig_Verbot; }
+  Unit setSignal_Fstr_Aus_Inselgleis_ID_RaFahrt_Gleichzeitig_Verbot(Maybe<TGUID> i) { m_Signal_Fstr_Aus_Inselgleis_ID_RaFahrt_Gleichzeitig_Verbot = i; }
+  Maybe<TGUID> getSignal_Fstr_Aus_Inselgleis_ID_ZgFahrt_Gleichzeitig_Verbot() { return m_Signal_Fstr_Aus_Inselgleis_ID_ZgFahrt_Gleichzeitig_Verbot; }
+  Unit setSignal_Fstr_Aus_Inselgleis_ID_ZgFahrt_Gleichzeitig_Verbot(Maybe<TGUID> i) { m_Signal_Fstr_Aus_Inselgleis_ID_ZgFahrt_Gleichzeitig_Verbot = i; }
+  Maybe<Bool> getSignal_Fstr_S_Gegengleis() { return m_Signal_Fstr_S_Gegengleis; }
+  Unit setSignal_Fstr_S_Gegengleis(Maybe<Bool> i) { m_Signal_Fstr_S_Gegengleis = i; }
+  Maybe<TGUID> getSignal_Fstr_S_ID_Anrueckverschluss() { return m_Signal_Fstr_S_ID_Anrueckverschluss; }
+  Unit setSignal_Fstr_S_ID_Anrueckverschluss(Maybe<TGUID> i) { m_Signal_Fstr_S_ID_Anrueckverschluss = i; }
+  Maybe<Bool> getSignal_Fstr_DA_Manuell() { return m_Signal_Fstr_DA_Manuell; }
+  Unit setSignal_Fstr_DA_Manuell(Maybe<Bool> i) { m_Signal_Fstr_DA_Manuell = i; }
+  Maybe<ENUMDurchfahrt> getSignal_Fstr_Durchfahrt() { return m_Signal_Fstr_Durchfahrt; }
+  Unit setSignal_Fstr_Durchfahrt(Maybe<ENUMDurchfahrt> i) { m_Signal_Fstr_Durchfahrt = i; }
+  Maybe<TGUID> getSignal_Fstr_ID_RaZiel_Erlaubnisabhaengig() { return m_Signal_Fstr_ID_RaZiel_Erlaubnisabhaengig; }
+  Unit setSignal_Fstr_ID_RaZiel_Erlaubnisabhaengig(Maybe<TGUID> i) { m_Signal_Fstr_ID_RaZiel_Erlaubnisabhaengig = i; }
+  Maybe<Bool> getSignal_Fstr_Rangierstrasse_Restaufloesung() { return m_Signal_Fstr_Rangierstrasse_Restaufloesung; }
+  Unit setSignal_Fstr_Rangierstrasse_Restaufloesung(Maybe<Bool> i) { m_Signal_Fstr_Rangierstrasse_Restaufloesung = i; }
+  Maybe<TMeter> getSignal_PZB_PZB_Schutzstrecke_Soll() { return m_Signal_PZB_PZB_Schutzstrecke_Soll; }
+  Unit setSignal_PZB_PZB_Schutzstrecke_Soll(Maybe<TMeter> i) { m_Signal_PZB_PZB_Schutzstrecke_Soll = i; }
+  SignalFiktivReal getSignalFiktivReal() { return m_SignalFiktivReal; }
+  Unit setSignalFiktivReal(SignalFiktivReal i) { m_SignalFiktivReal = i; }
+}
+
+class Signal_BefestigungImpl implements Signal_Befestigung {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Basis_Objekt
+  List<TGUID> m_ID_Bearbeitungsvermerk = Nil;
+  Maybe<TText> m_ObjektreferenzenDB_GDI_Referenz = Nothing;
+  Maybe<TText> m_ObjektreferenzenTechnischer_Platz = Nothing;
+  Maybe<ENUMObjektzustand_Besonders> m_Basis_Objekt_Allg_Objektzustand_Besonders = Nothing;
+  Maybe<TGUID> m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = Nothing;
+  Maybe<Date> m_Basis_Objekt_Allg_Datum_Regelwerk = Nothing;
+
+  // Fields from Punkt_Objekt
+  List<Punkt_Objekt_Strecke> m_Punkt_Objekt_Strecke = Nil;
+  List<Punkt_Objekt_TOP_Kante> m_Punkt_Objekt_TOP_Kante = Nil;
+
+  // Fields from Signal_Befestigung
+  Maybe<TGUID> m_ID_Signal_Befestigung = Nothing;
+  List<TGUID> m_ID_Regelzeichnung = Nil;
+  ENUMBefestigung_Art m_Signal_Befestigung_Allg_Befestigung_Art = ENUMBefestigung_Art_unused;
+  Maybe<TMeter> m_Signal_Befestigung_Allg_Hoehe_Fundamentoberkante = Nothing;
+  Maybe<TMeter> m_Signal_Befestigung_Allg_Obere_Lichtpunkthoehe = Nothing;
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_Signal_Befestigung; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Basis_Objekt
+  List<TGUID> getID_Bearbeitungsvermerk() { return m_ID_Bearbeitungsvermerk; }
+  Unit setID_Bearbeitungsvermerk(List<TGUID> i) { m_ID_Bearbeitungsvermerk = i; }
+  Maybe<TText> getObjektreferenzenDB_GDI_Referenz() { return m_ObjektreferenzenDB_GDI_Referenz; }
+  Unit setObjektreferenzenDB_GDI_Referenz(Maybe<TText> r) { m_ObjektreferenzenDB_GDI_Referenz = r; }
+  Maybe<TText> getObjektreferenzenTechnischer_Platz() { return m_ObjektreferenzenTechnischer_Platz; }
+  Unit setObjektreferenzenTechnischer_Platz(Maybe<TText> p) { m_ObjektreferenzenTechnischer_Platz = p; }
+  Maybe<ENUMObjektzustand_Besonders> getBasis_Objekt_Allg_Objektzustand_Besonders() { return m_Basis_Objekt_Allg_Objektzustand_Besonders; }
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(Maybe<ENUMObjektzustand_Besonders> o) { m_Basis_Objekt_Allg_Objektzustand_Besonders = o; }
+  Maybe<TGUID> getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders() { return m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders; }
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(Maybe<TGUID> i) { m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = i; }
+  Maybe<Date> getBasis_Objekt_Allg_Datum_Regelwerk() { return m_Basis_Objekt_Allg_Datum_Regelwerk; }
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Maybe<Date> d) { m_Basis_Objekt_Allg_Datum_Regelwerk = d; }
+
+  // Methods from Punkt_Objekt
+  List<Punkt_Objekt_Strecke> getPunkt_Objekt_Strecke() { return m_Punkt_Objekt_Strecke; }
+  Unit setPunkt_Objekt_Strecke(List<Punkt_Objekt_Strecke> i) { m_Punkt_Objekt_Strecke = i; }
+  List<Punkt_Objekt_TOP_Kante> getPunkt_Objekt_TOP_Kante() { return m_Punkt_Objekt_TOP_Kante; }
+  Unit setPunkt_Objekt_TOP_Kante(List<Punkt_Objekt_TOP_Kante> a) { m_Punkt_Objekt_TOP_Kante = a; }
+
+  // Methods from Signal_Befestigung
+  Maybe<TGUID> getID_Signal_Befestigung() { return m_ID_Signal_Befestigung; }
+  Unit setID_Signal_Befestigung(Maybe<TGUID> i) { m_ID_Signal_Befestigung = i; }
+  List<TGUID> getID_Regelzeichnung() { return m_ID_Regelzeichnung; }
+  Unit setID_Regelzeichnung(List<TGUID> i) { m_ID_Regelzeichnung = i; }
+  ENUMBefestigung_Art getSignal_Befestigung_Allg_Befestigung_Art() { return m_Signal_Befestigung_Allg_Befestigung_Art; }
+  Unit setSignal_Befestigung_Allg_Befestigung_Art(ENUMBefestigung_Art i) { m_Signal_Befestigung_Allg_Befestigung_Art = i; }
+  Maybe<TMeter> getSignal_Befestigung_Allg_Hoehe_Fundamentoberkante() { return m_Signal_Befestigung_Allg_Hoehe_Fundamentoberkante; }
+  Unit setSignal_Befestigung_Allg_Hoehe_Fundamentoberkante(Maybe<TMeter> i) { m_Signal_Befestigung_Allg_Hoehe_Fundamentoberkante = i; }
+  Maybe<TMeter> getSignal_Befestigung_Allg_Obere_Lichtpunkthoehe() { return m_Signal_Befestigung_Allg_Obere_Lichtpunkthoehe; }
+  Unit setSignal_Befestigung_Allg_Obere_Lichtpunkthoehe(Maybe<TMeter> i) { m_Signal_Befestigung_Allg_Obere_Lichtpunkthoehe = i; }
+}
+
+class Signal_RahmenImpl implements Signal_Rahmen {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Basis_Objekt
+  List<TGUID> m_ID_Bearbeitungsvermerk = Nil;
+  Maybe<TText> m_ObjektreferenzenDB_GDI_Referenz = Nothing;
+  Maybe<TText> m_ObjektreferenzenTechnischer_Platz = Nothing;
+  Maybe<ENUMObjektzustand_Besonders> m_Basis_Objekt_Allg_Objektzustand_Besonders = Nothing;
+  Maybe<TGUID> m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = Nothing;
+  Maybe<Date> m_Basis_Objekt_Allg_Datum_Regelwerk = Nothing;
+
+  // Fields from Signal_Rahmen
+  TGUID m_ID_Signal_Befestigung = "";
+  Maybe<TGUID> m_ID_Signal_Nachordnung = Nothing;
+  ENUMRahmen_Art m_Rahmen_Art = ENUMRahmen_Art_unused;
+  TGUID m_ID_Signal = "";
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_Signal_Rahmen; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Basis_Objekt
+  List<TGUID> getID_Bearbeitungsvermerk() { return m_ID_Bearbeitungsvermerk; }
+  Unit setID_Bearbeitungsvermerk(List<TGUID> i) { m_ID_Bearbeitungsvermerk = i; }
+  Maybe<TText> getObjektreferenzenDB_GDI_Referenz() { return m_ObjektreferenzenDB_GDI_Referenz; }
+  Unit setObjektreferenzenDB_GDI_Referenz(Maybe<TText> r) { m_ObjektreferenzenDB_GDI_Referenz = r; }
+  Maybe<TText> getObjektreferenzenTechnischer_Platz() { return m_ObjektreferenzenTechnischer_Platz; }
+  Unit setObjektreferenzenTechnischer_Platz(Maybe<TText> p) { m_ObjektreferenzenTechnischer_Platz = p; }
+  Maybe<ENUMObjektzustand_Besonders> getBasis_Objekt_Allg_Objektzustand_Besonders() { return m_Basis_Objekt_Allg_Objektzustand_Besonders; }
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(Maybe<ENUMObjektzustand_Besonders> o) { m_Basis_Objekt_Allg_Objektzustand_Besonders = o; }
+  Maybe<TGUID> getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders() { return m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders; }
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(Maybe<TGUID> i) { m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = i; }
+  Maybe<Date> getBasis_Objekt_Allg_Datum_Regelwerk() { return m_Basis_Objekt_Allg_Datum_Regelwerk; }
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Maybe<Date> d) { m_Basis_Objekt_Allg_Datum_Regelwerk = d; }
+
+  // Methods from Signal_Rahmen
+  TGUID getID_Signal_Befestigung() { return m_ID_Signal_Befestigung; }
+  Unit setID_Signal_Befestigung(TGUID i) { m_ID_Signal_Befestigung = i; }
+  Maybe<TGUID> getID_Signal_Nachordnung() { return m_ID_Signal_Nachordnung; }
+  Unit setID_Signal_Nachordnung(Maybe<TGUID> i) { m_ID_Signal_Nachordnung = i; }
+  ENUMRahmen_Art getRahmen_Art() { return m_Rahmen_Art; }
+  Unit setRahmen_Art(ENUMRahmen_Art i) { m_Rahmen_Art = i; }
+  TGUID getID_Signal() { return m_ID_Signal; }
+  Unit setID_Signal(TGUID i) { m_ID_Signal = i; }
+}
+
+class Signal_SignalbegriffImpl implements Signal_Signalbegriff {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Basis_Objekt
+  List<TGUID> m_ID_Bearbeitungsvermerk = Nil;
+  Maybe<TText> m_ObjektreferenzenDB_GDI_Referenz = Nothing;
+  Maybe<TText> m_ObjektreferenzenTechnischer_Platz = Nothing;
+  Maybe<ENUMObjektzustand_Besonders> m_Basis_Objekt_Allg_Objektzustand_Besonders = Nothing;
+  Maybe<TGUID> m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = Nothing;
+  Maybe<Date> m_Basis_Objekt_Allg_Datum_Regelwerk = Nothing;
+
+  // Fields from Signal_Signalbegriff
+  TGUID m_ID_Signal_Rahmen = "";
+  String m_Signalbegriff_ID = "";
+  Maybe<Bool> m_Signal_Signalbegriff_Allg_Geschaltet = Nothing;
+  Maybe<ENUMBeleuchtet> m_Signal_Signalbegriff_Allg_Beleuchtet = Nothing;
+  Maybe<ENUMAnschaltdauer> m_Signal_Signalbegriff_Allg_Anschaltdauer = Nothing;
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_Signal_Signalbegriff; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Basis_Objekt
+  List<TGUID> getID_Bearbeitungsvermerk() { return m_ID_Bearbeitungsvermerk; }
+  Unit setID_Bearbeitungsvermerk(List<TGUID> i) { m_ID_Bearbeitungsvermerk = i; }
+  Maybe<TText> getObjektreferenzenDB_GDI_Referenz() { return m_ObjektreferenzenDB_GDI_Referenz; }
+  Unit setObjektreferenzenDB_GDI_Referenz(Maybe<TText> r) { m_ObjektreferenzenDB_GDI_Referenz = r; }
+  Maybe<TText> getObjektreferenzenTechnischer_Platz() { return m_ObjektreferenzenTechnischer_Platz; }
+  Unit setObjektreferenzenTechnischer_Platz(Maybe<TText> p) { m_ObjektreferenzenTechnischer_Platz = p; }
+  Maybe<ENUMObjektzustand_Besonders> getBasis_Objekt_Allg_Objektzustand_Besonders() { return m_Basis_Objekt_Allg_Objektzustand_Besonders; }
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(Maybe<ENUMObjektzustand_Besonders> o) { m_Basis_Objekt_Allg_Objektzustand_Besonders = o; }
+  Maybe<TGUID> getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders() { return m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders; }
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(Maybe<TGUID> i) { m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = i; }
+  Maybe<Date> getBasis_Objekt_Allg_Datum_Regelwerk() { return m_Basis_Objekt_Allg_Datum_Regelwerk; }
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Maybe<Date> d) { m_Basis_Objekt_Allg_Datum_Regelwerk = d; }
+
+  // Methods from Signal_Signalbegriff
+  TGUID getID_Signal_Rahmen() { return m_ID_Signal_Rahmen; }
+  Unit setID_Signal_Rahmen(TGUID i) { m_ID_Signal_Rahmen = i; }
+  String getSignalbegriff_ID() { return m_Signalbegriff_ID; }
+  Unit setSignalbegriff_ID(String i) { m_Signalbegriff_ID = i; }
+  Maybe<Bool> getSignal_Signalbegriff_Allg_Geschaltet() { return m_Signal_Signalbegriff_Allg_Geschaltet; }
+  Unit setSignal_Signalbegriff_Allg_Geschaltet(Maybe<Bool> i) { m_Signal_Signalbegriff_Allg_Geschaltet = i; }
+  Maybe<ENUMBeleuchtet> getSignal_Signalbegriff_Allg_Beleuchtet() { return m_Signal_Signalbegriff_Allg_Beleuchtet; }
+  Unit setSignal_Signalbegriff_Allg_Beleuchtet(Maybe<ENUMBeleuchtet> i) { m_Signal_Signalbegriff_Allg_Beleuchtet = i; }
+  Maybe<ENUMAnschaltdauer> getSignal_Signalbegriff_Allg_Anschaltdauer() { return m_Signal_Signalbegriff_Allg_Anschaltdauer; }
+  Unit setSignal_Signalbegriff_Allg_Anschaltdauer(Maybe<ENUMAnschaltdauer> i) { m_Signal_Signalbegriff_Allg_Anschaltdauer = i; }
+}
+

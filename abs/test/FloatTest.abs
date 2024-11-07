@@ -1,0 +1,32 @@
+module Test;
+
+export *;
+import * from Util;
+
+
+interface Test {
+  Unit doNothing();
+}
+
+class TestImpl implements Test {
+  Unit doNothing() {
+    println("nix");
+  }
+
+  Unit run() {
+    Util util = new local Util();
+    String s1 = util.toFloatString(3/4, 3);
+    String s2 = util.toFloatString(27/9, 3);
+    String s3 = util.toFloatString(8/3, 3);
+    String s4 = util.toFloatString(31/14, 3);
+    println(s1);
+    println(s2);
+    println(s3);
+    println(s4);
+  }
+}
+
+{
+  new local TestImpl();
+}
+

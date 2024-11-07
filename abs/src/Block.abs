@@ -1,0 +1,338 @@
+module Block;
+
+export *;
+import * from BasisTypen;
+import * from Basisobjekte;
+import * from Metaobject;
+
+
+// Enums
+data ENUMBetriebsfuehrung = ENUMBetriebsfuehrung_unused | ENUMBetriebsfuehrung_eingl | ENUMBetriebsfuehrung_sonstige | ENUMBetriebsfuehrung_Stichstreckenblock | ENUMBetriebsfuehrung_ZLB | ENUMBetriebsfuehrung_zweigl | ENUMBetriebsfuehrung_zweigl_GWB;
+
+data ENUMBlock_Bauform = ENUMBlock_Bauform_unused | ENUMBlock_Bauform_AB64 | ENUMBlock_Bauform_AB70 | ENUMBlock_Bauform_elektronischer_Block_EBL2000 | ENUMBlock_Bauform_sonstige | ENUMBlock_Bauform_ESTW_Zentralblock | ENUMBlock_Bauform_ESTW_Zentralblock_mit_Sb_Abschluss_MCL84 | ENUMBlock_Bauform_ESTW_Zentralblock_mit_Sb_Abschluss_SBL60 | ENUMBlock_Bauform_ESTW_Zentralblock_mit_Sb_Abschluss_SBS59 | ENUMBlock_Bauform_Zentralblock_ZSB2000 | ENUMBlock_Bauform_ESTW_Zentralblock_mit_Sb_Abschluss_SBS60 | ENUMBlock_Bauform_Felderblock | ENUMBlock_Bauform_firmenneutrale_Blockschnittstelle | ENUMBlock_Bauform_DB_Block | ENUMBlock_Bauform_Zentralblock_ZBS65 | ENUMBlock_Bauform_Zentralblock_ZBS600 | ENUMBlock_Bauform_Selbstblock_SBL60 | ENUMBlock_Bauform_Selbstblock_SBS59 | ENUMBlock_Bauform_Selbstblock_SBS60 | ENUMBlock_Bauform_Relaisblock_RBII60 | ENUMBlock_Bauform_Relaisblock_RBIISp64b | ENUMBlock_Bauform_Relaisblock_RBIIISp68;
+
+data ENUMBremsweg = ENUMBremsweg_unused | ENUMBremsweg_1000 | ENUMBremsweg_400 | ENUMBremsweg_700 | ENUMBremsweg_sonstige;
+
+data ENUMSchaltung = ENUMSchaltung_unused | ENUMSchaltung_3_Drahtschaltung | ENUMSchaltung_sonstige | ENUMSchaltung_6_Drahtschaltung | ENUMSchaltung_9_Drahtschaltung;
+
+
+
+// Functions to print the enum values
+def String printBetriebsfuehrung(ENUMBetriebsfuehrung e) =
+  case e {
+    ENUMBetriebsfuehrung_unused => "";
+    ENUMBetriebsfuehrung_eingl => "eingl";
+    ENUMBetriebsfuehrung_sonstige => "sonstige";
+    ENUMBetriebsfuehrung_Stichstreckenblock => "Stichstreckenblock";
+    ENUMBetriebsfuehrung_ZLB => "ZLB";
+    ENUMBetriebsfuehrung_zweigl => "zweigl";
+    ENUMBetriebsfuehrung_zweigl_GWB => "zweigl_GWB";
+  };
+
+def String printBlock_Bauform(ENUMBlock_Bauform e) =
+  case e {
+    ENUMBlock_Bauform_unused => "";
+    ENUMBlock_Bauform_AB64 => "AB64";
+    ENUMBlock_Bauform_AB70 => "AB70";
+    ENUMBlock_Bauform_elektronischer_Block_EBL2000 => "elektronischer_Block_EBL2000";
+    ENUMBlock_Bauform_sonstige => "sonstige";
+    ENUMBlock_Bauform_ESTW_Zentralblock => "ESTW_Zentralblock";
+    ENUMBlock_Bauform_ESTW_Zentralblock_mit_Sb_Abschluss_MCL84 => "ESTW_Zentralblock_mit_Sb_Abschluss_MCL84";
+    ENUMBlock_Bauform_ESTW_Zentralblock_mit_Sb_Abschluss_SBL60 => "ESTW_Zentralblock_mit_Sb_Abschluss_SBL60";
+    ENUMBlock_Bauform_ESTW_Zentralblock_mit_Sb_Abschluss_SBS59 => "ESTW_Zentralblock_mit_Sb_Abschluss_SBS59";
+    ENUMBlock_Bauform_Zentralblock_ZSB2000 => "Zentralblock_ZSB2000";
+    ENUMBlock_Bauform_ESTW_Zentralblock_mit_Sb_Abschluss_SBS60 => "ESTW_Zentralblock_mit_Sb_Abschluss_SBS60";
+    ENUMBlock_Bauform_Felderblock => "Felderblock";
+    ENUMBlock_Bauform_firmenneutrale_Blockschnittstelle => "firmenneutrale_Blockschnittstelle";
+    ENUMBlock_Bauform_DB_Block => "DB_Block";
+    ENUMBlock_Bauform_Zentralblock_ZBS65 => "Zentralblock_ZBS65";
+    ENUMBlock_Bauform_Zentralblock_ZBS600 => "Zentralblock_ZBS600";
+    ENUMBlock_Bauform_Selbstblock_SBL60 => "Selbstblock_SBL60";
+    ENUMBlock_Bauform_Selbstblock_SBS59 => "Selbstblock_SBS59";
+    ENUMBlock_Bauform_Selbstblock_SBS60 => "Selbstblock_SBS60";
+    ENUMBlock_Bauform_Relaisblock_RBII60 => "Relaisblock_RBII60";
+    ENUMBlock_Bauform_Relaisblock_RBIISp64b => "Relaisblock_RBIISp64b";
+    ENUMBlock_Bauform_Relaisblock_RBIIISp68 => "Relaisblock_RBIIISp68";
+  };
+
+def String printBremsweg(ENUMBremsweg e) =
+  case e {
+    ENUMBremsweg_unused => "";
+    ENUMBremsweg_1000 => "1000";
+    ENUMBremsweg_400 => "400";
+    ENUMBremsweg_700 => "700";
+    ENUMBremsweg_sonstige => "sonstige";
+  };
+
+def String printSchaltung(ENUMSchaltung e) =
+  case e {
+    ENUMSchaltung_unused => "";
+    ENUMSchaltung_3_Drahtschaltung => "3_Drahtschaltung";
+    ENUMSchaltung_sonstige => "sonstige";
+    ENUMSchaltung_6_Drahtschaltung => "6_Drahtschaltung";
+    ENUMSchaltung_9_Drahtschaltung => "9_Drahtschaltung";
+  };
+
+
+
+//Block_Anlage
+interface Block_Anlage extends Basis_Objekt {
+  Maybe<ENUMSchaltung> getBlock_Anlage_Allg_Schaltung();
+  Unit setBlock_Anlage_Allg_Schaltung(Maybe<ENUMSchaltung> i);
+  Maybe<Bool> getBlock_Anlage_Allg_Schutzuebertrager();
+  Unit setBlock_Anlage_Allg_Schutzuebertrager(Maybe<Bool> i);
+  TGUID getID_Block_Element_A();
+  Unit setID_Block_Element_A(TGUID i);
+  Maybe<TGUID> getID_Block_Element_B();
+  Unit setID_Block_Element_B(Maybe<TGUID> i);
+  TGUID getID_Gleis_Bezeichnung();
+  Unit setID_Gleis_Bezeichnung(TGUID i);
+}
+
+//Block_Element
+interface Block_Element extends Basis_Objekt {
+  Maybe<ENUMBlock_Bauform> getBlock_Element_Allg_Block_Bauform();
+  Unit setBlock_Element_Allg_Block_Bauform(Maybe<ENUMBlock_Bauform> i);
+  Maybe<Bool> getBlock_Element_Allg_Rueckblockwecker();
+  Unit setBlock_Element_Allg_Rueckblockwecker(Maybe<Bool> i);
+  Maybe<Bool> getBlock_Element_Allg_Vorblockwecker();
+  Unit setBlock_Element_Allg_Vorblockwecker(Maybe<Bool> i);
+  Maybe<Bool> getBlock_Element_Erlaubnis_Auto_Erlaubnisruecklauf();
+  Unit setBlock_Element_Erlaubnis_Auto_Erlaubnisruecklauf(Maybe<Bool> i);
+  Maybe<Bool> getBlock_Element_Erlaubnis_Auto_Erlaubnisholen();
+  Unit setBlock_Element_Erlaubnis_Auto_Erlaubnisholen(Maybe<Bool> i);
+  Maybe<Bool> getBlock_Element_Erlaubnis_Erlaubnisabgabespeicherung();
+  Unit setBlock_Element_Erlaubnis_Erlaubnisabgabespeicherung(Maybe<Bool> i);
+  Maybe<Bool> getBlock_Element_Erlaubnis_Erlaubnis_Staendig_Vorhanden();
+  Unit setBlock_Element_Erlaubnis_Erlaubnis_Staendig_Vorhanden(Maybe<Bool> i);
+  Maybe<Bool> getBlock_Element_Erlaubnis_Erlaubnisholen();
+  Unit setBlock_Element_Erlaubnis_Erlaubnisholen(Maybe<Bool> i);
+  TGUID getID_Block_Strecke();
+  Unit setID_Block_Strecke(TGUID i);
+  Maybe<TGUID> getID_Raeumungspruefung();
+  Unit setID_Raeumungspruefung(Maybe<TGUID> i);
+  Maybe<TGUID> getID_Signal();
+  Unit setID_Signal(Maybe<TGUID> i);
+  Maybe<TGUID> getID_Zugschlussmeldung();
+  Unit setID_Zugschlussmeldung(Maybe<TGUID> i);
+}
+
+//Block_Strecke
+interface Block_Strecke extends Basis_Objekt {
+  ENUMBetriebsfuehrung getBlock_Strecke_Allg_Betriebsfuehrung();
+  Unit setBlock_Strecke_Allg_Betriebsfuehrung(ENUMBetriebsfuehrung i);
+  ENUMBremsweg getBlock_Strecke_Allg_Bremsweg();
+  Unit setBlock_Strecke_Allg_Bremsweg(ENUMBremsweg i);
+  TGeschwindigkeit getBlock_Strecke_Allg_Entwurfsgeschwindigkeit();
+  Unit setBlock_Strecke_Allg_Entwurfsgeschwindigkeit(TGeschwindigkeit i);
+  TGUID getID_Betriebsstelle();
+  Unit setID_Betriebsstelle(TGUID i);
+  Maybe<TGUID> getID_Knotenbahnhof();
+  Unit setID_Knotenbahnhof(Maybe<TGUID> i);
+  TGUID getID_Strecke();
+  Unit setID_Strecke(TGUID i);
+}
+
+
+
+
+
+
+class Block_AnlageImpl implements Block_Anlage {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Basis_Objekt
+  List<TGUID> m_ID_Bearbeitungsvermerk = Nil;
+  Maybe<TText> m_ObjektreferenzenDB_GDI_Referenz = Nothing;
+  Maybe<TText> m_ObjektreferenzenTechnischer_Platz = Nothing;
+  Maybe<ENUMObjektzustand_Besonders> m_Basis_Objekt_Allg_Objektzustand_Besonders = Nothing;
+  Maybe<TGUID> m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = Nothing;
+  Maybe<Date> m_Basis_Objekt_Allg_Datum_Regelwerk = Nothing;
+
+  // Fields from Block_Anlage
+  Maybe<ENUMSchaltung> m_Block_Anlage_Allg_Schaltung = Nothing;
+  Maybe<Bool> m_Block_Anlage_Allg_Schutzuebertrager = Nothing;
+  TGUID m_ID_Block_Element_A = "";
+  Maybe<TGUID> m_ID_Block_Element_B = Nothing;
+  TGUID m_ID_Gleis_Bezeichnung = "";
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_Block_Anlage; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Basis_Objekt
+  List<TGUID> getID_Bearbeitungsvermerk() { return m_ID_Bearbeitungsvermerk; }
+  Unit setID_Bearbeitungsvermerk(List<TGUID> i) { m_ID_Bearbeitungsvermerk = i; }
+  Maybe<TText> getObjektreferenzenDB_GDI_Referenz() { return m_ObjektreferenzenDB_GDI_Referenz; }
+  Unit setObjektreferenzenDB_GDI_Referenz(Maybe<TText> r) { m_ObjektreferenzenDB_GDI_Referenz = r; }
+  Maybe<TText> getObjektreferenzenTechnischer_Platz() { return m_ObjektreferenzenTechnischer_Platz; }
+  Unit setObjektreferenzenTechnischer_Platz(Maybe<TText> p) { m_ObjektreferenzenTechnischer_Platz = p; }
+  Maybe<ENUMObjektzustand_Besonders> getBasis_Objekt_Allg_Objektzustand_Besonders() { return m_Basis_Objekt_Allg_Objektzustand_Besonders; }
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(Maybe<ENUMObjektzustand_Besonders> o) { m_Basis_Objekt_Allg_Objektzustand_Besonders = o; }
+  Maybe<TGUID> getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders() { return m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders; }
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(Maybe<TGUID> i) { m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = i; }
+  Maybe<Date> getBasis_Objekt_Allg_Datum_Regelwerk() { return m_Basis_Objekt_Allg_Datum_Regelwerk; }
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Maybe<Date> d) { m_Basis_Objekt_Allg_Datum_Regelwerk = d; }
+
+  // Methods from Block_Anlage
+  Maybe<ENUMSchaltung> getBlock_Anlage_Allg_Schaltung() { return m_Block_Anlage_Allg_Schaltung; }
+  Unit setBlock_Anlage_Allg_Schaltung(Maybe<ENUMSchaltung> i) { m_Block_Anlage_Allg_Schaltung = i; }
+  Maybe<Bool> getBlock_Anlage_Allg_Schutzuebertrager() { return m_Block_Anlage_Allg_Schutzuebertrager; }
+  Unit setBlock_Anlage_Allg_Schutzuebertrager(Maybe<Bool> i) { m_Block_Anlage_Allg_Schutzuebertrager = i; }
+  TGUID getID_Block_Element_A() { return m_ID_Block_Element_A; }
+  Unit setID_Block_Element_A(TGUID i) { m_ID_Block_Element_A = i; }
+  Maybe<TGUID> getID_Block_Element_B() { return m_ID_Block_Element_B; }
+  Unit setID_Block_Element_B(Maybe<TGUID> i) { m_ID_Block_Element_B = i; }
+  TGUID getID_Gleis_Bezeichnung() { return m_ID_Gleis_Bezeichnung; }
+  Unit setID_Gleis_Bezeichnung(TGUID i) { m_ID_Gleis_Bezeichnung = i; }
+}
+
+class Block_ElementImpl implements Block_Element {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Basis_Objekt
+  List<TGUID> m_ID_Bearbeitungsvermerk = Nil;
+  Maybe<TText> m_ObjektreferenzenDB_GDI_Referenz = Nothing;
+  Maybe<TText> m_ObjektreferenzenTechnischer_Platz = Nothing;
+  Maybe<ENUMObjektzustand_Besonders> m_Basis_Objekt_Allg_Objektzustand_Besonders = Nothing;
+  Maybe<TGUID> m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = Nothing;
+  Maybe<Date> m_Basis_Objekt_Allg_Datum_Regelwerk = Nothing;
+
+  // Fields from Block_Element
+  Maybe<ENUMBlock_Bauform> m_Block_Element_Allg_Block_Bauform = Nothing;
+  Maybe<Bool> m_Block_Element_Allg_Rueckblockwecker = Nothing;
+  Maybe<Bool> m_Block_Element_Allg_Vorblockwecker = Nothing;
+  Maybe<Bool> m_Block_Element_Erlaubnis_Auto_Erlaubnisruecklauf = Nothing;
+  Maybe<Bool> m_Block_Element_Erlaubnis_Auto_Erlaubnisholen = Nothing;
+  Maybe<Bool> m_Block_Element_Erlaubnis_Erlaubnisabgabespeicherung = Nothing;
+  Maybe<Bool> m_Block_Element_Erlaubnis_Erlaubnis_Staendig_Vorhanden = Nothing;
+  Maybe<Bool> m_Block_Element_Erlaubnis_Erlaubnisholen = Nothing;
+  TGUID m_ID_Block_Strecke = "";
+  Maybe<TGUID> m_ID_Raeumungspruefung = Nothing;
+  Maybe<TGUID> m_ID_Signal = Nothing;
+  Maybe<TGUID> m_ID_Zugschlussmeldung = Nothing;
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_Block_Element; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Basis_Objekt
+  List<TGUID> getID_Bearbeitungsvermerk() { return m_ID_Bearbeitungsvermerk; }
+  Unit setID_Bearbeitungsvermerk(List<TGUID> i) { m_ID_Bearbeitungsvermerk = i; }
+  Maybe<TText> getObjektreferenzenDB_GDI_Referenz() { return m_ObjektreferenzenDB_GDI_Referenz; }
+  Unit setObjektreferenzenDB_GDI_Referenz(Maybe<TText> r) { m_ObjektreferenzenDB_GDI_Referenz = r; }
+  Maybe<TText> getObjektreferenzenTechnischer_Platz() { return m_ObjektreferenzenTechnischer_Platz; }
+  Unit setObjektreferenzenTechnischer_Platz(Maybe<TText> p) { m_ObjektreferenzenTechnischer_Platz = p; }
+  Maybe<ENUMObjektzustand_Besonders> getBasis_Objekt_Allg_Objektzustand_Besonders() { return m_Basis_Objekt_Allg_Objektzustand_Besonders; }
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(Maybe<ENUMObjektzustand_Besonders> o) { m_Basis_Objekt_Allg_Objektzustand_Besonders = o; }
+  Maybe<TGUID> getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders() { return m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders; }
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(Maybe<TGUID> i) { m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = i; }
+  Maybe<Date> getBasis_Objekt_Allg_Datum_Regelwerk() { return m_Basis_Objekt_Allg_Datum_Regelwerk; }
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Maybe<Date> d) { m_Basis_Objekt_Allg_Datum_Regelwerk = d; }
+
+  // Methods from Block_Element
+  Maybe<ENUMBlock_Bauform> getBlock_Element_Allg_Block_Bauform() { return m_Block_Element_Allg_Block_Bauform; }
+  Unit setBlock_Element_Allg_Block_Bauform(Maybe<ENUMBlock_Bauform> i) { m_Block_Element_Allg_Block_Bauform = i; }
+  Maybe<Bool> getBlock_Element_Allg_Rueckblockwecker() { return m_Block_Element_Allg_Rueckblockwecker; }
+  Unit setBlock_Element_Allg_Rueckblockwecker(Maybe<Bool> i) { m_Block_Element_Allg_Rueckblockwecker = i; }
+  Maybe<Bool> getBlock_Element_Allg_Vorblockwecker() { return m_Block_Element_Allg_Vorblockwecker; }
+  Unit setBlock_Element_Allg_Vorblockwecker(Maybe<Bool> i) { m_Block_Element_Allg_Vorblockwecker = i; }
+  Maybe<Bool> getBlock_Element_Erlaubnis_Auto_Erlaubnisruecklauf() { return m_Block_Element_Erlaubnis_Auto_Erlaubnisruecklauf; }
+  Unit setBlock_Element_Erlaubnis_Auto_Erlaubnisruecklauf(Maybe<Bool> i) { m_Block_Element_Erlaubnis_Auto_Erlaubnisruecklauf = i; }
+  Maybe<Bool> getBlock_Element_Erlaubnis_Auto_Erlaubnisholen() { return m_Block_Element_Erlaubnis_Auto_Erlaubnisholen; }
+  Unit setBlock_Element_Erlaubnis_Auto_Erlaubnisholen(Maybe<Bool> i) { m_Block_Element_Erlaubnis_Auto_Erlaubnisholen = i; }
+  Maybe<Bool> getBlock_Element_Erlaubnis_Erlaubnisabgabespeicherung() { return m_Block_Element_Erlaubnis_Erlaubnisabgabespeicherung; }
+  Unit setBlock_Element_Erlaubnis_Erlaubnisabgabespeicherung(Maybe<Bool> i) { m_Block_Element_Erlaubnis_Erlaubnisabgabespeicherung = i; }
+  Maybe<Bool> getBlock_Element_Erlaubnis_Erlaubnis_Staendig_Vorhanden() { return m_Block_Element_Erlaubnis_Erlaubnis_Staendig_Vorhanden; }
+  Unit setBlock_Element_Erlaubnis_Erlaubnis_Staendig_Vorhanden(Maybe<Bool> i) { m_Block_Element_Erlaubnis_Erlaubnis_Staendig_Vorhanden = i; }
+  Maybe<Bool> getBlock_Element_Erlaubnis_Erlaubnisholen() { return m_Block_Element_Erlaubnis_Erlaubnisholen; }
+  Unit setBlock_Element_Erlaubnis_Erlaubnisholen(Maybe<Bool> i) { m_Block_Element_Erlaubnis_Erlaubnisholen = i; }
+  TGUID getID_Block_Strecke() { return m_ID_Block_Strecke; }
+  Unit setID_Block_Strecke(TGUID i) { m_ID_Block_Strecke = i; }
+  Maybe<TGUID> getID_Raeumungspruefung() { return m_ID_Raeumungspruefung; }
+  Unit setID_Raeumungspruefung(Maybe<TGUID> i) { m_ID_Raeumungspruefung = i; }
+  Maybe<TGUID> getID_Signal() { return m_ID_Signal; }
+  Unit setID_Signal(Maybe<TGUID> i) { m_ID_Signal = i; }
+  Maybe<TGUID> getID_Zugschlussmeldung() { return m_ID_Zugschlussmeldung; }
+  Unit setID_Zugschlussmeldung(Maybe<TGUID> i) { m_ID_Zugschlussmeldung = i; }
+}
+
+class Block_StreckeImpl implements Block_Strecke {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Basis_Objekt
+  List<TGUID> m_ID_Bearbeitungsvermerk = Nil;
+  Maybe<TText> m_ObjektreferenzenDB_GDI_Referenz = Nothing;
+  Maybe<TText> m_ObjektreferenzenTechnischer_Platz = Nothing;
+  Maybe<ENUMObjektzustand_Besonders> m_Basis_Objekt_Allg_Objektzustand_Besonders = Nothing;
+  Maybe<TGUID> m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = Nothing;
+  Maybe<Date> m_Basis_Objekt_Allg_Datum_Regelwerk = Nothing;
+
+  // Fields from Block_Strecke
+  ENUMBetriebsfuehrung m_Block_Strecke_Allg_Betriebsfuehrung = ENUMBetriebsfuehrung_sonstige;
+  ENUMBremsweg m_Block_Strecke_Allg_Bremsweg = ENUMBremsweg_sonstige;
+  TGeschwindigkeit m_Block_Strecke_Allg_Entwurfsgeschwindigkeit = 0;
+  TGUID m_ID_Betriebsstelle = "";
+  Maybe<TGUID> m_ID_Knotenbahnhof = Nothing;
+  TGUID m_ID_Strecke = "";
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_Block_Strecke; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Basis_Objekt
+  List<TGUID> getID_Bearbeitungsvermerk() { return m_ID_Bearbeitungsvermerk; }
+  Unit setID_Bearbeitungsvermerk(List<TGUID> i) { m_ID_Bearbeitungsvermerk = i; }
+  Maybe<TText> getObjektreferenzenDB_GDI_Referenz() { return m_ObjektreferenzenDB_GDI_Referenz; }
+  Unit setObjektreferenzenDB_GDI_Referenz(Maybe<TText> r) { m_ObjektreferenzenDB_GDI_Referenz = r; }
+  Maybe<TText> getObjektreferenzenTechnischer_Platz() { return m_ObjektreferenzenTechnischer_Platz; }
+  Unit setObjektreferenzenTechnischer_Platz(Maybe<TText> p) { m_ObjektreferenzenTechnischer_Platz = p; }
+  Maybe<ENUMObjektzustand_Besonders> getBasis_Objekt_Allg_Objektzustand_Besonders() { return m_Basis_Objekt_Allg_Objektzustand_Besonders; }
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(Maybe<ENUMObjektzustand_Besonders> o) { m_Basis_Objekt_Allg_Objektzustand_Besonders = o; }
+  Maybe<TGUID> getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders() { return m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders; }
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(Maybe<TGUID> i) { m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = i; }
+  Maybe<Date> getBasis_Objekt_Allg_Datum_Regelwerk() { return m_Basis_Objekt_Allg_Datum_Regelwerk; }
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Maybe<Date> d) { m_Basis_Objekt_Allg_Datum_Regelwerk = d; }
+
+  // Methods from Block_Strecke
+  ENUMBetriebsfuehrung getBlock_Strecke_Allg_Betriebsfuehrung() { return m_Block_Strecke_Allg_Betriebsfuehrung; }
+  Unit setBlock_Strecke_Allg_Betriebsfuehrung(ENUMBetriebsfuehrung i) { m_Block_Strecke_Allg_Betriebsfuehrung = i; }
+  ENUMBremsweg getBlock_Strecke_Allg_Bremsweg() { return m_Block_Strecke_Allg_Bremsweg; }
+  Unit setBlock_Strecke_Allg_Bremsweg(ENUMBremsweg i) { m_Block_Strecke_Allg_Bremsweg = i; }
+  TGeschwindigkeit getBlock_Strecke_Allg_Entwurfsgeschwindigkeit() { return m_Block_Strecke_Allg_Entwurfsgeschwindigkeit; }
+  Unit setBlock_Strecke_Allg_Entwurfsgeschwindigkeit(TGeschwindigkeit i) { m_Block_Strecke_Allg_Entwurfsgeschwindigkeit = i; }
+  TGUID getID_Betriebsstelle() { return m_ID_Betriebsstelle; }
+  Unit setID_Betriebsstelle(TGUID i) { m_ID_Betriebsstelle = i; }
+  Maybe<TGUID> getID_Knotenbahnhof() { return m_ID_Knotenbahnhof; }
+  Unit setID_Knotenbahnhof(Maybe<TGUID> i) { m_ID_Knotenbahnhof = i; }
+  TGUID getID_Strecke() { return m_ID_Strecke; }
+  Unit setID_Strecke(TGUID i) { m_ID_Strecke = i; }
+}
+

@@ -1,0 +1,167 @@
+module BasisTypen;
+
+export *;
+
+
+// Enums
+data ENUMLinksRechts = ENUMLinksRechts_unused | ENUMLinksRechts_links | ENUMLinksRechts_rechts;
+data ENUMWirkrichtung = ENUMWirkrichtung_unused |ENUMWirkrichtung_beide | ENUMWirkrichtung_gegen | ENUMWirkrichtung_in;
+
+
+// Functions to print the enum values
+def String printLinksRechts(ENUMLinksRechts e) =
+  case e {
+    ENUMLinksRechts_links => "links";
+    ENUMLinksRechts_rechts => "rechts";
+    ENUMLinksRechts_unused => "";
+  };
+
+def String printWirkrichtung(ENUMWirkrichtung e) =
+  case e {
+    ENUMWirkrichtung_beide => "beide";
+    ENUMWirkrichtung_gegen => "gegen";
+    ENUMWirkrichtung_in => "in";
+    ENUMWirkrichtung_unused => "";
+  };
+
+
+// Complex types, modeled as interfaces with corresponding classes
+interface TCZeiger {
+  TObjektname getObjektname();
+  Unit setObjektname(TObjektname o);
+  TGUID getGUID();
+  Unit setGUID(TGUID g);
+}
+
+class TCZeiger implements TCZeiger {
+  TObjektname objname = "";
+  TGUID guid = "";
+
+  TObjektname getObjektname() {
+    return objname;
+  }
+
+  Unit setObjektname(TObjektname o) {
+    objname = o;
+  }
+
+  TGUID getGUID() {
+    return guid;
+  }
+
+  Unit setGUID(TGUID g) {
+    guid = g;
+  }
+}
+
+interface CBezeichnung_Element {
+  TKennzahl getKennzahl();
+  Unit setKennzahl(TKennzahl k);
+  TZeichenkette getOertlicher_Elementbezeichner();
+  Unit setOertlicher_Elementbezeichner(TZeichenkette b);
+  TText getBezeichnung_Lageplan_Kurz();
+  Unit setBezeichnung_Lageplan_Kurz(TText b);
+  TText getBezeichnung_Lageplan_Lang();
+  Unit setBezeichnung_Lageplan_Lang(TText b);
+  TText getBezeichnung_Tabelle();
+  Unit setBezeichnung_Tabelle(TText b);
+  TText getBezeichnung_Aussenanlage();
+  Unit setBezeichnung_Aussenanlage(TText b);
+}
+
+class CBezeichnung_Element implements CBezeichnung_Element {
+  TKennzahl kzahl = "";
+  TZeichenkette oElBez = "";
+  TText bezLPkurz = "";
+  TText bezLPlang = "";
+  TText bezTab = "";
+  TText bezAuss = "";
+
+  TKennzahl getKennzahl() {
+    return kzahl;
+  }
+
+  Unit setKennzahl(TKennzahl k) {
+    kzahl = k;
+  }
+
+  TZeichenkette getOertlicher_Elementbezeichner() {
+    return oElBez;
+  }
+
+  Unit setOertlicher_Elementbezeichner(TZeichenkette b) {
+    oElBez = b;
+  }
+
+  TText getBezeichnung_Lageplan_Kurz() {
+    return bezLPkurz;
+  }
+
+  Unit setBezeichnung_Lageplan_Kurz(TText b) {
+    bezLPkurz = b;
+  }
+
+  TText getBezeichnung_Lageplan_Lang() {
+    return bezLPlang;
+  }
+
+  Unit setBezeichnung_Lageplan_Lang(TText b) {
+    bezLPlang = b;
+  }
+
+  TText getBezeichnung_Tabelle() {
+    return bezTab;
+  }
+
+  Unit setBezeichnung_Tabelle(TText b) {
+    bezTab = b;
+  }
+
+  TText getBezeichnung_Aussenanlage() {
+    return bezAuss;
+  }
+
+  Unit setBezeichnung_Aussenanlage(TText b) {
+    bezAuss = b;
+  }
+}
+
+interface CBasisAttribut {
+  TCZeiger getID_Bearbeitungsvermerk();
+  Unit setID_Bearbeitungsvermerk(TCZeiger b);
+}
+
+class CBasisAttribut implements CBasisAttribut {
+  TCZeiger idBV = null;
+
+  TCZeiger getID_Bearbeitungsvermerk() {
+    return idBV;
+  }
+
+  Unit setID_Bearbeitungsvermerk(TCZeiger b) {
+    idBV = b;
+  }
+}
+
+
+//Types
+type TGUID = String;
+type TZeichenkette = String;
+type TElementname = TZeichenkette;
+type TText = String;
+type TObjektname = TText;
+type TFreiText = String;
+type TMeter = Decimal;
+type TKilometrierung = String;
+type TGeschwindigkeit = Int;
+type TSekunde = Decimal;
+type TLinksRechts = ENUMLinksRechts;
+type TWirkrichtung = ENUMWirkrichtung;
+type TKennzahl = TZeichenkette;
+
+// Types not defined in PlanPro, but part of the XML spec (and not part of ABS)
+type Date = String; // should be in format "YYYY-MM-DD"
+type DateTime = String; // should be in format "YYYY-MM-DDThh:mm:ss"
+type Base64Binary = String;
+type Decimal = Rat;
+

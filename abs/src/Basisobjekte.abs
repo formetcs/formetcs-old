@@ -1,0 +1,511 @@
+module Basisobjekte;
+
+export *;
+import * from BasisTypen;
+import * from Metaobject;
+
+
+// Enums
+data ENUMAnhang_Art = ENUMAnhang_Art_unused | ENUMAnhang_Art_Abnahmeniederschrift | ENUMAnhang_Art_Anbindung_IB2 | ENUMAnhang_Art_Anbindung_IB3 | ENUMAnhang_Art_BAST | ENUMAnhang_Art_BELU | ENUMAnhang_Art_Benutzeroberflaeche | ENUMAnhang_Art_Bestaetig_Gleichstellung | ENUMAnhang_Art_Bestaetig_Qualitaetspruefung | ENUMAnhang_Art_Bestaetig_Uebernahme | ENUMAnhang_Art_Freigabe_Bvb | ENUMAnhang_Art_Genehmigung_AG_Bh_Bhv | ENUMAnhang_Art_Material_Besonders | ENUMAnhang_Art_Uebertragungswegeplan | ENUMAnhang_Art_DWS | ENUMAnhang_Art_Erlaeuterungsbericht | ENUMAnhang_Art_Planverzeichnis | ENUMAnhang_Art_Pruefbericht | ENUMAnhang_Art_Regelwerksstand_Besonders | ENUMAnhang_Art_VzG | ENUMAnhang_Art_ZN_Raumplan_Bedienraum | ENUMAnhang_Art_ZN_Raumplan_Rechnerraum | ENUMAnhang_Art_GEO | ENUMAnhang_Art_INA | ENUMAnhang_Art_Moebelaufstellplan_Aufriss | ENUMAnhang_Art_Moebelaufstellplan_Grundriss | ENUMAnhang_Art_Monitoraufteilung | ENUMAnhang_Art_Raumplan_Bedienraeume | ENUMAnhang_Art_Raumplan_Rechnerraeume | ENUMAnhang_Art_Richtungssinn | ENUMAnhang_Art_sonstige | ENUMAnhang_Art_Steuerbezirksuebersicht | ENUMAnhang_Art_UiG | ENUMAnhang_Art_Vorgabe | ENUMAnhang_Art_Vorgabe_GBT | ENUMAnhang_Art_ZiE;
+
+data ENUMDateityp = ENUMDateityp_unused | ENUMDateityp_jpg | ENUMDateityp_mpeg | ENUMDateityp_pdf | ENUMDateityp_png | ENUMDateityp_tif;
+
+data ENUMName_LST_Objekt = ENUMName_LST_Objekt_unused | ENUMName_LST_Objekt_Anhang | ENUMName_LST_Objekt_Aussenelementansteuerung | ENUMName_LST_Objekt_Bahnsteig_Anlage | ENUMName_LST_Objekt_Bahnsteig_Kante | ENUMName_LST_Objekt_Bahnsteig_Zugang | ENUMName_LST_Objekt_Bearbeitungsvermerk | ENUMName_LST_Objekt_Bedien_Anrueckabschnitt | ENUMName_LST_Objekt_Bedien_Anzeige_Element | ENUMName_LST_Objekt_Bedien_Bezirk | ENUMName_LST_Objekt_Bedien_Einrichtung_Oertlich | ENUMName_LST_Objekt_Bedien_GBT | ENUMName_LST_Objekt_Bedien_Oberflaeche | ENUMName_LST_Objekt_Bedien_Oberflaeche_Bild | ENUMName_LST_Objekt_Bedien_Oertlichkeit | ENUMName_LST_Objekt_Bedien_Platz | ENUMName_LST_Objekt_Bedien_Zentrale | ENUMName_LST_Objekt_Block_Anlage | ENUMName_LST_Objekt_Block_Element | ENUMName_LST_Objekt_Block_Strecke | ENUMName_LST_Objekt_BUE_Anlage | ENUMName_LST_Objekt_BUE_Ausschaltung | ENUMName_LST_Objekt_BUE_Bedien_Anzeige_Element | ENUMName_LST_Objekt_BUE_Deckendes_Signal_Zuordnung | ENUMName_LST_Objekt_BUE_Einschaltung | ENUMName_LST_Objekt_BUE_Einschaltung_Zuordnung | ENUMName_LST_Objekt_BUE_Gleisbezogener_Gefahrraum | ENUMName_LST_Objekt_BUE_Schnittstelle | ENUMName_LST_Objekt_BUE_Spezifisches_Signal | ENUMName_LST_Objekt_BUE_WS_Fstr_Zuordnung | ENUMName_LST_Objekt_ESTW_Zentraleinheit | ENUMName_LST_Objekt_Fla_Freimelde_Zuordnung | ENUMName_LST_Objekt_Fla_Schutz | ENUMName_LST_Objekt_Fla_Zwieschutz | ENUMName_LST_Objekt_FMA_Anlage | ENUMName_LST_Objekt_FMA_Element | ENUMName_LST_Objekt_FMA_Komponente | ENUMName_LST_Objekt_Fstr_Abhaengigkeit | ENUMName_LST_Objekt_Fstr_Aneinander | ENUMName_LST_Objekt_Fstr_Aneinander_Zuordnung | ENUMName_LST_Objekt_Fstr_DWeg | ENUMName_LST_Objekt_Fstr_DWeg_W_Kr | ENUMName_LST_Objekt_Fstr_Fahrweg | ENUMName_LST_Objekt_Fstr_Nichthaltfall | ENUMName_LST_Objekt_Fstr_Rangier_Fla_Zuordnung | ENUMName_LST_Objekt_Fstr_Signalisierung | ENUMName_LST_Objekt_Fstr_Umfahrpunkt | ENUMName_LST_Objekt_Fstr_Zug_Rangier | ENUMName_LST_Objekt_GEO_Kante | ENUMName_LST_Objekt_GEO_Knoten | ENUMName_LST_Objekt_GEO_Punkt | ENUMName_LST_Objekt_Geschwindigkeitsprofil | ENUMName_LST_Objekt_Gleis_Abschluss | ENUMName_LST_Objekt_Gleis_Abschnitt | ENUMName_LST_Objekt_Gleis_Art | ENUMName_LST_Objekt_Gleis_Baubereich | ENUMName_LST_Objekt_Gleis_Bezeichnung | ENUMName_LST_Objekt_Gleis_Fahrbahn | ENUMName_LST_Objekt_Gleis_Lichtraum | ENUMName_LST_Objekt_Gleis_Schaltgruppe | ENUMName_LST_Objekt_Hoehenpunkt | ENUMName_LST_Objekt_Markanter_Punkt | ENUMName_LST_Objekt_NB | ENUMName_LST_Objekt_NB_Bedien_Anzeige_Element | ENUMName_LST_Objekt_NB_Zone | ENUMName_LST_Objekt_NB_Zone_Element | ENUMName_LST_Objekt_NB_Zone_Grenze | ENUMName_LST_Objekt_Oertlichkeit | ENUMName_LST_Objekt_PZB_Element | ENUMName_LST_Objekt_PZB_Element_Zuordnung | ENUMName_LST_Objekt_PZB_Zuordnung_Signal | ENUMName_LST_Objekt_Regelzeichnung | ENUMName_LST_Objekt_Regelzeichnung_Parameter | ENUMName_LST_Objekt_Schaltmittel_Fstr_Zuordnung | ENUMName_LST_Objekt_Schaltmittel_Zuordnung | ENUMName_LST_Objekt_Schloss | ENUMName_LST_Objekt_Schlosskombination | ENUMName_LST_Objekt_Schluessel | ENUMName_LST_Objekt_Schluesselsperre | ENUMName_LST_Objekt_Signal | ENUMName_LST_Objekt_Signal_Befestigung | ENUMName_LST_Objekt_Signal_Rahmen | ENUMName_LST_Objekt_Signal_Signalbegriff | ENUMName_LST_Objekt_Sonstiger_Punkt | ENUMName_LST_Objekt_Stell_Bereich | ENUMName_LST_Objekt_Stellelement | ENUMName_LST_Objekt_Strecke | ENUMName_LST_Objekt_Strecke_Punkt | ENUMName_LST_Objekt_Technischer_Bereich | ENUMName_LST_Objekt_Technischer_Punkt | ENUMName_LST_Objekt_TOP_Kante | ENUMName_LST_Objekt_TOP_Knoten | ENUMName_LST_Objekt_Ueberhoehung | ENUMName_LST_Objekt_Uebertragungsweg | ENUMName_LST_Objekt_Unterbringung | ENUMName_LST_Objekt_W_Kr_Anlage | ENUMName_LST_Objekt_W_Kr_Gsp_Element | ENUMName_LST_Objekt_W_Kr_Gsp_Komponente | ENUMName_LST_Objekt_Weichenlaufkette | ENUMName_LST_Objekt_Weichenlaufkette_Zuordnung | ENUMName_LST_Objekt_ZL | ENUMName_LST_Objekt_ZL_DLP_Abschnitt | ENUMName_LST_Objekt_ZL_DLP_Fstr | ENUMName_LST_Objekt_ZL_Fstr | ENUMName_LST_Objekt_ZL_Fstr_Anstoss | ENUMName_LST_Objekt_ZL_Signalgruppe | ENUMName_LST_Objekt_ZL_Signalgruppe_Zuordnung | ENUMName_LST_Objekt_ZLV_Bus | ENUMName_LST_Objekt_ZLV_Bus_US_Zuordnung | ENUMName_LST_Objekt_ZN | ENUMName_LST_Objekt_ZN_Akustik | ENUMName_LST_Objekt_ZN_Anzeigefeld | ENUMName_LST_Objekt_ZN_Fortschalt_Kriterium | ENUMName_LST_Objekt_ZN_Telegramm_84_Zuordnung | ENUMName_LST_Objekt_ZN_Telegramm_85_Zuordnung | ENUMName_LST_Objekt_ZN_Unterstation | ENUMName_LST_Objekt_ZN_ZBS | ENUMName_LST_Objekt_Zugeinwirkung;
+
+data ENUMObjektzustand_Besonders = ENUMObjektzustand_Besonders_unused | ENUMObjektzustand_Besonders_abgedeckt | ENUMObjektzustand_Besonders_ausser_Betrieb | ENUMObjektzustand_Besonders_ausser_Betrieb_vorbereitend | ENUMObjektzustand_Besonders_sonstige;
+
+data ENUMRolle = ENUMRolle_unused | ENUMRolle_GIS_Daten | ENUMRolle_LST_Fachplaner | ENUMRolle_sonstige;
+
+
+
+// Functions to print the enum values
+def String printAnhang_Art(ENUMAnhang_Art e) =
+  case e {
+    ENUMAnhang_Art_unused => "";
+    ENUMAnhang_Art_Abnahmeniederschrift => "Abnahmeniederschrift";
+    ENUMAnhang_Art_Anbindung_IB2 => "Anbindung_IB2";
+    ENUMAnhang_Art_Anbindung_IB3 => "Anbindung_IB3";
+    ENUMAnhang_Art_BAST => "BAST";
+    ENUMAnhang_Art_BELU => "BELU";
+    ENUMAnhang_Art_Benutzeroberflaeche => "Benutzeroberflaeche";
+    ENUMAnhang_Art_Bestaetig_Gleichstellung => "Bestaetig_Gleichstellung";
+    ENUMAnhang_Art_Bestaetig_Qualitaetspruefung => "Bestaetig_Qualitaetspruefung";
+    ENUMAnhang_Art_Bestaetig_Uebernahme => "Bestaetig_Uebernahme";
+    ENUMAnhang_Art_Freigabe_Bvb => "Freigabe_Bvb";
+    ENUMAnhang_Art_Genehmigung_AG_Bh_Bhv => "Genehmigung_AG_Bh_Bhv";
+    ENUMAnhang_Art_Material_Besonders => "Material_Besonders";
+    ENUMAnhang_Art_Uebertragungswegeplan => "Uebertragungswegeplan";
+    ENUMAnhang_Art_DWS => "DWS";
+    ENUMAnhang_Art_Erlaeuterungsbericht => "Erlaeuterungsbericht";
+    ENUMAnhang_Art_Planverzeichnis => "Planverzeichnis";
+    ENUMAnhang_Art_Pruefbericht => "Pruefbericht";
+    ENUMAnhang_Art_Regelwerksstand_Besonders => "Regelwerksstand_Besonders";
+    ENUMAnhang_Art_VzG => "VzG";
+    ENUMAnhang_Art_ZN_Raumplan_Bedienraum => "ZN_Raumplan_Bedienraum";
+    ENUMAnhang_Art_ZN_Raumplan_Rechnerraum => "ZN_Raumplan_Rechnerraum";
+    ENUMAnhang_Art_GEO => "GEO";
+    ENUMAnhang_Art_INA => "INA";
+    ENUMAnhang_Art_Moebelaufstellplan_Aufriss => "Moebelaufstellplan_Aufriss";
+    ENUMAnhang_Art_Moebelaufstellplan_Grundriss => "Moebelaufstellplan_Grundriss";
+    ENUMAnhang_Art_Monitoraufteilung => "Monitoraufteilung";
+    ENUMAnhang_Art_Raumplan_Bedienraeume => "Raumplan_Bedienraeume";
+    ENUMAnhang_Art_Raumplan_Rechnerraeume => "Raumplan_Rechnerraeume";
+    ENUMAnhang_Art_Richtungssinn => "Richtungssinn";
+    ENUMAnhang_Art_sonstige => "sonstige";
+    ENUMAnhang_Art_Steuerbezirksuebersicht => "Steuerbezirksuebersicht";
+    ENUMAnhang_Art_UiG => "UiG";
+    ENUMAnhang_Art_Vorgabe => "Vorgabe";
+    ENUMAnhang_Art_Vorgabe_GBT => "Vorgabe_GBT";
+    ENUMAnhang_Art_ZiE => "ZiE";
+  };
+
+def String printDateityp(ENUMDateityp e) =
+  case e {
+    ENUMDateityp_unused => "";
+    ENUMDateityp_jpg => "jpg";
+    ENUMDateityp_mpeg => "mpeg";
+    ENUMDateityp_pdf => "pdf";
+    ENUMDateityp_png => "png";
+    ENUMDateityp_tif => "tif";
+  };
+
+def String printName_LST_Objekt(ENUMName_LST_Objekt e) =
+  case e {
+    ENUMName_LST_Objekt_unused => "";
+    ENUMName_LST_Objekt_Anhang => "Anhang";
+    ENUMName_LST_Objekt_Aussenelementansteuerung => "Aussenelementansteuerung";
+    ENUMName_LST_Objekt_Bahnsteig_Anlage => "Bahnsteig_Anlage";
+    ENUMName_LST_Objekt_Bahnsteig_Kante => "Bahnsteig_Kante";
+    ENUMName_LST_Objekt_Bahnsteig_Zugang => "Bahnsteig_Zugang";
+    ENUMName_LST_Objekt_Bearbeitungsvermerk => "Bearbeitungsvermerk";
+    ENUMName_LST_Objekt_Bedien_Anrueckabschnitt => "Bedien_Anrueckabschnitt";
+    ENUMName_LST_Objekt_Bedien_Anzeige_Element => "Bedien_Anzeige_Element";
+    ENUMName_LST_Objekt_Bedien_Bezirk => "Bedien_Bezirk";
+    ENUMName_LST_Objekt_Bedien_Einrichtung_Oertlich => "Bedien_Einrichtung_Oertlich";
+    ENUMName_LST_Objekt_Bedien_GBT => "Bedien_GBT";
+    ENUMName_LST_Objekt_Bedien_Oberflaeche => "Bedien_Oberflaeche";
+    ENUMName_LST_Objekt_Bedien_Oberflaeche_Bild => "Bedien_Oberflaeche_Bild";
+    ENUMName_LST_Objekt_Bedien_Oertlichkeit => "Bedien_Oertlichkeit";
+    ENUMName_LST_Objekt_Bedien_Platz => "Bedien_Platz";
+    ENUMName_LST_Objekt_Bedien_Zentrale => "Bedien_Zentrale";
+    ENUMName_LST_Objekt_Block_Anlage => "Block_Anlage";
+    ENUMName_LST_Objekt_Block_Element => "Block_Element";
+    ENUMName_LST_Objekt_Block_Strecke => "Block_Strecke";
+    ENUMName_LST_Objekt_BUE_Anlage => "BUE_Anlage";
+    ENUMName_LST_Objekt_BUE_Ausschaltung => "BUE_Ausschaltung";
+    ENUMName_LST_Objekt_BUE_Bedien_Anzeige_Element => "BUE_Bedien_Anzeige_Element";
+    ENUMName_LST_Objekt_BUE_Deckendes_Signal_Zuordnung => "BUE_Deckendes_Signal_Zuordnung";
+    ENUMName_LST_Objekt_BUE_Einschaltung => "BUE_Einschaltung";
+    ENUMName_LST_Objekt_BUE_Einschaltung_Zuordnung => "BUE_Einschaltung_Zuordnung";
+    ENUMName_LST_Objekt_BUE_Gleisbezogener_Gefahrraum => "BUE_Gleisbezogener_Gefahrraum";
+    ENUMName_LST_Objekt_BUE_Schnittstelle => "BUE_Schnittstelle";
+    ENUMName_LST_Objekt_BUE_Spezifisches_Signal => "BUE_Spezifisches_Signal";
+    ENUMName_LST_Objekt_BUE_WS_Fstr_Zuordnung => "BUE_WS_Fstr_Zuordnung";
+    ENUMName_LST_Objekt_ESTW_Zentraleinheit => "ESTW_Zentraleinheit";
+    ENUMName_LST_Objekt_Fla_Freimelde_Zuordnung => "Fla_Freimelde_Zuordnung";
+    ENUMName_LST_Objekt_Fla_Schutz => "Fla_Schutz";
+    ENUMName_LST_Objekt_Fla_Zwieschutz => "Fla_Zwieschutz";
+    ENUMName_LST_Objekt_FMA_Anlage => "FMA_Anlage";
+    ENUMName_LST_Objekt_FMA_Element => "FMA_Element";
+    ENUMName_LST_Objekt_FMA_Komponente => "FMA_Komponente";
+    ENUMName_LST_Objekt_Fstr_Abhaengigkeit => "Fstr_Abhaengigkeit";
+    ENUMName_LST_Objekt_Fstr_Aneinander => "Fstr_Aneinander";
+    ENUMName_LST_Objekt_Fstr_Aneinander_Zuordnung => "Fstr_Aneinander_Zuordnung";
+    ENUMName_LST_Objekt_Fstr_DWeg => "Fstr_DWeg";
+    ENUMName_LST_Objekt_Fstr_DWeg_W_Kr => "Fstr_DWeg_W_Kr";
+    ENUMName_LST_Objekt_Fstr_Fahrweg => "Fstr_Fahrweg";
+    ENUMName_LST_Objekt_Fstr_Nichthaltfall => "Fstr_Nichthaltfall";
+    ENUMName_LST_Objekt_Fstr_Rangier_Fla_Zuordnung => "Fstr_Rangier_Fla_Zuordnung";
+    ENUMName_LST_Objekt_Fstr_Signalisierung => "Fstr_Signalisierung";
+    ENUMName_LST_Objekt_Fstr_Umfahrpunkt => "Fstr_Umfahrpunkt";
+    ENUMName_LST_Objekt_Fstr_Zug_Rangier => "Fstr_Zug_Rangier";
+    ENUMName_LST_Objekt_GEO_Kante => "GEO_Kante";
+    ENUMName_LST_Objekt_GEO_Knoten => "GEO_Knoten";
+    ENUMName_LST_Objekt_GEO_Punkt => "GEO_Punkt";
+    ENUMName_LST_Objekt_Geschwindigkeitsprofil => "Geschwindigkeitsprofil";
+    ENUMName_LST_Objekt_Gleis_Abschluss => "Gleis_Abschluss";
+    ENUMName_LST_Objekt_Gleis_Abschnitt => "Gleis_Abschnitt";
+    ENUMName_LST_Objekt_Gleis_Art => "Gleis_Art";
+    ENUMName_LST_Objekt_Gleis_Baubereich => "Gleis_Baubereich";
+    ENUMName_LST_Objekt_Gleis_Bezeichnung => "Gleis_Bezeichnung";
+    ENUMName_LST_Objekt_Gleis_Fahrbahn => "Gleis_Fahrbahn";
+    ENUMName_LST_Objekt_Gleis_Lichtraum => "Gleis_Lichtraum";
+    ENUMName_LST_Objekt_Gleis_Schaltgruppe => "Gleis_Schaltgruppe";
+    ENUMName_LST_Objekt_Hoehenpunkt => "Hoehenpunkt";
+    ENUMName_LST_Objekt_Markanter_Punkt => "Markanter_Punkt";
+    ENUMName_LST_Objekt_NB => "NB";
+    ENUMName_LST_Objekt_NB_Bedien_Anzeige_Element => "NB_Bedien_Anzeige_Element";
+    ENUMName_LST_Objekt_NB_Zone => "NB_Zone";
+    ENUMName_LST_Objekt_NB_Zone_Element => "NB_Zone_Element";
+    ENUMName_LST_Objekt_NB_Zone_Grenze => "NB_Zone_Grenze";
+    ENUMName_LST_Objekt_Oertlichkeit => "Oertlichkeit";
+    ENUMName_LST_Objekt_PZB_Element => "PZB_Element";
+    ENUMName_LST_Objekt_PZB_Element_Zuordnung => "PZB_Element_Zuordnung";
+    ENUMName_LST_Objekt_PZB_Zuordnung_Signal => "PZB_Zuordnung_Signal";
+    ENUMName_LST_Objekt_Regelzeichnung => "Regelzeichnung";
+    ENUMName_LST_Objekt_Regelzeichnung_Parameter => "Regelzeichnung_Parameter";
+    ENUMName_LST_Objekt_Schaltmittel_Fstr_Zuordnung => "Schaltmittel_Fstr_Zuordnung";
+    ENUMName_LST_Objekt_Schaltmittel_Zuordnung => "Schaltmittel_Zuordnung";
+    ENUMName_LST_Objekt_Schloss => "Schloss";
+    ENUMName_LST_Objekt_Schlosskombination => "Schlosskombination";
+    ENUMName_LST_Objekt_Schluessel => "Schluessel";
+    ENUMName_LST_Objekt_Schluesselsperre => "Schluesselsperre";
+    ENUMName_LST_Objekt_Signal => "Signal";
+    ENUMName_LST_Objekt_Signal_Befestigung => "Signal_Befestigung";
+    ENUMName_LST_Objekt_Signal_Rahmen => "Signal_Rahmen";
+    ENUMName_LST_Objekt_Signal_Signalbegriff => "Signal_Signalbegriff";
+    ENUMName_LST_Objekt_Sonstiger_Punkt => "Sonstiger_Punkt";
+    ENUMName_LST_Objekt_Stell_Bereich => "Stell_Bereich";
+    ENUMName_LST_Objekt_Stellelement => "Stellelement";
+    ENUMName_LST_Objekt_Strecke => "Strecke";
+    ENUMName_LST_Objekt_Strecke_Punkt => "Strecke_Punkt";
+    ENUMName_LST_Objekt_Technischer_Bereich => "Technischer_Bereich";
+    ENUMName_LST_Objekt_Technischer_Punkt => "Technischer_Punkt";
+    ENUMName_LST_Objekt_TOP_Kante => "TOP_Kante";
+    ENUMName_LST_Objekt_TOP_Knoten => "TOP_Knoten";
+    ENUMName_LST_Objekt_Ueberhoehung => "Ueberhoehung";
+    ENUMName_LST_Objekt_Uebertragungsweg => "Uebertragungsweg";
+    ENUMName_LST_Objekt_Unterbringung => "Unterbringung";
+    ENUMName_LST_Objekt_W_Kr_Anlage => "W_Kr_Anlage";
+    ENUMName_LST_Objekt_W_Kr_Gsp_Element => "W_Kr_Gsp_Element";
+    ENUMName_LST_Objekt_W_Kr_Gsp_Komponente => "W_Kr_Gsp_Komponente";
+    ENUMName_LST_Objekt_Weichenlaufkette => "Weichenlaufkette";
+    ENUMName_LST_Objekt_Weichenlaufkette_Zuordnung => "Weichenlaufkette_Zuordnung";
+    ENUMName_LST_Objekt_ZL => "ZL";
+    ENUMName_LST_Objekt_ZL_DLP_Abschnitt => "ZL_DLP_Abschnitt";
+    ENUMName_LST_Objekt_ZL_DLP_Fstr => "ZL_DLP_Fstr";
+    ENUMName_LST_Objekt_ZL_Fstr => "ZL_Fstr";
+    ENUMName_LST_Objekt_ZL_Fstr_Anstoss => "ZL_Fstr_Anstoss";
+    ENUMName_LST_Objekt_ZL_Signalgruppe => "ZL_Signalgruppe";
+    ENUMName_LST_Objekt_ZL_Signalgruppe_Zuordnung => "ZL_Signalgruppe_Zuordnung";
+    ENUMName_LST_Objekt_ZLV_Bus => "ZLV_Bus";
+    ENUMName_LST_Objekt_ZLV_Bus_US_Zuordnung => "ZLV_Bus_US_Zuordnung";
+    ENUMName_LST_Objekt_ZN => "ZN";
+    ENUMName_LST_Objekt_ZN_Akustik => "ZN_Akustik";
+    ENUMName_LST_Objekt_ZN_Anzeigefeld => "ZN_Anzeigefeld";
+    ENUMName_LST_Objekt_ZN_Fortschalt_Kriterium => "ZN_Fortschalt_Kriterium";
+    ENUMName_LST_Objekt_ZN_Telegramm_84_Zuordnung => "ZN_Telegramm_84_Zuordnung";
+    ENUMName_LST_Objekt_ZN_Telegramm_85_Zuordnung => "ZN_Telegramm_85_Zuordnung";
+    ENUMName_LST_Objekt_ZN_Unterstation => "ZN_Unterstation";
+    ENUMName_LST_Objekt_ZN_ZBS => "ZN_ZBS";
+    ENUMName_LST_Objekt_Zugeinwirkung => "Zugeinwirkung";
+  };
+
+def String printObjektzustand_Besonders(ENUMObjektzustand_Besonders e) =
+  case e {
+    ENUMObjektzustand_Besonders_unused => "";
+    ENUMObjektzustand_Besonders_abgedeckt => "abgedeckt";
+    ENUMObjektzustand_Besonders_ausser_Betrieb => "ausser_Betrieb";
+    ENUMObjektzustand_Besonders_ausser_Betrieb_vorbereitend => "ausser_Betrieb_vorbereitend";
+    ENUMObjektzustand_Besonders_sonstige => "sonstige";
+  };
+
+def String printRolle(ENUMRolle e) =
+  case e {
+    ENUMRolle_unused => "";
+    ENUMRolle_GIS_Daten => "GIS_Daten";
+    ENUMRolle_LST_Fachplaner => "LST_Fachplaner";
+    ENUMRolle_sonstige => "sonstige";
+  };
+
+
+
+//Ur_Objekt
+interface Ur_Objekt extends Metaobject {
+  TGUID getIdentitaet();
+  Unit setIdentitaet(TGUID i);
+}
+
+//Anhang
+interface Anhang extends Ur_Objekt {
+  ENUMAnhang_Art getAnhang_Allg_Anhang_Art();
+  Unit setAnhang_Allg_Anhang_Art(ENUMAnhang_Art a);
+  TText getAnhang_Allg_Dateiname();
+  Unit setAnhang_Allg_Dateiname(TText n);
+  ENUMDateityp getAnhang_Allg_Dateityp();
+  Unit setAnhang_Allg_Dateityp(ENUMDateityp t);
+  Base64Binary getAnhang_Allg_Daten();
+  Unit setAnhang_Allg_Daten(Base64Binary d);
+}
+
+//Proxy_Objekt
+interface Proxy_Objekt extends Ur_Objekt {
+  ENUMName_LST_Objekt getName_LST_Objekt();
+  Unit setName_LST_Objekt(ENUMName_LST_Objekt n);
+}
+
+//Bearbeitungsvermerk
+interface Bearbeitungsvermerk extends Ur_Objekt {
+  Maybe<TZeichenkette> getBearbeitungsvermerk_Allg_Bearbeitungsvermerk_Kennung();
+  Unit setBearbeitungsvermerk_Allg_Bearbeitungsvermerk_Kennung(Maybe<TZeichenkette> k);
+  ENUMRolle getBearbeitungsvermerk_Allg_Bearbeitungsvermerk_Rolle();
+  Unit setBearbeitungsvermerk_Allg_Bearbeitungsvermerk_Rolle(ENUMRolle r);
+  TFreiText getBearbeitungsvermerk_Allg_Kommentar();
+  Unit setBearbeitungsvermerk_Allg_Kommentar(TFreiText k);
+  Maybe<TText> getBearbeitungsvermerk_Allg_Kurztext();
+  Unit setBearbeitungsvermerk_Allg_Kurztext(Maybe<TText> k);
+  DateTime getBearbeitungsvermerk_Allg_Zeit_Bearbeitungsvermerk();
+  Unit setBearbeitungsvermerk_Allg_Zeit_Bearbeitungsvermerk(DateTime z);
+  Maybe<TGUID> getID_Anhang();
+  Unit setID_Anhang(Maybe<TGUID> i);
+}
+
+//Basis_Objekt
+interface Basis_Objekt extends Ur_Objekt {
+  List<TGUID> getID_Bearbeitungsvermerk();
+  Unit setID_Bearbeitungsvermerk(List<TGUID> i);
+  Maybe<TText> getObjektreferenzenDB_GDI_Referenz();
+  Unit setObjektreferenzenDB_GDI_Referenz(Maybe<TText> r);
+  Maybe<TText> getObjektreferenzenTechnischer_Platz();
+  Unit setObjektreferenzenTechnischer_Platz(Maybe<TText> p);
+  Maybe<ENUMObjektzustand_Besonders> getBasis_Objekt_Allg_Objektzustand_Besonders();
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(Maybe<ENUMObjektzustand_Besonders> o);
+  Maybe<TGUID> getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders();
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(Maybe<TGUID> i);
+  Maybe<Date> getBasis_Objekt_Allg_Datum_Regelwerk();
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Maybe<Date> d);
+}
+
+//Attribute group Punkt_Objekt_Strecke used in Punkt_Objekt
+interface Punkt_Objekt_Strecke {
+  TGUID getID_Strecke();
+  Unit setID_Strecke(TGUID i);
+  TKilometrierung getStrecke_Km();
+  Unit setStrecke_Km(TKilometrierung k);
+}
+
+//Attribute group Punkt_Objekt_TOP_Kante used in Punkt_Objekt
+interface Punkt_Objekt_TOP_Kante {
+  TGUID getID_TOP_Kante();
+  Unit setID_TOP_Kante(TGUID i);
+  TMeter getAbstand();
+  Unit setAbstand(TMeter a);
+  Maybe<TWirkrichtung> getWirkrichtung();
+  Unit setWirkrichtung(Maybe<TWirkrichtung> w);
+  Maybe<TLinksRechts> getSeitliche_Lage();
+  Unit setSeitliche_Lage(Maybe<TLinksRechts> l);
+  Maybe<TMeter> getSeitlicher_Abstand();
+  Unit setSeitlicher_Abstand(Maybe<TMeter> a);
+}
+
+//Punkt_Objekt
+interface Punkt_Objekt extends Basis_Objekt {
+  List<Punkt_Objekt_Strecke> getPunkt_Objekt_Strecke();
+  Unit setPunkt_Objekt_Strecke(List<Punkt_Objekt_Strecke> i);
+  List<Punkt_Objekt_TOP_Kante> getPunkt_Objekt_TOP_Kante();
+  Unit setPunkt_Objekt_TOP_Kante(List<Punkt_Objekt_TOP_Kante> a);
+}
+
+//Attribute group Bereich_Objekt_Teilbereich used in Bereich_Objekt
+interface Bereich_Objekt_Teilbereich {
+  TMeter getBegrenzung_A();
+  Unit setBegrenzung_A(TMeter b);
+  Maybe<TWirkrichtung> getRichtungsbezug();
+  Unit setRichtungsbezug(Maybe<TWirkrichtung> w);
+  TMeter getBegrenzung_B();
+  Unit setBegrenzung_B(TMeter b);
+  TGUID getID_TOP_Kante();
+  Unit setID_TOP_Kante(TGUID i);
+}
+
+//Bereich_Objekt
+interface Bereich_Objekt extends Basis_Objekt {
+  List<Bereich_Objekt_Teilbereich> getBereich_Objekt_Teilbereich();
+  Unit setBereich_Objekt_Teilbereich(List<Bereich_Objekt_Teilbereich> b);
+}
+
+
+
+
+class AnhangImpl implements Anhang {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Anhang
+  ENUMAnhang_Art m_Anhang_Allg_Anhang_Art = ENUMAnhang_Art_unused;
+  TText m_Anhang_Allg_Dateiname = "";
+  ENUMDateityp m_Anhang_Allg_Dateityp = ENUMDateityp_unused;
+  Base64Binary m_Anhang_Allg_Daten = "";
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_Punkt_Objekt; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Anhang
+  ENUMAnhang_Art getAnhang_Allg_Anhang_Art() { return m_Anhang_Allg_Anhang_Art; }
+  Unit setAnhang_Allg_Anhang_Art(ENUMAnhang_Art a) { m_Anhang_Allg_Anhang_Art = a; }
+  TText getAnhang_Allg_Dateiname() { return m_Anhang_Allg_Dateiname; }
+  Unit setAnhang_Allg_Dateiname(TText n) { m_Anhang_Allg_Dateiname = n; }
+  ENUMDateityp getAnhang_Allg_Dateityp() { return m_Anhang_Allg_Dateityp; }
+  Unit setAnhang_Allg_Dateityp(ENUMDateityp t) { m_Anhang_Allg_Dateityp = t; }
+  Base64Binary getAnhang_Allg_Daten() { return m_Anhang_Allg_Daten; }
+  Unit setAnhang_Allg_Daten(Base64Binary d) { m_Anhang_Allg_Daten = d; }
+}
+
+class Proxy_ObjektImpl implements Proxy_Objekt {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Proxy_Objekt
+  ENUMName_LST_Objekt m_Name_LST_Objekt = ENUMName_LST_Objekt_unused;
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_Punkt_Objekt; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Proxy_Objekt
+  ENUMName_LST_Objekt getName_LST_Objekt() { return m_Name_LST_Objekt; }
+  Unit setName_LST_Objekt(ENUMName_LST_Objekt n) { m_Name_LST_Objekt = n; }
+}
+
+class BearbeitungsvermerkImpl implements Bearbeitungsvermerk {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Bearbeitungsvermerk
+  Maybe<TZeichenkette> m_Bearbeitungsvermerk_Allg_Bearbeitungsvermerk_Kennung = Nothing;
+  ENUMRolle m_Bearbeitungsvermerk_Allg_Bearbeitungsvermerk_Rolle = ENUMRolle_unused;
+  TFreiText m_Bearbeitungsvermerk_Allg_Kommentar = "";
+  Maybe<TText> m_Bearbeitungsvermerk_Allg_Kurztext = Nothing;
+  DateTime m_Bearbeitungsvermerk_Allg_Zeit_Bearbeitungsvermerk = "";
+  Maybe<TGUID> m_ID_Anhang = Nothing;
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_Punkt_Objekt; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Bearbeitungsvermerk
+  Maybe<TZeichenkette> getBearbeitungsvermerk_Allg_Bearbeitungsvermerk_Kennung() { return m_Bearbeitungsvermerk_Allg_Bearbeitungsvermerk_Kennung; }
+  Unit setBearbeitungsvermerk_Allg_Bearbeitungsvermerk_Kennung(Maybe<TZeichenkette> k) { m_Bearbeitungsvermerk_Allg_Bearbeitungsvermerk_Kennung = k; }
+  ENUMRolle getBearbeitungsvermerk_Allg_Bearbeitungsvermerk_Rolle() { return m_Bearbeitungsvermerk_Allg_Bearbeitungsvermerk_Rolle; }
+  Unit setBearbeitungsvermerk_Allg_Bearbeitungsvermerk_Rolle(ENUMRolle r) { m_Bearbeitungsvermerk_Allg_Bearbeitungsvermerk_Rolle = r; }
+  TFreiText getBearbeitungsvermerk_Allg_Kommentar() { return m_Bearbeitungsvermerk_Allg_Kommentar; }
+  Unit setBearbeitungsvermerk_Allg_Kommentar(TFreiText k) { m_Bearbeitungsvermerk_Allg_Kommentar = k; }
+  Maybe<TText> getBearbeitungsvermerk_Allg_Kurztext() { return m_Bearbeitungsvermerk_Allg_Kurztext; }
+  Unit setBearbeitungsvermerk_Allg_Kurztext(Maybe<TText> k) { m_Bearbeitungsvermerk_Allg_Kurztext = k; }
+  DateTime getBearbeitungsvermerk_Allg_Zeit_Bearbeitungsvermerk() { return m_Bearbeitungsvermerk_Allg_Zeit_Bearbeitungsvermerk; }
+  Unit setBearbeitungsvermerk_Allg_Zeit_Bearbeitungsvermerk(DateTime z) { m_Bearbeitungsvermerk_Allg_Zeit_Bearbeitungsvermerk = z; }
+  Maybe<TGUID> getID_Anhang() { return m_ID_Anhang; }
+  Unit setID_Anhang(Maybe<TGUID> i) { m_ID_Anhang = i; }
+}
+
+class Punkt_Objekt_Strecke implements Punkt_Objekt_Strecke {
+  TGUID m_ID_Strecke = "";
+  TKilometrierung m_Strecke_Km = "";
+
+  TGUID getID_Strecke() { return m_ID_Strecke; }
+  Unit setID_Strecke(TGUID i) { m_ID_Strecke = i; }
+  TKilometrierung getStrecke_Km() { return m_Strecke_Km; }
+  Unit setStrecke_Km(TKilometrierung k) { m_Strecke_Km = k; }
+}
+
+class Punkt_Objekt_TOP_Kante implements Punkt_Objekt_TOP_Kante {
+  TGUID m_ID_TOP_Kante = "";
+  TMeter m_Abstand = 0;
+  Maybe<TWirkrichtung> m_Wirkrichtung = Nothing;
+  Maybe<TLinksRechts> m_Seitliche_Lage = Nothing;
+  Maybe<TMeter> m_Seitlicher_Abstand = Nothing;
+
+  TGUID getID_TOP_Kante() { return m_ID_TOP_Kante; }
+  Unit setID_TOP_Kante(TGUID i) { m_ID_TOP_Kante = i; }
+  TMeter getAbstand() { return m_Abstand; }
+  Unit setAbstand(TMeter a) { m_Abstand = a; }
+  Maybe<TWirkrichtung> getWirkrichtung() { return m_Wirkrichtung; }
+  Unit setWirkrichtung(Maybe<TWirkrichtung> w) { m_Wirkrichtung = w; }
+  Maybe<TLinksRechts> getSeitliche_Lage() { return m_Seitliche_Lage; }
+  Unit setSeitliche_Lage(Maybe<TLinksRechts> l) { m_Seitliche_Lage = l; }
+  Maybe<TMeter> getSeitlicher_Abstand() { return m_Seitlicher_Abstand; }
+  Unit setSeitlicher_Abstand(Maybe<TMeter> a) { m_Seitlicher_Abstand = a; }
+}
+
+class Bereich_Objekt_Teilbereich implements Bereich_Objekt_Teilbereich {
+  TMeter m_Begrenzung_A = 0;
+  Maybe<TWirkrichtung> m_Richtungsbezug = Nothing;
+  TMeter m_Begrenzung_B = 0;
+  TGUID m_ID_TOP_Kante = "";
+
+  TMeter getBegrenzung_A() { return m_Begrenzung_A; }
+  Unit setBegrenzung_A(TMeter b) { m_Begrenzung_A = b; }
+  Maybe<TWirkrichtung> getRichtungsbezug() { return m_Richtungsbezug; }
+  Unit setRichtungsbezug(Maybe<TWirkrichtung> w) { m_Richtungsbezug = w; }
+  TMeter getBegrenzung_B() { return m_Begrenzung_B; }
+  Unit setBegrenzung_B(TMeter b) { m_Begrenzung_B = b; }
+  TGUID getID_TOP_Kante() { return m_ID_TOP_Kante; }
+  Unit setID_TOP_Kante(TGUID i) { m_ID_TOP_Kante = i; }
+}
+
+
+
+class Punkt_Objekt implements Punkt_Objekt {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Basis_Objekt
+  List<TGUID> m_ID_Bearbeitungsvermerk = Nil;
+  Maybe<TText> m_ObjektreferenzenDB_GDI_Referenz = Nothing;
+  Maybe<TText> m_ObjektreferenzenTechnischer_Platz = Nothing;
+  Maybe<ENUMObjektzustand_Besonders> m_Basis_Objekt_Allg_Objektzustand_Besonders = Nothing;
+  Maybe<TGUID> m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = Nothing;
+  Maybe<Date> m_Basis_Objekt_Allg_Datum_Regelwerk = Nothing;
+
+  // Fields from Punkt_Objekt
+  List<Punkt_Objekt_Strecke> m_Punkt_Objekt_Strecke = Nil;
+  List<Punkt_Objekt_TOP_Kante> m_Punkt_Objekt_TOP_Kante = Nil;
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_Punkt_Objekt; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Basis_Objekt
+  List<TGUID> getID_Bearbeitungsvermerk() { return m_ID_Bearbeitungsvermerk; }
+  Unit setID_Bearbeitungsvermerk(List<TGUID> i) { m_ID_Bearbeitungsvermerk = i; }
+  Maybe<TText> getObjektreferenzenDB_GDI_Referenz() { return m_ObjektreferenzenDB_GDI_Referenz; }
+  Unit setObjektreferenzenDB_GDI_Referenz(Maybe<TText> r) { m_ObjektreferenzenDB_GDI_Referenz = r; }
+  Maybe<TText> getObjektreferenzenTechnischer_Platz() { return m_ObjektreferenzenTechnischer_Platz; }
+  Unit setObjektreferenzenTechnischer_Platz(Maybe<TText> p) { m_ObjektreferenzenTechnischer_Platz = p; }
+  Maybe<ENUMObjektzustand_Besonders> getBasis_Objekt_Allg_Objektzustand_Besonders() { return m_Basis_Objekt_Allg_Objektzustand_Besonders; }
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(Maybe<ENUMObjektzustand_Besonders> o) { m_Basis_Objekt_Allg_Objektzustand_Besonders = o; }
+  Maybe<TGUID> getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders() { return m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders; }
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(Maybe<TGUID> i) { m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = i; }
+  Maybe<Date> getBasis_Objekt_Allg_Datum_Regelwerk() { return m_Basis_Objekt_Allg_Datum_Regelwerk; }
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Maybe<Date> d) { m_Basis_Objekt_Allg_Datum_Regelwerk = d; }
+
+  // Methods from Punkt_Objekt
+  List<Punkt_Objekt_Strecke> getPunkt_Objekt_Strecke() { return m_Punkt_Objekt_Strecke; }
+  Unit setPunkt_Objekt_Strecke(List<Punkt_Objekt_Strecke> i) { m_Punkt_Objekt_Strecke = i; }
+  List<Punkt_Objekt_TOP_Kante> getPunkt_Objekt_TOP_Kante() { return m_Punkt_Objekt_TOP_Kante; }
+  Unit setPunkt_Objekt_TOP_Kante(List<Punkt_Objekt_TOP_Kante> a) { m_Punkt_Objekt_TOP_Kante = a; }
+}
+

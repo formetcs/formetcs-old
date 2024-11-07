@@ -1,0 +1,641 @@
+module Test;
+
+export *;
+import * from Metaobject;
+import * from BasisTypen;
+import * from Basisobjekte;
+import * from Geodaten;
+import * from Signale;
+import * from ETCS;
+import * from Block;
+import * from Util;
+import * from XmlWriter;
+import * from Constructor;
+
+interface Test {
+  Unit doNothing();
+}
+
+class TestImpl implements Test {
+  Unit doNothing() {
+    println("nix");
+  }
+
+  Unit run() {
+    //XmlWriter xmlw = new local XmlWriter();
+    //Constructor constructor = new local Constructor();
+    Util util = new local Util();
+    Map<TGUID, PlanProObject> l = map(Nil);
+    List<Punkt_Objekt> entrylist = Nil;
+    List<Punkt_Objekt> exitlist = Nil;
+
+    Signal o1 = new local SignalImpl();
+    o1.setIdentitaet("S4");
+    Punkt_Objekt_TOP_Kante tkgroup_o1 = new local Punkt_Objekt_TOP_Kante();
+    List<Punkt_Objekt_TOP_Kante> tkgrouplist_o1 = Nil;
+    tkgroup_o1.setID_TOP_Kante("TKa4");
+    tkgroup_o1.setAbstand(950/1);
+    tkgroup_o1.setSeitlicher_Abstand(Just(3/1));
+    tkgroup_o1.setWirkrichtung(Just(ENUMWirkrichtung_in));
+    tkgrouplist_o1 = appendright(tkgrouplist_o1, tkgroup_o1);
+    o1.setPunkt_Objekt_TOP_Kante(tkgrouplist_o1);
+    Signal_Real sigreal_o1 = new local Signal_Real();
+    sigreal_o1.setSignal_Real_Aktiv_Schirm_Signal_Art(Just(ENUMSignal_Art_Hauptsignal));
+    sigreal_o1.setSignal_Real_Aktiv_Schirm_Signalsystem(Just(ENUMSignalsystem_HV));
+    sigreal_o1.setSignal_Real_Aktiv_Signal_Funktion(Just(ENUMSignal_Funktion_Block_Signal));
+    SignalFiktivReal sfikreal_o1 = SignalReal(sigreal_o1);
+    o1.setSignalFiktivReal(sfikreal_o1);
+    CBezeichnung_Element bez_o1 = new local CBezeichnung_Element();
+    bez_o1.setBezeichnung_Lageplan_Kurz("S4");
+    o1.setBezeichnung(Just(bez_o1));
+    l = insert(l, Pair("S4", Objecttype_Signal(o1)));
+
+    Signal o2 = new local SignalImpl();
+    o2.setIdentitaet("S3");
+    Punkt_Objekt_TOP_Kante tkgroup_o2 = new local Punkt_Objekt_TOP_Kante();
+    List<Punkt_Objekt_TOP_Kante> tkgrouplist_o2 = Nil;
+    tkgroup_o2.setID_TOP_Kante("TKa3");
+    tkgroup_o2.setAbstand(2950/1);
+    tkgroup_o2.setSeitlicher_Abstand(Just(3/1));
+    tkgroup_o2.setWirkrichtung(Just(ENUMWirkrichtung_in));
+    tkgrouplist_o2 = appendright(tkgrouplist_o2, tkgroup_o2);
+    o2.setPunkt_Objekt_TOP_Kante(tkgrouplist_o2);
+    Signal_Real sigreal_o2 = new local Signal_Real();
+    sigreal_o2.setSignal_Real_Aktiv_Schirm_Signal_Art(Just(ENUMSignal_Art_Hauptsignal));
+    sigreal_o2.setSignal_Real_Aktiv_Schirm_Signalsystem(Just(ENUMSignalsystem_HV));
+    sigreal_o2.setSignal_Real_Aktiv_Signal_Funktion(Just(ENUMSignal_Funktion_Block_Signal));
+    SignalFiktivReal sfikreal_o2 = SignalReal(sigreal_o2);
+    o2.setSignalFiktivReal(sfikreal_o2);
+    CBezeichnung_Element bez_o2 = new local CBezeichnung_Element();
+    bez_o2.setBezeichnung_Lageplan_Kurz("S3");
+    o2.setBezeichnung(Just(bez_o2));
+    l = insert(l, Pair("S3", Objecttype_Signal(o2)));
+
+    Signal o3 = new local SignalImpl();
+    o3.setIdentitaet("S2");
+    Punkt_Objekt_TOP_Kante tkgroup_o3 = new local Punkt_Objekt_TOP_Kante();
+    List<Punkt_Objekt_TOP_Kante> tkgrouplist_o3 = Nil;
+    tkgroup_o3.setID_TOP_Kante("TKa2");
+    tkgroup_o3.setAbstand(3950/1);
+    tkgroup_o3.setSeitlicher_Abstand(Just(3/1));
+    tkgroup_o3.setWirkrichtung(Just(ENUMWirkrichtung_in));
+    tkgrouplist_o3 = appendright(tkgrouplist_o3, tkgroup_o3);
+    o3.setPunkt_Objekt_TOP_Kante(tkgrouplist_o3);
+    Signal_Real sigreal_o3 = new local Signal_Real();
+    sigreal_o3.setSignal_Real_Aktiv_Schirm_Signal_Art(Just(ENUMSignal_Art_Hauptsignal));
+    sigreal_o3.setSignal_Real_Aktiv_Schirm_Signalsystem(Just(ENUMSignalsystem_HV));
+    sigreal_o3.setSignal_Real_Aktiv_Signal_Funktion(Just(ENUMSignal_Funktion_Block_Signal));
+    SignalFiktivReal sfikreal_o3 = SignalReal(sigreal_o3);
+    o3.setSignalFiktivReal(sfikreal_o3);
+    CBezeichnung_Element bez_o3 = new local CBezeichnung_Element();
+    bez_o3.setBezeichnung_Lageplan_Kurz("S2");
+    o3.setBezeichnung(Just(bez_o3));
+    l = insert(l, Pair("S2", Objecttype_Signal(o3)));
+
+    Signal o4 = new local SignalImpl();
+    o4.setIdentitaet("S1");
+    Punkt_Objekt_TOP_Kante tkgroup_o4 = new local Punkt_Objekt_TOP_Kante();
+    List<Punkt_Objekt_TOP_Kante> tkgrouplist_o4 = Nil;
+    tkgroup_o4.setID_TOP_Kante("TKa2");
+    tkgroup_o4.setAbstand(950/1);
+    tkgroup_o4.setSeitlicher_Abstand(Just(3/1));
+    tkgroup_o4.setWirkrichtung(Just(ENUMWirkrichtung_in));
+    tkgrouplist_o4 = appendright(tkgrouplist_o4, tkgroup_o4);
+    o4.setPunkt_Objekt_TOP_Kante(tkgrouplist_o4);
+    Signal_Real sigreal_o4 = new local Signal_Real();
+    sigreal_o4.setSignal_Real_Aktiv_Schirm_Signal_Art(Just(ENUMSignal_Art_Hauptsignal));
+    sigreal_o4.setSignal_Real_Aktiv_Schirm_Signalsystem(Just(ENUMSignalsystem_HV));
+    sigreal_o4.setSignal_Real_Aktiv_Signal_Funktion(Just(ENUMSignal_Funktion_Block_Signal));
+    SignalFiktivReal sfikreal_o4 = SignalReal(sigreal_o4);
+    o4.setSignalFiktivReal(sfikreal_o4);
+    CBezeichnung_Element bez_o4 = new local CBezeichnung_Element();
+    bez_o4.setBezeichnung_Lageplan_Kurz("S1");
+    o4.setBezeichnung(Just(bez_o4));
+    l = insert(l, Pair("S1", Objecttype_Signal(o4)));
+
+    TOP_Kante o5 = new local TOP_KanteImpl();
+    o5.setIdentitaet("TKa4");
+    o5.setID_TOP_Knoten_A("TKn4");
+    o5.setID_TOP_Knoten_B("TKn5");
+    o5.setTOP_Kante_Allg_TOP_Anschluss_A(ENUMTOP_Anschluss_Verbindung);
+    o5.setTOP_Kante_Allg_TOP_Anschluss_B(ENUMTOP_Anschluss_Ende);
+    o5.setTOP_Kante_Allg_TOP_Laenge(5000/1);
+    l = insert(l, Pair("TKa4", Objecttype_TOP_Kante(o5)));
+
+    TOP_Kante o6 = new local TOP_KanteImpl();
+    o6.setIdentitaet("TKa3");
+    o6.setID_TOP_Knoten_A("TKn3");
+    o6.setID_TOP_Knoten_B("TKn4");
+    o6.setTOP_Kante_Allg_TOP_Anschluss_A(ENUMTOP_Anschluss_Verbindung);
+    o6.setTOP_Kante_Allg_TOP_Anschluss_B(ENUMTOP_Anschluss_Verbindung);
+    o6.setTOP_Kante_Allg_TOP_Laenge(5000/1);
+    l = insert(l, Pair("TKa3", Objecttype_TOP_Kante(o6)));
+
+    TOP_Kante o7 = new local TOP_KanteImpl();
+    o7.setIdentitaet("TKa2");
+    o7.setID_TOP_Knoten_A("TKn2");
+    o7.setID_TOP_Knoten_B("TKn3");
+    o7.setTOP_Kante_Allg_TOP_Anschluss_A(ENUMTOP_Anschluss_Verbindung);
+    o7.setTOP_Kante_Allg_TOP_Anschluss_B(ENUMTOP_Anschluss_Verbindung);
+    o7.setTOP_Kante_Allg_TOP_Laenge(5000/1);
+    l = insert(l, Pair("TKa2", Objecttype_TOP_Kante(o7)));
+
+    TOP_Kante o8 = new local TOP_KanteImpl();
+    o8.setIdentitaet("TKa1");
+    o8.setID_TOP_Knoten_A("TKn1");
+    o8.setID_TOP_Knoten_B("TKn2");
+    o8.setTOP_Kante_Allg_TOP_Anschluss_A(ENUMTOP_Anschluss_Ende);
+    o8.setTOP_Kante_Allg_TOP_Anschluss_B(ENUMTOP_Anschluss_Verbindung);
+    o8.setTOP_Kante_Allg_TOP_Laenge(5000/1);
+    l = insert(l, Pair("TKa1", Objecttype_TOP_Kante(o8)));
+
+    TOP_Knoten o9 = new local TOP_KnotenImpl();
+    o9.setIdentitaet("TKn5");
+    o9.setTOP_Knoten_Allg_Knotenname(Just("TKn5"));
+    o9.setID_GEO_Knoten("GKn21");
+    l = insert(l, Pair("TKn5", Objecttype_TOP_Knoten(o9)));
+
+    TOP_Knoten o10 = new local TOP_KnotenImpl();
+    o10.setIdentitaet("TKn4");
+    o10.setTOP_Knoten_Allg_Knotenname(Just("TKn4"));
+    o10.setID_GEO_Knoten("GKn16");
+    l = insert(l, Pair("TKn4", Objecttype_TOP_Knoten(o10)));
+
+    TOP_Knoten o11 = new local TOP_KnotenImpl();
+    o11.setIdentitaet("TKn3");
+    o11.setTOP_Knoten_Allg_Knotenname(Just("TKn3"));
+    o11.setID_GEO_Knoten("GKn11");
+    l = insert(l, Pair("TKn3", Objecttype_TOP_Knoten(o11)));
+
+    TOP_Knoten o12 = new local TOP_KnotenImpl();
+    o12.setIdentitaet("TKn2");
+    o12.setTOP_Knoten_Allg_Knotenname(Just("TKn2"));
+    o12.setID_GEO_Knoten("GKn6");
+    l = insert(l, Pair("TKn2", Objecttype_TOP_Knoten(o12)));
+
+    TOP_Knoten o13 = new local TOP_KnotenImpl();
+    o13.setIdentitaet("TKn1");
+    o13.setTOP_Knoten_Allg_Knotenname(Just("TKn1"));
+    o13.setID_GEO_Knoten("GKn1");
+    l = insert(l, Pair("TKn1", Objecttype_TOP_Knoten(o13)));
+
+    GEO_Kante o14 = new local GEO_KanteImpl();
+    o14.setIdentitaet("GKa20");
+    o14.setID_GEO_Knoten_A("GKn20");
+    o14.setID_GEO_Knoten_B("GKn21");
+    o14.setID_GEO_Art("TKa4");
+    o14.setGEO_Kante_Allg_GEO_Laenge(1000/1);
+    l = insert(l, Pair("GKa20", Objecttype_GEO_Kante(o14)));
+
+    GEO_Kante o15 = new local GEO_KanteImpl();
+    o15.setIdentitaet("GKa19");
+    o15.setID_GEO_Knoten_A("GKn19");
+    o15.setID_GEO_Knoten_B("GKn20");
+    o15.setID_GEO_Art("TKa4");
+    o15.setGEO_Kante_Allg_GEO_Laenge(1000/1);
+    l = insert(l, Pair("GKa19", Objecttype_GEO_Kante(o15)));
+
+    GEO_Kante o16 = new local GEO_KanteImpl();
+    o16.setIdentitaet("GKa18");
+    o16.setID_GEO_Knoten_A("GKn18");
+    o16.setID_GEO_Knoten_B("GKn19");
+    o16.setID_GEO_Art("TKa4");
+    o16.setGEO_Kante_Allg_GEO_Laenge(1000/1);
+    l = insert(l, Pair("GKa18", Objecttype_GEO_Kante(o16)));
+
+    GEO_Kante o17 = new local GEO_KanteImpl();
+    o17.setIdentitaet("GKa17");
+    o17.setID_GEO_Knoten_A("GKn17");
+    o17.setID_GEO_Knoten_B("GKn18");
+    o17.setID_GEO_Art("TKa4");
+    o17.setGEO_Kante_Allg_GEO_Laenge(1000/1);
+    l = insert(l, Pair("GKa17", Objecttype_GEO_Kante(o17)));
+
+    GEO_Kante o18 = new local GEO_KanteImpl();
+    o18.setIdentitaet("GKa16");
+    o18.setID_GEO_Knoten_A("GKn16");
+    o18.setID_GEO_Knoten_B("GKn17");
+    o18.setID_GEO_Art("TKa4");
+    o18.setGEO_Kante_Allg_GEO_Laenge(1000/1);
+    l = insert(l, Pair("GKa16", Objecttype_GEO_Kante(o18)));
+
+    GEO_Kante o19 = new local GEO_KanteImpl();
+    o19.setIdentitaet("GKa15");
+    o19.setID_GEO_Knoten_A("GKn15");
+    o19.setID_GEO_Knoten_B("GKn16");
+    o19.setID_GEO_Art("TKa3");
+    o19.setGEO_Kante_Allg_GEO_Laenge(1000/1);
+    l = insert(l, Pair("GKa15", Objecttype_GEO_Kante(o19)));
+
+    GEO_Kante o20 = new local GEO_KanteImpl();
+    o20.setIdentitaet("GKa14");
+    o20.setID_GEO_Knoten_A("GKn14");
+    o20.setID_GEO_Knoten_B("GKn15");
+    o20.setID_GEO_Art("TKa3");
+    o20.setGEO_Kante_Allg_GEO_Laenge(1000/1);
+    l = insert(l, Pair("GKa14", Objecttype_GEO_Kante(o20)));
+
+    GEO_Kante o21 = new local GEO_KanteImpl();
+    o21.setIdentitaet("GKa13");
+    o21.setID_GEO_Knoten_A("GKn13");
+    o21.setID_GEO_Knoten_B("GKn14");
+    o21.setID_GEO_Art("TKa3");
+    o21.setGEO_Kante_Allg_GEO_Laenge(1000/1);
+    l = insert(l, Pair("GKa13", Objecttype_GEO_Kante(o21)));
+
+    GEO_Kante o22 = new local GEO_KanteImpl();
+    o22.setIdentitaet("GKa12");
+    o22.setID_GEO_Knoten_A("GKn12");
+    o22.setID_GEO_Knoten_B("GKn13");
+    o22.setID_GEO_Art("TKa3");
+    o22.setGEO_Kante_Allg_GEO_Laenge(1000/1);
+    l = insert(l, Pair("GKa12", Objecttype_GEO_Kante(o22)));
+
+    GEO_Kante o23 = new local GEO_KanteImpl();
+    o23.setIdentitaet("GKa11");
+    o23.setID_GEO_Knoten_A("GKn11");
+    o23.setID_GEO_Knoten_B("GKn12");
+    o23.setID_GEO_Art("TKa3");
+    o23.setGEO_Kante_Allg_GEO_Laenge(1000/1);
+    l = insert(l, Pair("GKa11", Objecttype_GEO_Kante(o23)));
+
+    GEO_Kante o24 = new local GEO_KanteImpl();
+    o24.setIdentitaet("GKa10");
+    o24.setID_GEO_Knoten_A("GKn10");
+    o24.setID_GEO_Knoten_B("GKn11");
+    o24.setID_GEO_Art("TKa2");
+    o24.setGEO_Kante_Allg_GEO_Laenge(1000/1);
+    l = insert(l, Pair("GKa10", Objecttype_GEO_Kante(o24)));
+
+    GEO_Kante o25 = new local GEO_KanteImpl();
+    o25.setIdentitaet("GKa9");
+    o25.setID_GEO_Knoten_A("GKn9");
+    o25.setID_GEO_Knoten_B("GKn10");
+    o25.setID_GEO_Art("TKa2");
+    o25.setGEO_Kante_Allg_GEO_Laenge(1000/1);
+    l = insert(l, Pair("GKa9", Objecttype_GEO_Kante(o25)));
+
+    GEO_Kante o26 = new local GEO_KanteImpl();
+    o26.setIdentitaet("GKa8");
+    o26.setID_GEO_Knoten_A("GKn8");
+    o26.setID_GEO_Knoten_B("GKn9");
+    o26.setID_GEO_Art("TKa2");
+    o26.setGEO_Kante_Allg_GEO_Laenge(1000/1);
+    l = insert(l, Pair("GKa8", Objecttype_GEO_Kante(o26)));
+
+    GEO_Kante o27 = new local GEO_KanteImpl();
+    o27.setIdentitaet("GKa7");
+    o27.setID_GEO_Knoten_A("GKn7");
+    o27.setID_GEO_Knoten_B("GKn8");
+    o27.setID_GEO_Art("TKa2");
+    o27.setGEO_Kante_Allg_GEO_Laenge(1000/1);
+    l = insert(l, Pair("GKa7", Objecttype_GEO_Kante(o27)));
+
+    GEO_Kante o28 = new local GEO_KanteImpl();
+    o28.setIdentitaet("GKa6");
+    o28.setID_GEO_Knoten_A("GKn6");
+    o28.setID_GEO_Knoten_B("GKn7");
+    o28.setID_GEO_Art("TKa2");
+    o28.setGEO_Kante_Allg_GEO_Laenge(1000/1);
+    l = insert(l, Pair("GKa6", Objecttype_GEO_Kante(o28)));
+
+    GEO_Kante o29 = new local GEO_KanteImpl();
+    o29.setIdentitaet("GKa5");
+    o29.setID_GEO_Knoten_A("GKn5");
+    o29.setID_GEO_Knoten_B("GKn6");
+    o29.setID_GEO_Art("TKa1");
+    o29.setGEO_Kante_Allg_GEO_Laenge(1000/1);
+    l = insert(l, Pair("GKa5", Objecttype_GEO_Kante(o29)));
+
+    GEO_Kante o30 = new local GEO_KanteImpl();
+    o30.setIdentitaet("GKa4");
+    o30.setID_GEO_Knoten_A("GKn4");
+    o30.setID_GEO_Knoten_B("GKn5");
+    o30.setID_GEO_Art("TKa1");
+    o30.setGEO_Kante_Allg_GEO_Laenge(1000/1);
+    l = insert(l, Pair("GKa4", Objecttype_GEO_Kante(o30)));
+
+    GEO_Kante o31 = new local GEO_KanteImpl();
+    o31.setIdentitaet("GKa3");
+    o31.setID_GEO_Knoten_A("GKn3");
+    o31.setID_GEO_Knoten_B("GKn4");
+    o31.setID_GEO_Art("TKa1");
+    o31.setGEO_Kante_Allg_GEO_Laenge(1000/1);
+    l = insert(l, Pair("GKa3", Objecttype_GEO_Kante(o31)));
+
+    GEO_Kante o32 = new local GEO_KanteImpl();
+    o32.setIdentitaet("GKa2");
+    o32.setID_GEO_Knoten_A("GKn2");
+    o32.setID_GEO_Knoten_B("GKn3");
+    o32.setID_GEO_Art("TKa1");
+    o32.setGEO_Kante_Allg_GEO_Laenge(1000/1);
+    l = insert(l, Pair("GKa2", Objecttype_GEO_Kante(o32)));
+
+    GEO_Kante o33 = new local GEO_KanteImpl();
+    o33.setIdentitaet("GKa1");
+    o33.setID_GEO_Knoten_A("GKn1");
+    o33.setID_GEO_Knoten_B("GKn2");
+    o33.setID_GEO_Art("TKa1");
+    o33.setGEO_Kante_Allg_GEO_Laenge(1000/1);
+    l = insert(l, Pair("GKa1", Objecttype_GEO_Kante(o33)));
+
+    GEO_Punkt o34 = new local GEO_PunktImpl();
+    o34.setIdentitaet("GP21");
+    o34.setID_GEO_Knoten(Just("GKn21"));
+    o34.setGEO_Punkt_Allg_GK_X(20000/1);
+    o34.setGEO_Punkt_Allg_GK_Y(0/1);
+    l = insert(l, Pair("GP21", Objecttype_GEO_Punkt(o34)));
+
+    GEO_Punkt o35 = new local GEO_PunktImpl();
+    o35.setIdentitaet("GP20");
+    o35.setID_GEO_Knoten(Just("GKn20"));
+    o35.setGEO_Punkt_Allg_GK_X(19000/1);
+    o35.setGEO_Punkt_Allg_GK_Y(0/1);
+    l = insert(l, Pair("GP20", Objecttype_GEO_Punkt(o35)));
+
+    GEO_Punkt o36 = new local GEO_PunktImpl();
+    o36.setIdentitaet("GP19");
+    o36.setID_GEO_Knoten(Just("GKn19"));
+    o36.setGEO_Punkt_Allg_GK_X(18000/1);
+    o36.setGEO_Punkt_Allg_GK_Y(0/1);
+    l = insert(l, Pair("GP19", Objecttype_GEO_Punkt(o36)));
+
+    GEO_Punkt o37 = new local GEO_PunktImpl();
+    o37.setIdentitaet("GP18");
+    o37.setID_GEO_Knoten(Just("GKn18"));
+    o37.setGEO_Punkt_Allg_GK_X(17000/1);
+    o37.setGEO_Punkt_Allg_GK_Y(0/1);
+    l = insert(l, Pair("GP18", Objecttype_GEO_Punkt(o37)));
+
+    GEO_Punkt o38 = new local GEO_PunktImpl();
+    o38.setIdentitaet("GP17");
+    o38.setID_GEO_Knoten(Just("GKn17"));
+    o38.setGEO_Punkt_Allg_GK_X(16000/1);
+    o38.setGEO_Punkt_Allg_GK_Y(0/1);
+    l = insert(l, Pair("GP17", Objecttype_GEO_Punkt(o38)));
+
+    GEO_Punkt o39 = new local GEO_PunktImpl();
+    o39.setIdentitaet("GP16");
+    o39.setID_GEO_Knoten(Just("GKn16"));
+    o39.setGEO_Punkt_Allg_GK_X(15000/1);
+    o39.setGEO_Punkt_Allg_GK_Y(0/1);
+    l = insert(l, Pair("GP16", Objecttype_GEO_Punkt(o39)));
+
+    GEO_Punkt o40 = new local GEO_PunktImpl();
+    o40.setIdentitaet("GP15");
+    o40.setID_GEO_Knoten(Just("GKn15"));
+    o40.setGEO_Punkt_Allg_GK_X(14000/1);
+    o40.setGEO_Punkt_Allg_GK_Y(0/1);
+    l = insert(l, Pair("GP15", Objecttype_GEO_Punkt(o40)));
+
+    GEO_Punkt o41 = new local GEO_PunktImpl();
+    o41.setIdentitaet("GP14");
+    o41.setID_GEO_Knoten(Just("GKn14"));
+    o41.setGEO_Punkt_Allg_GK_X(13000/1);
+    o41.setGEO_Punkt_Allg_GK_Y(0/1);
+    l = insert(l, Pair("GP14", Objecttype_GEO_Punkt(o41)));
+
+    GEO_Punkt o42 = new local GEO_PunktImpl();
+    o42.setIdentitaet("GP13");
+    o42.setID_GEO_Knoten(Just("GKn13"));
+    o42.setGEO_Punkt_Allg_GK_X(12000/1);
+    o42.setGEO_Punkt_Allg_GK_Y(0/1);
+    l = insert(l, Pair("GP13", Objecttype_GEO_Punkt(o42)));
+
+    GEO_Punkt o43 = new local GEO_PunktImpl();
+    o43.setIdentitaet("GP12");
+    o43.setID_GEO_Knoten(Just("GKn12"));
+    o43.setGEO_Punkt_Allg_GK_X(11000/1);
+    o43.setGEO_Punkt_Allg_GK_Y(0/1);
+    l = insert(l, Pair("GP12", Objecttype_GEO_Punkt(o43)));
+
+    GEO_Punkt o44 = new local GEO_PunktImpl();
+    o44.setIdentitaet("GP11");
+    o44.setID_GEO_Knoten(Just("GKn11"));
+    o44.setGEO_Punkt_Allg_GK_X(10000/1);
+    o44.setGEO_Punkt_Allg_GK_Y(0/1);
+    l = insert(l, Pair("GP11", Objecttype_GEO_Punkt(o44)));
+
+    GEO_Punkt o45 = new local GEO_PunktImpl();
+    o45.setIdentitaet("GP10");
+    o45.setID_GEO_Knoten(Just("GKn10"));
+    o45.setGEO_Punkt_Allg_GK_X(9000/1);
+    o45.setGEO_Punkt_Allg_GK_Y(0/1);
+    l = insert(l, Pair("GP10", Objecttype_GEO_Punkt(o45)));
+
+    GEO_Punkt o46 = new local GEO_PunktImpl();
+    o46.setIdentitaet("GP9");
+    o46.setID_GEO_Knoten(Just("GKn9"));
+    o46.setGEO_Punkt_Allg_GK_X(8000/1);
+    o46.setGEO_Punkt_Allg_GK_Y(0/1);
+    l = insert(l, Pair("GP9", Objecttype_GEO_Punkt(o46)));
+
+    GEO_Punkt o47 = new local GEO_PunktImpl();
+    o47.setIdentitaet("GP8");
+    o47.setID_GEO_Knoten(Just("GKn8"));
+    o47.setGEO_Punkt_Allg_GK_X(7000/1);
+    o47.setGEO_Punkt_Allg_GK_Y(0/1);
+    l = insert(l, Pair("GP8", Objecttype_GEO_Punkt(o47)));
+
+    GEO_Punkt o48 = new local GEO_PunktImpl();
+    o48.setIdentitaet("GP7");
+    o48.setID_GEO_Knoten(Just("GKn7"));
+    o48.setGEO_Punkt_Allg_GK_X(6000/1);
+    o48.setGEO_Punkt_Allg_GK_Y(0/1);
+    l = insert(l, Pair("GP7", Objecttype_GEO_Punkt(o48)));
+
+    GEO_Punkt o49 = new local GEO_PunktImpl();
+    o49.setIdentitaet("GP6");
+    o49.setID_GEO_Knoten(Just("GKn6"));
+    o49.setGEO_Punkt_Allg_GK_X(5000/1);
+    o49.setGEO_Punkt_Allg_GK_Y(0/1);
+    l = insert(l, Pair("GP6", Objecttype_GEO_Punkt(o49)));
+
+    GEO_Punkt o50 = new local GEO_PunktImpl();
+    o50.setIdentitaet("GP5");
+    o50.setID_GEO_Knoten(Just("GKn5"));
+    o50.setGEO_Punkt_Allg_GK_X(4000/1);
+    o50.setGEO_Punkt_Allg_GK_Y(0/1);
+    l = insert(l, Pair("GP5", Objecttype_GEO_Punkt(o50)));
+
+    GEO_Punkt o51 = new local GEO_PunktImpl();
+    o51.setIdentitaet("GP4");
+    o51.setID_GEO_Knoten(Just("GKn4"));
+    o51.setGEO_Punkt_Allg_GK_X(3000/1);
+    o51.setGEO_Punkt_Allg_GK_Y(0/1);
+    l = insert(l, Pair("GP4", Objecttype_GEO_Punkt(o51)));
+
+    GEO_Punkt o52 = new local GEO_PunktImpl();
+    o52.setIdentitaet("GP3");
+    o52.setID_GEO_Knoten(Just("GKn3"));
+    o52.setGEO_Punkt_Allg_GK_X(2000/1);
+    o52.setGEO_Punkt_Allg_GK_Y(0/1);
+    l = insert(l, Pair("GP3", Objecttype_GEO_Punkt(o52)));
+
+    GEO_Punkt o53 = new local GEO_PunktImpl();
+    o53.setIdentitaet("GP2");
+    o53.setID_GEO_Knoten(Just("GKn2"));
+    o53.setGEO_Punkt_Allg_GK_X(1000/1);
+    o53.setGEO_Punkt_Allg_GK_Y(0/1);
+    l = insert(l, Pair("GP2", Objecttype_GEO_Punkt(o53)));
+
+    GEO_Punkt o54 = new local GEO_PunktImpl();
+    o54.setIdentitaet("GP1");
+    o54.setID_GEO_Knoten(Just("GKn1"));
+    o54.setGEO_Punkt_Allg_GK_X(0/1);
+    o54.setGEO_Punkt_Allg_GK_Y(0/1);
+    l = insert(l, Pair("GP1", Objecttype_GEO_Punkt(o54)));
+
+    GEO_Knoten o55 = new local GEO_KnotenImpl();
+    o55.setIdentitaet("GKn21");
+    l = insert(l, Pair("GKn21", Objecttype_GEO_Knoten(o55)));
+
+    GEO_Knoten o56 = new local GEO_KnotenImpl();
+    o56.setIdentitaet("GKn20");
+    l = insert(l, Pair("GKn20", Objecttype_GEO_Knoten(o56)));
+
+    GEO_Knoten o57 = new local GEO_KnotenImpl();
+    o57.setIdentitaet("GKn19");
+    l = insert(l, Pair("GKn19", Objecttype_GEO_Knoten(o57)));
+
+    GEO_Knoten o58 = new local GEO_KnotenImpl();
+    o58.setIdentitaet("GKn18");
+    l = insert(l, Pair("GKn18", Objecttype_GEO_Knoten(o58)));
+
+    GEO_Knoten o59 = new local GEO_KnotenImpl();
+    o59.setIdentitaet("GKn17");
+    l = insert(l, Pair("GKn17", Objecttype_GEO_Knoten(o59)));
+
+    GEO_Knoten o60 = new local GEO_KnotenImpl();
+    o60.setIdentitaet("GKn16");
+    l = insert(l, Pair("GKn16", Objecttype_GEO_Knoten(o60)));
+
+    GEO_Knoten o61 = new local GEO_KnotenImpl();
+    o61.setIdentitaet("GKn15");
+    l = insert(l, Pair("GKn15", Objecttype_GEO_Knoten(o61)));
+
+    GEO_Knoten o62 = new local GEO_KnotenImpl();
+    o62.setIdentitaet("GKn14");
+    l = insert(l, Pair("GKn14", Objecttype_GEO_Knoten(o62)));
+
+    GEO_Knoten o63 = new local GEO_KnotenImpl();
+    o63.setIdentitaet("GKn13");
+    l = insert(l, Pair("GKn13", Objecttype_GEO_Knoten(o63)));
+
+    GEO_Knoten o64 = new local GEO_KnotenImpl();
+    o64.setIdentitaet("GKn12");
+    l = insert(l, Pair("GKn12", Objecttype_GEO_Knoten(o64)));
+
+    GEO_Knoten o65 = new local GEO_KnotenImpl();
+    o65.setIdentitaet("GKn11");
+    l = insert(l, Pair("GKn11", Objecttype_GEO_Knoten(o65)));
+
+    GEO_Knoten o66 = new local GEO_KnotenImpl();
+    o66.setIdentitaet("GKn10");
+    l = insert(l, Pair("GKn10", Objecttype_GEO_Knoten(o66)));
+
+    GEO_Knoten o67 = new local GEO_KnotenImpl();
+    o67.setIdentitaet("GKn9");
+    l = insert(l, Pair("GKn9", Objecttype_GEO_Knoten(o67)));
+
+    GEO_Knoten o68 = new local GEO_KnotenImpl();
+    o68.setIdentitaet("GKn8");
+    l = insert(l, Pair("GKn8", Objecttype_GEO_Knoten(o68)));
+
+    GEO_Knoten o69 = new local GEO_KnotenImpl();
+    o69.setIdentitaet("GKn7");
+    l = insert(l, Pair("GKn7", Objecttype_GEO_Knoten(o69)));
+
+    GEO_Knoten o70 = new local GEO_KnotenImpl();
+    o70.setIdentitaet("GKn6");
+    l = insert(l, Pair("GKn6", Objecttype_GEO_Knoten(o70)));
+
+    GEO_Knoten o71 = new local GEO_KnotenImpl();
+    o71.setIdentitaet("GKn5");
+    l = insert(l, Pair("GKn5", Objecttype_GEO_Knoten(o71)));
+
+    GEO_Knoten o72 = new local GEO_KnotenImpl();
+    o72.setIdentitaet("GKn4");
+    l = insert(l, Pair("GKn4", Objecttype_GEO_Knoten(o72)));
+
+    GEO_Knoten o73 = new local GEO_KnotenImpl();
+    o73.setIdentitaet("GKn3");
+    l = insert(l, Pair("GKn3", Objecttype_GEO_Knoten(o73)));
+
+    GEO_Knoten o74 = new local GEO_KnotenImpl();
+    o74.setIdentitaet("GKn2");
+    l = insert(l, Pair("GKn2", Objecttype_GEO_Knoten(o74)));
+
+    GEO_Knoten o75 = new local GEO_KnotenImpl();
+    o75.setIdentitaet("GKn1");
+    l = insert(l, Pair("GKn1", Objecttype_GEO_Knoten(o75)));
+
+    entrylist = appendright(entrylist, o4);
+    exitlist = appendright(exitlist, o1);
+    //constructor.setEntryList(entrylist);
+    //constructor.setExitList(exitlist);
+    //l = constructor.constructEtcsL2Line(l);
+    //xmlw.printXmlInfo(l);
+
+
+    List<Pair<TOP_Kante, Bool>> resultlist1 = util.getNextTOP_Kante(l, o6, True);
+    Int count1 = length(resultlist1);
+    println("ListCount1=" + toString(count1));
+    Pair<TOP_Kante, Bool> entrypair1 = nth(resultlist1, 0);
+    TOP_Kante tka_result1 = fst(entrypair1);
+    String guidOld = o6.getIdentitaet();
+    println("tkaOld=" + guidOld);
+    String guid1 = tka_result1.getIdentitaet();
+    println("tkaId1=" + guid1);
+
+    List<Pair<TOP_Kante, Bool>> resultlist2 = util.getNextTOP_Kante(l, o6, False);
+    Int count2 = length(resultlist2);
+    println("ListCount2=" + toString(count2));
+    Pair<TOP_Kante, Bool> entrypair2 = nth(resultlist2, 0);
+    TOP_Kante tka_result2 = fst(entrypair2);
+    String guid2 = tka_result2.getIdentitaet();
+    println("tkaId2=" + guid2);
+
+    List<Pair<TOP_Kante, Bool>> resultlist3 = util.getNextTOP_Kante(l, o5, True);
+    Int count3 = length(resultlist3);
+    println("ListCount3=" + toString(count3));
+
+    println("-------------------------------");
+
+    TMeter dist1 = util.calculateDistance(l, o3, o2, True);
+    println("dist1=" + toString(dist1));
+    TMeter dist2 = util.calculateDistance(l, o2, o3, False);
+    println("dist2=" + toString(dist2));
+    TMeter dist3 = util.calculateDistance(l, o2, o3, True);
+    println("dist3=" + toString(dist3));
+    TMeter dist4 = util.calculateDistance(l, o4, o2, True);
+    println("dist4=" + toString(dist4));
+    TMeter dist5 = util.calculateDistance(l, o1, o4, False);
+    println("dist5=" + toString(dist5));
+
+    println("-------------------------------");
+
+    List<Punkt_Objekt> objectlist1 = util.calculatePosition(l, o4, 10000);
+    Int olcount1 = length(objectlist1);
+    println("olcount1=" + toString(olcount1));
+    Punkt_Objekt po1 = nth(objectlist1, 0);
+    List<Punkt_Objekt_TOP_Kante> tdpkantenlist = po1.getPunkt_Objekt_TOP_Kante();
+    Punkt_Objekt_TOP_Kante tdpTopKantenGroup = nth(tdpkantenlist, 0); // Take the first element (only one reference edge)
+    TGUID tkaid_po1 = tdpTopKantenGroup.getID_TOP_Kante();
+    TMeter abstand_po1 =  tdpTopKantenGroup.getAbstand();
+    Maybe<TWirkrichtung> wirkrichtung_po1Maybe = tdpTopKantenGroup.getWirkrichtung();
+    TWirkrichtung wirkrichtung_po1 = fromJust(wirkrichtung_po1Maybe);
+    println("tkaid_po1=" + tkaid_po1);
+    println("abstand_po1=" + toString(abstand_po1));
+    println("wirkrichtung_po1=" + toString(wirkrichtung_po1));
+
+    List<Punkt_Objekt> objectlist2 = util.calculatePosition(l, o4, 100000);
+    Int olcount2 = length(objectlist2);
+    println("olcount2=" + toString(olcount2));
+  }
+}
+
+{
+  new local TestImpl();
+}
+

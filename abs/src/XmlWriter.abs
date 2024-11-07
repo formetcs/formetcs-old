@@ -1,0 +1,485 @@
+module XmlWriter;
+
+export *;
+import * from Util;
+import * from Metaobject;
+import * from BasisTypen;
+import * from Basisobjekte;
+import * from Geodaten;
+import * from Signale;
+import * from ETCS;
+import * from Block;
+
+
+
+
+
+interface XmlWriter {
+  Unit printXmlInfo(Map<TGUID, PlanProObject> m);
+}
+
+class XmlWriter implements XmlWriter {
+
+  Unit printUrObjektData(Ur_Objekt o) {
+    TGUID guid = o.getIdentitaet();
+    println("       <Identitaet><Wert>" + guid + "</Wert></Identitaet>");
+  }
+
+  Unit printBasisObjektData(Basis_Objekt o) {
+    List<TGUID> bearbeitungsvermerkListe = o.getID_Bearbeitungsvermerk();
+    Maybe<TText> referenzMaybe = o.getObjektreferenzenDB_GDI_Referenz();
+    Maybe<TText> platzMaybe = o.getObjektreferenzenTechnischer_Platz();
+    Maybe<ENUMObjektzustand_Besonders> zustandMaybe = o.getBasis_Objekt_Allg_Objektzustand_Besonders();
+    Maybe<TGUID> regelwerkMaybe = o.getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders();
+    Maybe<Date> datumRegelwerkMaybe = o.getBasis_Objekt_Allg_Datum_Regelwerk();
+    Int c = 0;
+    while(c < length(bearbeitungsvermerkListe)) {
+      TGUID bearbeitungsvermerk = nth(bearbeitungsvermerkListe, c);
+      println("       <ID_Bearbeitungsvermerk><Wert>" + bearbeitungsvermerk + "</Wert></ID_Bearbeitungsvermerk>");
+      c = c + 1;
+    }
+    println("       <Objektreferenzen>");
+    if(isJust(referenzMaybe)) {
+      TText referenz = fromJust(referenzMaybe);
+      println("        <DB_GDI_Referenz><Wert>" + referenz + "</Wert></DB_GDI_Referenz>");
+    }
+    if(isJust(platzMaybe)) {
+      TText platz = fromJust(platzMaybe);
+      println("        <Technischer_Platz><Wert>" + platz + "</Wert></Technischer_Platz>");
+    }
+    println("       </Objektreferenzen>");
+    println("       <Basis_Objekt_Allg>");
+    if(isJust(zustandMaybe)) {
+      ENUMObjektzustand_Besonders zustand = fromJust(zustandMaybe);
+      println("        <Objektzustand_Besonders><Wert>" + printObjektzustand_Besonders(zustand) + "</Wert></Objektzustand_Besonders>");
+    }
+    if(isJust(regelwerkMaybe)) {
+      TGUID regelwerk = fromJust(regelwerkMaybe);
+      println("        <ID_Anhang_Regelwerk_Besonders><Wert>" + regelwerk + "</Wert></ID_Anhang_Regelwerk_Besonders>");
+    }
+    if(isJust(datumRegelwerkMaybe)) {
+      Date datumRegelwerk = fromJust(datumRegelwerkMaybe);
+      println("        <Datum_Regelwerk><Wert>" + datumRegelwerk + "</Wert></Datum_Regelwerk>");
+    }
+    println("       </Basis_Objekt_Allg>");
+  }
+
+  Unit printPunktObjektData(Punkt_Objekt o) {
+    Util util = new local Util();
+    List<Punkt_Objekt_Strecke> punktObjektStreckeList = o.getPunkt_Objekt_Strecke();
+    List<Punkt_Objekt_TOP_Kante> punktObjektTopkanteList = o.getPunkt_Objekt_TOP_Kante();
+    Int c = 0;
+    while(c < length(punktObjektStreckeList)) {
+      Punkt_Objekt_Strecke punktObjektStrecke = nth(punktObjektStreckeList, c);
+      TGUID idStrecke = punktObjektStrecke.getID_Strecke();
+      TKilometrierung kilometrierung = punktObjektStrecke.getStrecke_Km();
+      println("       <Punkt_Objekt_Strecke>");
+      println("        <ID_Strecke><Wert>" + idStrecke + "</Wert></ID_Strecke>");
+      println("        <Strecke_Km><Wert>" + kilometrierung + "</Wert></Strecke_Km>");
+      println("       </Punkt_Objekt_Strecke>");
+      c = c + 1;
+    }
+    c = 0;
+    while(c < length(punktObjektTopkanteList)) {
+      Punkt_Objekt_TOP_Kante punktObjektTopkante = nth(punktObjektTopkanteList, c);
+      TGUID kante = punktObjektTopkante.getID_TOP_Kante();
+      TMeter abstand = punktObjektTopkante.getAbstand();
+      String abstandString = util.toFloatString(abstand, 6);
+      Maybe<TWirkrichtung> wirkrichtungMaybe = punktObjektTopkante.getWirkrichtung();
+      Maybe<TLinksRechts> seitliche_lageMaybe = punktObjektTopkante.getSeitliche_Lage();
+      Maybe<TMeter> seitlicher_abstandMaybe = punktObjektTopkante.getSeitlicher_Abstand();
+      println("       <Punkt_Objekt_TOP_Kante>");
+      println("        <ID_TOP_Kante><Wert>" + kante + "</Wert></ID_TOP_Kante>");
+      println("        <Abstand><Wert>" + abstandString + "</Wert></Abstand>");
+      if(isJust(seitlicher_abstandMaybe)) {
+        TMeter seitlicher_abstand = fromJust(seitlicher_abstandMaybe);
+        String seitlicherAbstandString = util.toFloatString(seitlicher_abstand, 6);
+        println("        <Seitlicher_Abstand><Wert>" + seitlicherAbstandString + "</Wert></Seitlicher_Abstand>");
+      }
+      if(isJust(seitliche_lageMaybe)) {
+        TLinksRechts seitliche_lage = fromJust(seitliche_lageMaybe);
+        println("        <Seitliche_Lage><Wert>" + printLinksRechts(seitliche_lage) + "</Wert></Seitliche_Lage>");
+      }
+      if(isJust(wirkrichtungMaybe)) {
+        TWirkrichtung wirkrichtung = fromJust(wirkrichtungMaybe);
+        println("        <Wirkrichtung><Wert>" + printWirkrichtung(wirkrichtung) + "</Wert></Wirkrichtung>");
+      }
+      println("       </Punkt_Objekt_TOP_Kante>");
+      c = c + 1;
+    }
+  }
+
+  Unit printXmlInfo(Map<TGUID, PlanProObject> m) {
+    println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+    println("<nsPlanPro:PlanPro_Schnittstelle>");
+    println(" <LST_Planung_Projekt>");
+    println("  <LST_Planung_Gruppe>");
+    println("   <LST_Planung_Einzel>");
+    println("    <LST_Zustand_Ziel>");
+    println("     <Container>");
+    List<PlanProObject> l = values(m);
+    Int counter = 0;
+    Util util = new local Util();
+    while(counter < length(l)) {
+      PlanProObject temp = nth(l, counter);
+      case temp {
+        Objecttype_GEO_Knoten(o) => {
+                                      GEO_Knoten t = o;
+                                      Int step = t.getStep();
+                                      Maybe<TText> geoPadMaybe = t.getGEO_PAD();
+                                      println("      <GEO_Knoten step=\"" + toString(step) + "\">");
+                                      this.printUrObjektData(t);
+                                      this.printBasisObjektData(t);
+                                      if(isJust(geoPadMaybe)) {
+                                        TText geoPad = fromJust(geoPadMaybe);
+                                        println("       <GEO_PAD><Wert>" + geoPad + "</Wert></GEO_PAD>");
+                                      }
+                                      println("      </GEO_Knoten>");
+                                    }
+        Objecttype_GEO_Kante(o) =>  {
+                                      GEO_Kante t = o;
+                                      Int step = t.getStep();
+                                      TGUID knoten_a = t.getID_GEO_Knoten_A();
+                                      TGUID knoten_b = t.getID_GEO_Knoten_B();
+                                      TGUID geo_art = t.getID_GEO_Art();
+                                      TMeter laenge = t.getGEO_Kante_Allg_GEO_Laenge();
+                                      String laengeString = util.toFloatString(laenge, 6);
+                                      Maybe<TMeter> radiusAMaybe = t.getGEO_Kante_Allg_GEO_Radius_A();
+                                      Maybe<TMeter> radiusBMaybe = t.getGEO_Kante_Allg_GEO_Radius_B();
+                                      Maybe<Decimal> richtungswinkelMaybe = t.getGEO_Kante_Allg_GEO_Richtungswinkel();
+                                      ENUMPlan_Quelle planQuelle = t.getGEO_Kante_Allg_Plan_Quelle();
+                                      Maybe<ENUMGEO_Form> geoFormMaybe = t.getGEO_Kante_Allg_GEO_Form();
+                                      println("      <GEO_Kante step=\"" + toString(step) + "\">");
+                                      this.printUrObjektData(t);
+                                      this.printBasisObjektData(t);
+                                      println("       <ID_GEO_Knoten_A><Wert>" + knoten_a + "</Wert></ID_GEO_Knoten_A>");
+                                      println("       <ID_GEO_Knoten_B><Wert>" + knoten_b + "</Wert></ID_GEO_Knoten_B>");
+                                      println("       <ID_GEO_Art><Wert>" + geo_art + "</Wert></ID_GEO_Art>");
+                                      println("       <GEO_Kante_Allg>");
+                                      println("        <GEO_Laenge><Wert>" + laengeString + "</Wert></GEO_Laenge>");
+                                      println("        <Plan_Quelle><Wert>" + printPlan_Quelle(planQuelle) + "</Wert></Plan_Quelle>");
+                                      if(isJust(radiusAMaybe)) {
+                                        TMeter radiusA = fromJust(radiusAMaybe);
+                                        String radiusAString = util.toFloatString(radiusA, 6);
+                                        println("        <GEO_Radius_A><Wert>" + radiusAString + "</Wert></GEO_Radius_A>");
+                                      }
+                                      if(isJust(radiusBMaybe)) {
+                                        TMeter radiusB = fromJust(radiusBMaybe);
+                                        String radiusBString = util.toFloatString(radiusB, 6);
+                                        println("        <GEO_Radius_B><Wert>" + radiusBString + "</Wert></GEO_Radius_B>");
+                                      }
+                                      if(isJust(richtungswinkelMaybe)) {
+                                        Decimal richtungswinkel = fromJust(richtungswinkelMaybe);
+                                        String richtungswinkelString = util.toFloatString(richtungswinkel, 6);
+                                        println("        <GEO_Richtungswinkel><Wert>" + richtungswinkelString + "</Wert></GEO_Richtungswinkel>");
+                                      }
+                                      if(isJust(geoFormMaybe)) {
+                                        ENUMGEO_Form geoForm = fromJust(geoFormMaybe);
+                                        println("        <GEO_Form><Wert>" + printGEO_Form(geoForm) + "</Wert></GEO_Form>");
+                                      }
+                                      println("       </GEO_Kante_Allg>");
+                                      println("      </GEO_Kante>");
+                                    }
+        Objecttype_GEO_Punkt(o) =>  {
+                                      GEO_Punkt t = o;
+                                      Int step = t.getStep();
+                                      Maybe<TGUID> knotenMaybe = t.getID_GEO_Knoten();
+                                      ENUMPlan_Quelle planQuelle = t.getGEO_Punkt_Allg_Plan_Quelle();
+                                      Decimal gkx = t.getGEO_Punkt_Allg_GK_X();
+                                      String gkxString = util.toFloatString(gkx, 6);
+                                      Decimal gky = t.getGEO_Punkt_Allg_GK_Y();
+                                      String gkyString = util.toFloatString(gky, 6);
+                                      Maybe<Decimal> gkzMaybe = t.getGEO_Punkt_Allg_GK_Z();
+                                      Maybe<TZeichenkette> koorLsysMaybe = t.getGEO_Punkt_Allg_GEO_KoordinatenSystem_LSys();
+                                      Maybe<TZeichenkette> koorSonstMaybe = t.getGEO_Punkt_Allg_GEO_KoordinatenSystem_Sonstige();
+                                      println("      <GEO_Punkt step=\"" + toString(step) + "\">");
+                                      this.printUrObjektData(t);
+                                      this.printBasisObjektData(t);
+                                      if(isJust(knotenMaybe)) {
+                                        TGUID knoten = fromJust(knotenMaybe);
+                                        println("       <ID_GEO_Knoten><Wert>" + knoten + "</Wert></ID_GEO_Knoten>");
+                                      }
+                                      println("       <GEO_Punkt_Allg>");
+                                      println("        <Plan_Quelle><Wert>" + printPlan_Quelle(planQuelle) + "</Wert></Plan_Quelle>");
+                                      println("        <GK_X><Wert>" + gkxString + "</Wert></GK_X>");
+                                      println("        <GK_Y><Wert>" + gkyString + "</Wert></GK_Y>");
+                                      if(isJust(gkzMaybe)) {
+                                        Decimal gkz = fromJust(gkzMaybe);
+                                        String gkzString = util.toFloatString(gkz, 6);
+                                        println("        <GK_Z><Wert>" + gkzString + "</Wert></GK_Z>");
+                                      }
+                                      if(isJust(koorLsysMaybe)) {
+                                        TZeichenkette koorLsys = fromJust(koorLsysMaybe);
+                                        println("        <GEO_KoordinatenSystem_LSys><Wert>" + koorLsys + "</Wert></GEO_KoordinatenSystem_LSys>");
+                                      }
+                                      if(isJust(koorSonstMaybe)) {
+                                        TZeichenkette koorSonst = fromJust(koorSonstMaybe);
+                                        println("        <GEO_KoordinatenSystem_Sonstige><Wert>" + koorSonst + "</Wert></GEO_KoordinatenSystem_Sonstige>");
+                                      }
+                                      println("       </GEO_Punkt_Allg>");
+                                      println("      </GEO_Punkt>");
+                                    }
+        Objecttype_TOP_Knoten(o) => {
+                                      TOP_Knoten t = o;
+                                      Int step = t.getStep();
+                                      TGUID id_geoknoten = t.getID_GEO_Knoten();
+                                      Maybe<TText> nameMaybe = t.getTOP_Knoten_Allg_Knotenname();
+                                      Maybe<ENUMArt_Besonders> artBesondersMaybe = t.getTOP_Knoten_Allg_Art_Besonders();
+                                      println("      <TOP_Knoten step=\"" + toString(step) + "\">");
+                                      this.printUrObjektData(t);
+                                      this.printBasisObjektData(t);
+                                      println("       <ID_GEO_Knoten><Wert>" + id_geoknoten + "</Wert></ID_GEO_Knoten>");
+                                      println("       <TOP_Knoten_Allg>");
+                                      if(isJust(nameMaybe)) {
+                                        TText name = fromJust(nameMaybe);
+                                        println("        <Knotenname><Wert>" + name + "</Wert></Knotenname>");
+                                      }
+                                      if(isJust(artBesondersMaybe)) {
+                                        ENUMArt_Besonders artBesonders = fromJust(artBesondersMaybe);
+                                        println("        <Art_Besonders><Wert>" + printArt_Besonders(artBesonders) + "</Wert></Art_Besonders>");
+                                      }
+                                      println("       </TOP_Knoten_Allg>");
+                                      println("      </TOP_Knoten>");
+                                    }
+        Objecttype_TOP_Kante(o) =>  {
+                                      TOP_Kante t = o;
+                                      Int step = t.getStep();
+                                      TGUID knoten_a = t.getID_TOP_Knoten_A();
+                                      TGUID knoten_b = t.getID_TOP_Knoten_B();
+                                      ENUMTOP_Anschluss anschluss_a = t.getTOP_Kante_Allg_TOP_Anschluss_A();
+                                      ENUMTOP_Anschluss anschluss_b = t.getTOP_Kante_Allg_TOP_Anschluss_B();
+                                      TMeter laenge = t.getTOP_Kante_Allg_TOP_Laenge();
+                                      String laengeString = util.toFloatString(laenge, 6);
+                                      println("      <TOP_Kante step=\"" + toString(step) + "\">");
+                                      this.printUrObjektData(t);
+                                      this.printBasisObjektData(t);
+                                      println("       <ID_TOP_Knoten_A><Wert>" + knoten_a + "</Wert></ID_TOP_Knoten_A>");
+                                      println("       <ID_TOP_Knoten_B><Wert>" + knoten_b + "</Wert></ID_TOP_Knoten_B>");
+                                      println("       <TOP_Kante_Allg>");
+                                      println("        <TOP_Laenge><Wert>" + laengeString + "</Wert></TOP_Laenge>");
+                                      println("        <TOP_Anschluss_A><Wert>" + printTOP_Anschluss(anschluss_a) + "</Wert></TOP_Anschluss_A>");
+                                      println("        <TOP_Anschluss_B><Wert>" + printTOP_Anschluss(anschluss_b) + "</Wert></TOP_Anschluss_B>");
+                                      println("       </TOP_Kante_Allg>");
+                                      println("      </TOP_Kante>");
+                                    }
+        Objecttype_Signal(o) =>     {
+                                      Signal t = o;
+                                      Int step = t.getStep();
+                                      Maybe<CBezeichnung_Element> bezMaybe = t.getBezeichnung();
+                                      Maybe<TGUID> raVerbotMaybe = t.getSignal_Fstr_Aus_Inselgleis_ID_RaFahrt_Gleichzeitig_Verbot();
+                                      Maybe<TGUID> zgVerbotMaybe = t.getSignal_Fstr_Aus_Inselgleis_ID_ZgFahrt_Gleichzeitig_Verbot();
+                                      Maybe<Bool> gegengleisMaybe = t.getSignal_Fstr_S_Gegengleis();
+                                      Maybe<TGUID> anrueckverschlussMaybe = t.getSignal_Fstr_S_ID_Anrueckverschluss();
+                                      Maybe<Bool> daManuellMaybe = t.getSignal_Fstr_DA_Manuell();
+                                      Maybe<ENUMDurchfahrt> durchfahrtMaybe = t.getSignal_Fstr_Durchfahrt();
+                                      Maybe<TGUID> erlaubnisabhMaybe = t.getSignal_Fstr_ID_RaZiel_Erlaubnisabhaengig();
+                                      Maybe<Bool> restaufloesungMaybe = t.getSignal_Fstr_Rangierstrasse_Restaufloesung();
+                                      Maybe<TMeter> schutzstreckeSollMaybe = t.getSignal_PZB_PZB_Schutzstrecke_Soll();
+                                      SignalFiktivReal sfikreal = t.getSignalFiktivReal();
+                                      println("      <Signal step=\"" + toString(step) + "\">");
+                                      this.printUrObjektData(t);
+                                      this.printBasisObjektData(t);
+                                      this.printPunktObjektData(t);
+                                      if(isJust(bezMaybe)) {
+                                        CBezeichnung_Element bez = fromJust(bezMaybe);
+                                        TKennzahl kennzahl = bez.getKennzahl();
+                                        TZeichenkette elem_bez = bez.getOertlicher_Elementbezeichner();
+                                        TText bezeichnung_kurz = bez.getBezeichnung_Lageplan_Kurz();
+                                        TText bezeichnung_lang  = bez.getBezeichnung_Lageplan_Lang();
+                                        TText bezeichnung_tabelle = bez.getBezeichnung_Tabelle();
+                                        TText bezeichnung_ausanl = bez.getBezeichnung_Aussenanlage();
+                                        println("       <Bezeichnung>");
+                                        println("        <Kennzahl><Wert>" + kennzahl + "</Wert></Kennzahl>");
+                                        println("        <Oertlicher_Elementbezeichner><Wert>" + elem_bez + "</Wert></Oertlicher_Elementbezeichner>");
+                                        println("        <Bezeichnung_Lageplan_Kurz><Wert>" + bezeichnung_kurz + "</Wert></Bezeichnung_Lageplan_Kurz>");
+                                        println("        <Bezeichnung_Lageplan_Lang><Wert>" + bezeichnung_lang + "</Wert></Bezeichnung_Lageplan_Lang>");
+                                        println("        <Bezeichnung_Tabelle><Wert>" + bezeichnung_tabelle + "</Wert></Bezeichnung_Tabelle>");
+                                        println("        <Bezeichnung_Aussenanlage><Wert>" + bezeichnung_ausanl + "</Wert></Bezeichnung_Aussenanlage>");
+                                        println("       </Bezeichnung>");
+                                      }
+                                      println("       <Signal_Fstr_Aus_Inselgleis>");
+                                      if(isJust(raVerbotMaybe)) {
+                                        TGUID raVerbot = fromJust(raVerbotMaybe);
+                                        println("        <ID_RaFahrt_Gleichzeitig_Verbot><Wert>" + raVerbot + "</Wert></ID_RaFahrt_Gleichzeitig_Verbot>");
+                                      }
+                                      if(isJust(zgVerbotMaybe)) {
+                                        TGUID zgVerbot = fromJust(zgVerbotMaybe);
+                                        println("        <ID_ZgFahrt_Gleichzeitig_Verbot><Wert>" + zgVerbot + "</Wert></ID_ZgFahrt_Gleichzeitig_Verbot>");
+                                      }
+                                      println("       </Signal_Fstr_Aus_Inselgleis>");
+                                      println("       <Signal_Fstr_S>");
+                                      if(isJust(gegengleisMaybe)) {
+                                        Bool gegengleis = fromJust(gegengleisMaybe);
+                                        println("        <Gegengleis><Wert>" + toString(gegengleis) + "</Wert></Gegengleis>");
+                                      }
+                                      if(isJust(anrueckverschlussMaybe)) {
+                                        TGUID anrueckverschluss = fromJust(anrueckverschlussMaybe);
+                                        println("        <ID_Anrueckverschluss><Wert>" + anrueckverschluss + "</Wert></ID_Anrueckverschluss>");
+                                      }
+                                      println("       </Signal_Fstr_S>");
+                                      println("       <Signal_Fstr>");
+                                      if(isJust(daManuellMaybe)) {
+                                        Bool daManuell = fromJust(daManuellMaybe);
+                                        println("        <DA_Manuell><Wert>" + toString(daManuell) + "</Wert></DA_Manuell>");
+                                      }
+                                      if(isJust(durchfahrtMaybe)) {
+                                        ENUMDurchfahrt durchfahrt = fromJust(durchfahrtMaybe);
+                                        println("        <Durchfahrt><Wert>" + printDurchfahrt(durchfahrt) + "</Wert></Durchfahrt>");
+                                      }
+                                      if(isJust(erlaubnisabhMaybe)) {
+                                        TGUID erlaubnisabh = fromJust(erlaubnisabhMaybe);
+                                        println("        <ID_RaZiel_Erlaubnisabhaengig><Wert>" + erlaubnisabh + "</Wert></ID_RaZiel_Erlaubnisabhaengig>");
+                                      }
+                                      if(isJust(restaufloesungMaybe)) {
+                                        Bool restaufloesung = fromJust(restaufloesungMaybe);
+                                        println("        <Rangierstrasse_Restaufloesung><Wert>" + toString(restaufloesung) + "</Wert></Rangierstrasse_Restaufloesung>");
+                                      }
+                                      println("       </Signal_Fstr>");
+                                      println("       <Signal_PZB>");
+                                      if(isJust(schutzstreckeSollMaybe)) {
+                                        TMeter schutzstreckeSoll = fromJust(schutzstreckeSollMaybe);
+                                        String schutzstreckeSollString = util.toFloatString(schutzstreckeSoll, 6);
+                                        println("        <PZB_Schutzstrecke_Soll><Wert>" + schutzstreckeSollString + "</Wert></PZB_Schutzstrecke_Soll>");
+                                      }
+                                      println("       </Signal_PZB>");
+                                      case sfikreal {
+                                        SignalFiktiv(sfik) =>  {
+                                                                 Signal_Fiktiv sf = sfik;
+                                                                 Maybe<ENUMAuto_Einstellung> autoEinstMaybe = sf.getAuto_Einstellung();
+                                                                 ENUMFiktives_Signal_Funktion fiktivessignalfunktion = sf.getFiktives_Signal_Funktion();
+                                                                 println("       <Signal_Fiktiv>");
+                                                                 println("        <Fiktives_Signal_Funktion><Wert>" + printFiktives_Signal_Funktion(fiktivessignalfunktion) + "</Wert></Fiktives_Signal_Funktion>");
+                                                                 if(isJust(autoEinstMaybe)) {
+                                                                   ENUMAuto_Einstellung autoEinst = fromJust(autoEinstMaybe);
+                                                                   println("        <Auto_Einstellung><Wert>" + printAuto_Einstellung(autoEinst) + "</Wert></Auto_Einstellung>");
+                                                                 }
+                                                                 println("       </Signal_Fiktiv>");
+                                                               }
+                                        SignalReal(sreal) =>   {
+                                                                 Signal_Real sr = sreal;
+                                                                 Maybe<ENUMBedienart> bedienartMaybe = sr.getSignal_Real_Aktiv_Schirm_Bedienart();
+                                                                 Maybe<TText> richtpunktMaybe = sr.getSignal_Real_Aktiv_Schirm_Richtpunkt();
+                                                                 Maybe<Bool> dunkelschaltungMaybe = sr.getSignal_Real_Aktiv_Schirm_Dunkelschaltung();
+                                                                 Maybe<TMeter> richtpunktEntfernungMaybe = sr.getSignal_Real_Aktiv_Schirm_Richtpunktentfernung();
+                                                                 Maybe<ENUMSignalsystem> signalsystemMaybe = sr.getSignal_Real_Aktiv_Schirm_Signalsystem();
+                                                                 Maybe<ENUMStreuscheibe_Art> streuscheibeArtMaybe = sr.getSignal_Real_Aktiv_Schirm_Streuscheibe_Art();
+                                                                 Maybe<ENUMStreuscheibe_Betriebsstellung> streuscheibeBetriebsstellungMaybe = sr.getSignal_Real_Aktiv_Schirm_Streuscheibe_Betriebsstellung();
+                                                                 Maybe<ENUMSignal_Art> signalartMaybe = sr.getSignal_Real_Aktiv_Schirm_Signal_Art();
+                                                                 Maybe<TGUID> idStellelementMaybe = sr.getSignal_Real_Aktiv_ID_Stellelement();
+                                                                 Maybe<TMeter> sichtMindestMaybe = sr.getSignal_Real_Aktiv_Signalsicht_Mindest();
+                                                                 Maybe<TMeter> sichtSollMaybe = sr.getSignal_Real_Aktiv_Signalsicht_Soll();
+                                                                 Maybe<TMeter> sichtErreichbarMaybe = sr.getSignal_Real_Aktiv_Signalsicht_Erreichbar();
+                                                                 Maybe<ENUMTunnelsignal> tunnelsignalMaybe = sr.getSignal_Real_Aktiv_Tunnelsignal();
+                                                                 Maybe<ENUMSignal_Funktion> signalfunktionMaybe = sr.getSignal_Real_Aktiv_Signal_Funktion();
+                                                                 Maybe<ENUMAuto_Einstellung> autoEinstMaybe = sr.getSignal_Real_Aktiv_Auto_Einstellung();
+                                                                 Maybe<ENUMSonstige_Zulaessige_Anordnung> anordnungMaybe = sr.getSignal_Real_Aktiv_Sonstige_Zulaessige_Anordnung();
+                                                                 ENUMSignal_Befestigungsart befestArt = sr.getSignal_Befestigungsart();
+                                                                 println("       <Signal_Real>");
+                                                                 println("        <Signal_Befestigungsart><Wert>" + printSignal_Befestigungsart(befestArt) + "</Wert></Signal_Befestigungsart>");
+                                                                 println("        <Signal_Real_Aktiv>");
+                                                                 if(isJust(idStellelementMaybe)) {
+                                                                   TGUID idStellelement = fromJust(idStellelementMaybe);
+                                                                   println("         <ID_Stellelement><Wert>" + idStellelement + "</Wert></ID_Stellelement>");
+                                                                 }
+                                                                 if(isJust(sichtMindestMaybe)) {
+                                                                   TMeter sichtMindest = fromJust(sichtMindestMaybe);
+                                                                   String sichtMindestString = util.toFloatString(sichtMindest, 6);
+                                                                   println("         <Signalsicht_Mindest><Wert>" + sichtMindestString + "</Wert></Signalsicht_Mindest>");
+                                                                 }
+                                                                 if(isJust(sichtSollMaybe)) {
+                                                                   TMeter sichtSoll = fromJust(sichtSollMaybe);
+                                                                   String sichtSollString = util.toFloatString(sichtSoll, 6);
+                                                                   println("         <Signalsicht_Soll><Wert>" + sichtSollString + "</Wert></Signalsicht_Soll>");
+                                                                 }
+                                                                 if(isJust(sichtErreichbarMaybe)) {
+                                                                   TMeter sichtErreichbar = fromJust(sichtErreichbarMaybe);
+                                                                   String sichtErreichbarString = util.toFloatString(sichtErreichbar, 6);
+                                                                   println("         <Signalsicht_Erreichbar><Wert>" + sichtErreichbarString + "</Wert></Signalsicht_Erreichbar>");
+                                                                 }
+                                                                 if(isJust(tunnelsignalMaybe)) {
+                                                                   ENUMTunnelsignal tunnelsignal = fromJust(tunnelsignalMaybe);
+                                                                   println("         <Tunnelsignal><Wert>" + printTunnelsignal(tunnelsignal) + "</Wert></Tunnelsignal>");
+                                                                 }
+                                                                 if(isJust(signalfunktionMaybe)) {
+                                                                   ENUMSignal_Funktion signalfunktion = fromJust(signalfunktionMaybe);
+                                                                    println("         <Signal_Funktion><Wert>" + printSignal_Funktion(signalfunktion) + "</Wert></Signal_Funktion>");
+                                                                 }
+                                                                 if(isJust(autoEinstMaybe)) {
+                                                                   ENUMAuto_Einstellung autoEinst = fromJust(autoEinstMaybe);
+                                                                   println("         <Auto_Einstellung><Wert>" + printAuto_Einstellung(autoEinst) + "</Wert></Auto_Einstellung>");
+                                                                 }
+                                                                 if(isJust(anordnungMaybe)) {
+                                                                   ENUMSonstige_Zulaessige_Anordnung anordnung = fromJust(anordnungMaybe);
+                                                                   println("         <Sonstige_Zulaessige_Anordnung><Wert>" + printSonstige_Zulaessige_Anordnung(anordnung) + "</Wert></Sonstige_Zulaessige_Anordnung>");
+                                                                 }
+                                                                 println("        </Signal_Real_Aktiv>");
+                                                                 println("        <Signal_Real_Aktiv_Schirm>");
+                                                                 if(isJust(bedienartMaybe)) {
+                                                                   ENUMBedienart bedienart = fromJust(bedienartMaybe);
+                                                                   println("         <Bedienart><Wert>" + printBedienart(bedienart) + "</Wert></Bedienart>");
+                                                                 }
+                                                                 if(isJust(richtpunktMaybe)) {
+                                                                   TText richtpunkt = fromJust(richtpunktMaybe);
+                                                                   println("         <Richtpunkt><Wert>" + richtpunkt + "</Wert></Richtpunkt>");
+                                                                 }
+                                                                 if(isJust(dunkelschaltungMaybe)) {
+                                                                   Bool dunkelschaltung = fromJust(dunkelschaltungMaybe);
+                                                                   println("         <Dunkelschaltung><Wert>" + toString(dunkelschaltung) + "</Wert></Dunkelschaltung>");
+                                                                 }
+                                                                 if(isJust(richtpunktEntfernungMaybe)) {
+                                                                   TMeter richtpunktEntfernung = fromJust(richtpunktEntfernungMaybe);
+                                                                   String richtpunktEntfernungString = util.toFloatString(richtpunktEntfernung, 6);
+                                                                   println("         <Richtpunktentfernung><Wert>" + richtpunktEntfernungString + "</Wert></Richtpunktentfernung>");
+                                                                 }
+                                                                 if(isJust(signalsystemMaybe)) {
+                                                                   ENUMSignalsystem signalsystem = fromJust(signalsystemMaybe);
+                                                                   println("         <Signalsystem><Wert>" + printSignalsystem(signalsystem) + "</Wert></Signalsystem>");
+                                                                 }
+                                                                 if(isJust(streuscheibeArtMaybe)) {
+                                                                   ENUMStreuscheibe_Art streuscheibeArt = fromJust(streuscheibeArtMaybe);
+                                                                   println("         <Streuscheibe_Art><Wert>" + printStreuscheibe_Art(streuscheibeArt) + "</Wert></Streuscheibe_Art>");
+                                                                 }
+                                                                 if(isJust(streuscheibeBetriebsstellungMaybe)) {
+                                                                   ENUMStreuscheibe_Betriebsstellung streuscheibeBetriebsstellung = fromJust(streuscheibeBetriebsstellungMaybe);
+                                                                   println("         <Streuscheibe_Betriebsstellung><Wert>" + printStreuscheibe_Betriebsstellung(streuscheibeBetriebsstellung) + "</Wert></Streuscheibe_Betriebsstellung>");
+                                                                 }
+                                                                 if(isJust(signalartMaybe)) {
+                                                                   ENUMSignal_Art signalart = fromJust(signalartMaybe);
+                                                                   println("         <Signal_Art><Wert>" + printSignal_Art(signalart) + "</Wert></Signal_Art>");
+                                                                 }
+                                                                 println("        </Signal_Real_Aktiv_Schirm>");
+                                                                 println("       </Signal_Real>");
+                                                               }
+                                        _ => skip;
+                                      }
+                                      println("      </Signal>");
+                                    }
+        Objecttype_Datenpunkt(o) => {
+                                      Datenpunkt t = o;
+                                      Int step = t.getStep();
+                                      Maybe<TText> beschreibungMaybe = t.getDatenpunkt_Allg_Datenpunkt_Beschreibung();
+                                      println("      <Datenpunkt step=\"" + toString(step) + "\">");
+                                      this.printUrObjektData(t);
+                                      this.printBasisObjektData(t);
+                                      this.printPunktObjektData(t);
+                                      println("       <Datenpunkt_Allg>");
+                                      if(isJust(beschreibungMaybe)) {
+                                        TText beschreibung = fromJust(beschreibungMaybe);
+                                        println("        <Datenpunkt_Beschreibung><Wert>" + beschreibung + "</Wert></Datenpunkt_Beschreibung>");
+                                      }
+                                      println("       </Datenpunkt_Allg>");
+                                      println("      </Datenpunkt>");
+                                    }
+        _ => skip;
+      }
+      counter = counter + 1;
+    }
+    println("     </Container>");
+    println("    </LST_Zustand_Ziel>");
+    println("   </LST_Planung_Einzel>");
+    println("  </LST_Planung_Gruppe>");
+    println(" </LST_Planung_Projekt>");
+    println("</nsPlanPro:PlanPro_Schnittstelle>");
+  }
+}
+

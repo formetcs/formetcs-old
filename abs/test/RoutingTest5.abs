@@ -1,0 +1,365 @@
+module Test;
+
+export *;
+import * from Metaobject;
+import * from BasisTypen;
+import * from Basisobjekte;
+import * from Geodaten;
+import * from Signale;
+import * from ETCS;
+import * from Block;
+import * from Util;
+import * from XmlWriter;
+import * from Constructor;
+
+interface Test {
+  Unit doNothing();
+}
+
+class TestImpl implements Test {
+  Unit doNothing() {
+    println("nix");
+  }
+
+  Unit run() {
+    XmlWriter xmlw = new local XmlWriter();
+    Constructor constructor = new local Constructor();
+    //Util util = new local Util();
+    Map<TGUID, PlanProObject> l = map(Nil);
+    //List<Punkt_Objekt> entrylist = Nil;
+    //List<Punkt_Objekt> exitlist = Nil;
+
+
+    TOP_Knoten tkn1 = new local TOP_KnotenImpl();
+    tkn1.setIdentitaet("TKn1");
+    tkn1.setTOP_Knoten_Allg_Knotenname(Just("TKn1"));
+    //tkn1.setID_GEO_Knoten("GKn1");
+    l = insert(l, Pair("TKn1", Objecttype_TOP_Knoten(tkn1)));
+
+    TOP_Knoten tkn2 = new local TOP_KnotenImpl();
+    tkn2.setIdentitaet("TKn2");
+    tkn2.setTOP_Knoten_Allg_Knotenname(Just("TKn2"));
+    //tkn2.setID_GEO_Knoten("GKn2");
+    l = insert(l, Pair("TKn2", Objecttype_TOP_Knoten(tkn2)));
+
+    TOP_Knoten tkn3 = new local TOP_KnotenImpl();
+    tkn3.setIdentitaet("TKn3");
+    tkn3.setTOP_Knoten_Allg_Knotenname(Just("TKn3"));
+    //tkn3.setID_GEO_Knoten("GKn3");
+    l = insert(l, Pair("TKn3", Objecttype_TOP_Knoten(tkn3)));
+
+    TOP_Knoten tkn4 = new local TOP_KnotenImpl();
+    tkn4.setIdentitaet("TKn4");
+    tkn4.setTOP_Knoten_Allg_Knotenname(Just("TKn4"));
+    //tkn4.setID_GEO_Knoten("GKn4");
+    l = insert(l, Pair("TKn4", Objecttype_TOP_Knoten(tkn4)));
+
+    TOP_Knoten tkn5 = new local TOP_KnotenImpl();
+    tkn5.setIdentitaet("TKn5");
+    tkn5.setTOP_Knoten_Allg_Knotenname(Just("TKn5"));
+    //tkn5.setID_GEO_Knoten("GKn5");
+    l = insert(l, Pair("TKn5", Objecttype_TOP_Knoten(tkn5)));
+
+    TOP_Knoten tkn6 = new local TOP_KnotenImpl();
+    tkn6.setIdentitaet("TKn6");
+    tkn6.setTOP_Knoten_Allg_Knotenname(Just("TKn6"));
+    //tkn6.setID_GEO_Knoten("GKn6");
+    l = insert(l, Pair("TKn6", Objecttype_TOP_Knoten(tkn6)));
+
+    TOP_Knoten tkn7 = new local TOP_KnotenImpl();
+    tkn7.setIdentitaet("TKn7");
+    tkn7.setTOP_Knoten_Allg_Knotenname(Just("TKn7"));
+    //tkn7.setID_GEO_Knoten("GKn7");
+    l = insert(l, Pair("TKn7", Objecttype_TOP_Knoten(tkn7)));
+
+    TOP_Knoten tkn8 = new local TOP_KnotenImpl();
+    tkn8.setIdentitaet("TKn8");
+    tkn8.setTOP_Knoten_Allg_Knotenname(Just("TKn8"));
+    //tkn8.setID_GEO_Knoten("GKn8");
+    l = insert(l, Pair("TKn8", Objecttype_TOP_Knoten(tkn8)));
+
+    TOP_Knoten tkn9 = new local TOP_KnotenImpl();
+    tkn9.setIdentitaet("TKn9");
+    tkn9.setTOP_Knoten_Allg_Knotenname(Just("TKn9"));
+    //tkn9.setID_GEO_Knoten("GKn9");
+    l = insert(l, Pair("TKn9", Objecttype_TOP_Knoten(tkn9)));
+
+    TOP_Knoten tkn10 = new local TOP_KnotenImpl();
+    tkn10.setIdentitaet("TKn10");
+    tkn10.setTOP_Knoten_Allg_Knotenname(Just("TKn10"));
+    //tkn10.setID_GEO_Knoten("GKn10");
+    l = insert(l, Pair("TKn10", Objecttype_TOP_Knoten(tkn10)));
+
+    TOP_Knoten tkn11 = new local TOP_KnotenImpl();
+    tkn11.setIdentitaet("TKn11");
+    tkn11.setTOP_Knoten_Allg_Knotenname(Just("TKn11"));
+    //tkn11.setID_GEO_Knoten("GKn11");
+    l = insert(l, Pair("TKn11", Objecttype_TOP_Knoten(tkn11)));
+
+    TOP_Knoten tkn12 = new local TOP_KnotenImpl();
+    tkn12.setIdentitaet("TKn12");
+    tkn12.setTOP_Knoten_Allg_Knotenname(Just("TKn12"));
+    //tkn12.setID_GEO_Knoten("GKn12");
+    l = insert(l, Pair("TKn12", Objecttype_TOP_Knoten(tkn12)));
+
+    TOP_Knoten tkn13 = new local TOP_KnotenImpl();
+    tkn13.setIdentitaet("TKn13");
+    tkn13.setTOP_Knoten_Allg_Knotenname(Just("TKn13"));
+    //tkn13.setID_GEO_Knoten("GKn13");
+    l = insert(l, Pair("TKn13", Objecttype_TOP_Knoten(tkn13)));
+
+    TOP_Knoten tkn14 = new local TOP_KnotenImpl();
+    tkn14.setIdentitaet("TKn14");
+    tkn14.setTOP_Knoten_Allg_Knotenname(Just("TKn14"));
+    //tkn14.setID_GEO_Knoten("GKn14");
+    l = insert(l, Pair("TKn14", Objecttype_TOP_Knoten(tkn14)));
+
+    TOP_Knoten tkn15 = new local TOP_KnotenImpl();
+    tkn15.setIdentitaet("TKn15");
+    tkn15.setTOP_Knoten_Allg_Knotenname(Just("TKn15"));
+    //tkn15.setID_GEO_Knoten("GKn15");
+    l = insert(l, Pair("TKn15", Objecttype_TOP_Knoten(tkn15)));
+
+    TOP_Knoten tkn16 = new local TOP_KnotenImpl();
+    tkn16.setIdentitaet("TKn16");
+    tkn16.setTOP_Knoten_Allg_Knotenname(Just("TKn16"));
+    //tkn16.setID_GEO_Knoten("GKn16");
+    l = insert(l, Pair("TKn16", Objecttype_TOP_Knoten(tkn16)));
+
+
+    TOP_Kante tka1 = new local TOP_KanteImpl();
+    tka1.setIdentitaet("TKa1");
+    tka1.setID_TOP_Knoten_A("TKn16");
+    tka1.setID_TOP_Knoten_B("TKn1");
+    tka1.setTOP_Kante_Allg_TOP_Anschluss_A(ENUMTOP_Anschluss_Ende);
+    tka1.setTOP_Kante_Allg_TOP_Anschluss_B(ENUMTOP_Anschluss_Spitze);
+    tka1.setTOP_Kante_Allg_TOP_Laenge(1000);
+    l = insert(l, Pair("TKa1", Objecttype_TOP_Kante(tka1)));
+
+    TOP_Kante tka2 = new local TOP_KanteImpl();
+    tka2.setIdentitaet("TKa2");
+    tka2.setID_TOP_Knoten_A("TKn1");
+    tka2.setID_TOP_Knoten_B("TKn2");
+    tka2.setTOP_Kante_Allg_TOP_Anschluss_A(ENUMTOP_Anschluss_Links);
+    tka2.setTOP_Kante_Allg_TOP_Anschluss_B(ENUMTOP_Anschluss_Spitze);
+    tka2.setTOP_Kante_Allg_TOP_Laenge(1000);
+    l = insert(l, Pair("TKa2", Objecttype_TOP_Kante(tka2)));
+
+    TOP_Kante tka3 = new local TOP_KanteImpl();
+    tka3.setIdentitaet("TKa3");
+    tka3.setID_TOP_Knoten_A("TKn3");
+    tka3.setID_TOP_Knoten_B("TKn2");
+    tka3.setTOP_Kante_Allg_TOP_Anschluss_A(ENUMTOP_Anschluss_Rechts);
+    tka3.setTOP_Kante_Allg_TOP_Anschluss_B(ENUMTOP_Anschluss_Rechts);
+    tka3.setTOP_Kante_Allg_TOP_Laenge(1000);
+    l = insert(l, Pair("TKa3", Objecttype_TOP_Kante(tka3)));
+
+    TOP_Kante tka4 = new local TOP_KanteImpl();
+    tka4.setIdentitaet("TKa4");
+    tka4.setID_TOP_Knoten_A("TKn4");
+    tka4.setID_TOP_Knoten_B("TKn3");
+    tka4.setTOP_Kante_Allg_TOP_Anschluss_A(ENUMTOP_Anschluss_Spitze);
+    tka4.setTOP_Kante_Allg_TOP_Anschluss_B(ENUMTOP_Anschluss_Spitze);
+    tka4.setTOP_Kante_Allg_TOP_Laenge(1000);
+    l = insert(l, Pair("TKa4", Objecttype_TOP_Kante(tka4)));
+
+    TOP_Kante tka5 = new local TOP_KanteImpl();
+    tka5.setIdentitaet("TKa5");
+    tka5.setID_TOP_Knoten_A("TKn4");
+    tka5.setID_TOP_Knoten_B("TKn5");
+    tka5.setTOP_Kante_Allg_TOP_Anschluss_A(ENUMTOP_Anschluss_Rechts);
+    tka5.setTOP_Kante_Allg_TOP_Anschluss_B(ENUMTOP_Anschluss_Rechts);
+    tka5.setTOP_Kante_Allg_TOP_Laenge(1000);
+    l = insert(l, Pair("TKa5", Objecttype_TOP_Kante(tka5)));
+
+    TOP_Kante tka6 = new local TOP_KanteImpl();
+    tka6.setIdentitaet("TKa6");
+    tka6.setID_TOP_Knoten_A("TKn6");
+    tka6.setID_TOP_Knoten_B("TKn5");
+    tka6.setTOP_Kante_Allg_TOP_Anschluss_A(ENUMTOP_Anschluss_Links);
+    tka6.setTOP_Kante_Allg_TOP_Anschluss_B(ENUMTOP_Anschluss_Spitze);
+    tka6.setTOP_Kante_Allg_TOP_Laenge(1000);
+    l = insert(l, Pair("TKa6", Objecttype_TOP_Kante(tka6)));
+
+    TOP_Kante tka7 = new local TOP_KanteImpl();
+    tka7.setIdentitaet("TKa7");
+    tka7.setID_TOP_Knoten_A("TKn2");
+    tka7.setID_TOP_Knoten_B("TKn9");
+    tka7.setTOP_Kante_Allg_TOP_Anschluss_A(ENUMTOP_Anschluss_Links);
+    tka7.setTOP_Kante_Allg_TOP_Anschluss_B(ENUMTOP_Anschluss_Links);
+    tka7.setTOP_Kante_Allg_TOP_Laenge(1000);
+    l = insert(l, Pair("TKa7", Objecttype_TOP_Kante(tka7)));
+
+    TOP_Kante tka8 = new local TOP_KanteImpl();
+    tka8.setIdentitaet("TKa8");
+    tka8.setID_TOP_Knoten_A("TKn7");
+    tka8.setID_TOP_Knoten_B("TKn9");
+    tka8.setTOP_Kante_Allg_TOP_Anschluss_A(ENUMTOP_Anschluss_Ende);
+    tka8.setTOP_Kante_Allg_TOP_Anschluss_B(ENUMTOP_Anschluss_Rechts);
+    tka8.setTOP_Kante_Allg_TOP_Laenge(1000);
+    l = insert(l, Pair("TKa8", Objecttype_TOP_Kante(tka8)));
+
+    TOP_Kante tka9 = new local TOP_KanteImpl();
+    tka9.setIdentitaet("TKa9");
+    tka9.setID_TOP_Knoten_A("TKn10");
+    tka9.setID_TOP_Knoten_B("TKn9");
+    tka9.setTOP_Kante_Allg_TOP_Anschluss_A(ENUMTOP_Anschluss_Links);
+    tka9.setTOP_Kante_Allg_TOP_Anschluss_B(ENUMTOP_Anschluss_Spitze);
+    tka9.setTOP_Kante_Allg_TOP_Laenge(1000);
+    l = insert(l, Pair("TKa9", Objecttype_TOP_Kante(tka9)));
+
+    TOP_Kante tka10 = new local TOP_KanteImpl();
+    tka10.setIdentitaet("TKa10");
+    tka10.setID_TOP_Knoten_A("TKn12");
+    tka10.setID_TOP_Knoten_B("TKn10");
+    tka10.setTOP_Kante_Allg_TOP_Anschluss_A(ENUMTOP_Anschluss_Ende);
+    tka10.setTOP_Kante_Allg_TOP_Anschluss_B(ENUMTOP_Anschluss_Rechts);
+    tka10.setTOP_Kante_Allg_TOP_Laenge(1000);
+    l = insert(l, Pair("TKa10", Objecttype_TOP_Kante(tka10)));
+
+    TOP_Kante tka11 = new local TOP_KanteImpl();
+    tka11.setIdentitaet("TKa11");
+    tka11.setID_TOP_Knoten_A("TKn4");
+    tka11.setID_TOP_Knoten_B("TKn11");
+    tka11.setTOP_Kante_Allg_TOP_Anschluss_A(ENUMTOP_Anschluss_Links);
+    tka11.setTOP_Kante_Allg_TOP_Anschluss_B(ENUMTOP_Anschluss_Links);
+    tka11.setTOP_Kante_Allg_TOP_Laenge(1000);
+    l = insert(l, Pair("TKa11", Objecttype_TOP_Kante(tka11)));
+
+    TOP_Kante tka12 = new local TOP_KanteImpl();
+    tka12.setIdentitaet("TKa12");
+    tka12.setID_TOP_Knoten_A("TKn11");
+    tka12.setID_TOP_Knoten_B("TKn10");
+    tka12.setTOP_Kante_Allg_TOP_Anschluss_A(ENUMTOP_Anschluss_Rechts);
+    tka12.setTOP_Kante_Allg_TOP_Anschluss_B(ENUMTOP_Anschluss_Spitze);
+    tka12.setTOP_Kante_Allg_TOP_Laenge(1000);
+    l = insert(l, Pair("TKa12", Objecttype_TOP_Kante(tka12)));
+
+    TOP_Kante tka13 = new local TOP_KanteImpl();
+    tka13.setIdentitaet("TKa13");
+    tka13.setID_TOP_Knoten_A("TKn11");
+    tka13.setID_TOP_Knoten_B("TKn6");
+    tka13.setTOP_Kante_Allg_TOP_Anschluss_A(ENUMTOP_Anschluss_Spitze);
+    tka13.setTOP_Kante_Allg_TOP_Anschluss_B(ENUMTOP_Anschluss_Rechts);
+    tka13.setTOP_Kante_Allg_TOP_Laenge(1000);
+    l = insert(l, Pair("TKa13", Objecttype_TOP_Kante(tka13)));
+
+    TOP_Kante tka14 = new local TOP_KanteImpl();
+    tka14.setIdentitaet("TKa14");
+    tka14.setID_TOP_Knoten_A("TKn6");
+    tka14.setID_TOP_Knoten_B("TKn7");
+    tka14.setTOP_Kante_Allg_TOP_Anschluss_A(ENUMTOP_Anschluss_Spitze);
+    tka14.setTOP_Kante_Allg_TOP_Anschluss_B(ENUMTOP_Anschluss_Ende);
+    tka14.setTOP_Kante_Allg_TOP_Laenge(1000);
+    l = insert(l, Pair("TKa14", Objecttype_TOP_Kante(tka14)));
+
+    TOP_Kante tka15 = new local TOP_KanteImpl();
+    tka15.setIdentitaet("TKa15");
+    tka15.setID_TOP_Knoten_A("TKn13");
+    tka15.setID_TOP_Knoten_B("TKn1");
+    tka15.setTOP_Kante_Allg_TOP_Anschluss_A(ENUMTOP_Anschluss_Spitze);
+    tka15.setTOP_Kante_Allg_TOP_Anschluss_B(ENUMTOP_Anschluss_Rechts);
+    tka15.setTOP_Kante_Allg_TOP_Laenge(1000);
+    l = insert(l, Pair("TKa15", Objecttype_TOP_Kante(tka15)));
+
+    TOP_Kante tka16 = new local TOP_KanteImpl();
+    tka16.setIdentitaet("TKa16");
+    tka16.setID_TOP_Knoten_A("TKn13");
+    tka16.setID_TOP_Knoten_B("TKn3");
+    tka16.setTOP_Kante_Allg_TOP_Anschluss_A(ENUMTOP_Anschluss_Links);
+    tka16.setTOP_Kante_Allg_TOP_Anschluss_B(ENUMTOP_Anschluss_Links);
+    tka16.setTOP_Kante_Allg_TOP_Laenge(1000);
+    l = insert(l, Pair("TKa16", Objecttype_TOP_Kante(tka16)));
+
+    TOP_Kante tka17 = new local TOP_KanteImpl();
+    tka17.setIdentitaet("TKa17");
+    tka17.setID_TOP_Knoten_A("TKn13");
+    tka17.setID_TOP_Knoten_B("TKn14");
+    tka17.setTOP_Kante_Allg_TOP_Anschluss_A(ENUMTOP_Anschluss_Rechts);
+    tka17.setTOP_Kante_Allg_TOP_Anschluss_B(ENUMTOP_Anschluss_Spitze);
+    tka17.setTOP_Kante_Allg_TOP_Laenge(1000);
+    l = insert(l, Pair("TKa17", Objecttype_TOP_Kante(tka17)));
+
+    TOP_Kante tka18 = new local TOP_KanteImpl();
+    tka18.setIdentitaet("TKa18");
+    tka18.setID_TOP_Knoten_A("TKn5");
+    tka18.setID_TOP_Knoten_B("TKn14");
+    tka18.setTOP_Kante_Allg_TOP_Anschluss_A(ENUMTOP_Anschluss_Links);
+    tka18.setTOP_Kante_Allg_TOP_Anschluss_B(ENUMTOP_Anschluss_Links);
+    tka18.setTOP_Kante_Allg_TOP_Laenge(1000);
+    l = insert(l, Pair("TKa18", Objecttype_TOP_Kante(tka18)));
+
+    TOP_Kante tka19 = new local TOP_KanteImpl();
+    tka19.setIdentitaet("TKa19");
+    tka19.setID_TOP_Knoten_A("TKn15");
+    tka19.setID_TOP_Knoten_B("TKn14");
+    tka19.setTOP_Kante_Allg_TOP_Anschluss_A(ENUMTOP_Anschluss_Ende);
+    tka19.setTOP_Kante_Allg_TOP_Anschluss_B(ENUMTOP_Anschluss_Rechts);
+    tka19.setTOP_Kante_Allg_TOP_Laenge(1000);
+    l = insert(l, Pair("TKa19", Objecttype_TOP_Kante(tka19)));
+
+
+    Datenpunkt dp1 = new local DatenpunktImpl();
+    dp1.setIdentitaet("DP1");
+    Punkt_Objekt_TOP_Kante tkgroup_dp1 = new local Punkt_Objekt_TOP_Kante();
+    List<Punkt_Objekt_TOP_Kante> tkgrouplist_dp1 = Nil;
+    tkgroup_dp1.setID_TOP_Kante("TKa1");
+    tkgroup_dp1.setAbstand(500);
+    tkgroup_dp1.setSeitlicher_Abstand(Just(0));
+    tkgroup_dp1.setWirkrichtung(Just(ENUMWirkrichtung_in));
+    tkgrouplist_dp1 = appendright(tkgrouplist_dp1, tkgroup_dp1);
+    dp1.setPunkt_Objekt_TOP_Kante(tkgrouplist_dp1);
+    l = insert(l, Pair("DP1", Objecttype_Datenpunkt(dp1)));
+
+    Datenpunkt dp2 = new local DatenpunktImpl();
+    dp2.setIdentitaet("DP2");
+    Punkt_Objekt_TOP_Kante tkgroup_dp2 = new local Punkt_Objekt_TOP_Kante();
+    List<Punkt_Objekt_TOP_Kante> tkgrouplist_dp2 = Nil;
+    tkgroup_dp2.setID_TOP_Kante("TKa4");
+    tkgroup_dp2.setAbstand(500);
+    tkgroup_dp2.setSeitlicher_Abstand(Just(0));
+    tkgroup_dp2.setWirkrichtung(Just(ENUMWirkrichtung_gegen));
+    tkgrouplist_dp2 = appendright(tkgrouplist_dp2, tkgroup_dp2);
+    dp2.setPunkt_Objekt_TOP_Kante(tkgrouplist_dp2);
+    l = insert(l, Pair("DP2", Objecttype_Datenpunkt(dp2)));
+
+    Datenpunkt dp3 = new local DatenpunktImpl();
+    dp3.setIdentitaet("DP3");
+    Punkt_Objekt_TOP_Kante tkgroup_dp3 = new local Punkt_Objekt_TOP_Kante();
+    List<Punkt_Objekt_TOP_Kante> tkgrouplist_dp3 = Nil;
+    tkgroup_dp3.setID_TOP_Kante("TKa13");
+    tkgroup_dp3.setAbstand(500);
+    tkgroup_dp3.setSeitlicher_Abstand(Just(0));
+    tkgroup_dp3.setWirkrichtung(Just(ENUMWirkrichtung_in));
+    tkgrouplist_dp3 = appendright(tkgrouplist_dp3, tkgroup_dp3);
+    dp3.setPunkt_Objekt_TOP_Kante(tkgrouplist_dp3);
+    l = insert(l, Pair("DP3", Objecttype_Datenpunkt(dp3)));
+
+    Datenpunkt dp4 = new local DatenpunktImpl();
+    dp4.setIdentitaet("DP4");
+    Punkt_Objekt_TOP_Kante tkgroup_dp4 = new local Punkt_Objekt_TOP_Kante();
+    List<Punkt_Objekt_TOP_Kante> tkgrouplist_dp4 = Nil;
+    tkgroup_dp4.setID_TOP_Kante("TKa6");
+    tkgroup_dp4.setAbstand(500);
+    tkgroup_dp4.setSeitlicher_Abstand(Just(0));
+    tkgroup_dp4.setWirkrichtung(Just(ENUMWirkrichtung_gegen));
+    tkgrouplist_dp4 = appendright(tkgrouplist_dp4, tkgroup_dp4);
+    dp4.setPunkt_Objekt_TOP_Kante(tkgrouplist_dp4);
+    l = insert(l, Pair("DP4", Objecttype_Datenpunkt(dp4)));
+
+
+
+    //entrylist = appendright(entrylist, s1);
+    //exitlist = appendright(exitlist, s2);
+    //constructor.setEntryList(entrylist);
+    //constructor.setExitList(exitlist);
+    l = constructor.constructEtcsL2Line(l);
+    xmlw.printXmlInfo(l);
+
+  }
+}
+
+{
+  new local TestImpl();
+}
+

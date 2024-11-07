@@ -1,0 +1,1018 @@
+module Constructor;
+
+export *;
+import * from Metaobject;
+import * from BasisTypen;
+import * from Basisobjekte;
+import * from Geodaten;
+import * from Signale;
+import * from ETCS;
+import * from Block;
+import * from Util;
+
+
+interface Constructor {
+  Unit setEntryList(List<Punkt_Objekt> e);
+  Unit setExitList(List<Punkt_Objekt> e);
+  Map<TGUID, PlanProObject> constructEtcsL1Line(Map<TGUID, PlanProObject> m);
+  Map<TGUID, PlanProObject> constructEtcsL2Line(Map<TGUID, PlanProObject> m);
+}
+
+class Constructor implements Constructor {
+
+  List<Punkt_Objekt> entrylist = Nil;
+  List<Punkt_Objekt> exitlist = Nil;
+
+  Unit setEntryList(List<Punkt_Objekt> e) { entrylist = e; }
+  Unit setExitList(List<Punkt_Objekt> e) { exitlist = e; }
+
+  Map<TGUID, PlanProObject> constructEtcsL1Line(Map<TGUID, PlanProObject> m) {
+    Map<TGUID, PlanProObject> returnval = m;
+    returnval = this.placeDPHS(returnval, 1);
+    returnval = this.placeDPMS(returnval, 1);
+    returnval = this.placeDPVS(returnval, 2);
+    returnval = this.placeDPVW(returnval, 2);
+    returnval = this.placeDPAW(returnval, 3);
+    return returnval;
+  }
+
+  Map<TGUID, PlanProObject> constructEtcsL2Line(Map<TGUID, PlanProObject> m) {
+    Map<TGUID, PlanProObject> returnval = m;
+    returnval = this.placeDP1(returnval, 1);
+    returnval = this.placeDP2(returnval, 2);
+    returnval = this.placeDP3(returnval, 3);
+    returnval = this.placeDP4(returnval, 4);
+    returnval = this.placeDP20(returnval, 5);
+    returnval = this.placeDP21(returnval, 5);
+    returnval = this.placeDP23(returnval, 6);
+    returnval = this.placeDP24(returnval, 7);
+    returnval = this.placeDP25(returnval, 8);
+    returnval = this.placeDP60(returnval, 9);
+    return returnval;
+  }
+
+  Map<TGUID, PlanProObject> placeDPHS(Map<TGUID, PlanProObject> m, Int step) {
+    Map<TGUID, PlanProObject> returnval = m;
+    List<PlanProObject> l = values(m);
+    Util util = new local Util();
+    Int counter = 0;
+    while(counter < length(l)) {
+      PlanProObject temp = nth(l, counter);
+      case temp {
+        Objecttype_Signal(o) =>     {
+                                      Signal t = o;
+                                      SignalFiktivReal sfr = t.getSignalFiktivReal();
+                                      case sfr {
+                                          SignalReal(sr) =>
+                                                   {
+                                                     Signal_Real sigreal = sr;
+                                                     Maybe<ENUMSignal_Art> sigartMaybe = sigreal.getSignal_Real_Aktiv_Schirm_Signal_Art();
+                                                     if(isJust(sigartMaybe)) {
+                                                       ENUMSignal_Art sigart = fromJust(sigartMaybe);
+                                                       if(sigart == ENUMSignal_Art_Hauptsignal || sigart == ENUMSignal_Art_Hauptsperrsignal) {
+                                                         List<Punkt_Objekt_TOP_Kante> kantenlist = t.getPunkt_Objekt_TOP_Kante();
+                                                         Punkt_Objekt_TOP_Kante topKantenGroup = nth(kantenlist, 0); // Take the first element (only one reference edge)
+                                                         TGUID kante = topKantenGroup.getID_TOP_Kante();
+                                                         TMeter abstand =  topKantenGroup.getAbstand();
+                                                         Maybe<TWirkrichtung> wirkrichtungMaybe = topKantenGroup.getWirkrichtung();
+                                                         TWirkrichtung wirkrichtung = fromJust(wirkrichtungMaybe);
+                                                         TMeter distFromEntry = -1;
+                                                         TMeter distToExit = -1;
+                                                         Int c = 0;
+                                                         while(c < length(entrylist) && distFromEntry < 0) {
+                                                           Punkt_Objekt entry = nth(entrylist, c);
+                                                           distFromEntry = util.calculateDistance(m, entry, t, True);
+                                                           c = c + 1;
+                                                         }
+                                                         c = 0;
+                                                         while(c < length(exitlist) && distToExit < 0) {
+                                                           Punkt_Objekt exit = nth(exitlist, c);
+                                                           distToExit = util.calculateDistance(m, t, exit, True);
+                                                           c = c + 1;
+                                                         }
+                                                         //if(distFromEntry >= 0 && distToExit >= 0) { // only for signals between entry and exit
+                                                         Datenpunkt dp1 = new local DatenpunktImpl();
+                                                         Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+                                                         List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+                                                         tkgroup.setID_TOP_Kante(kante);
+                                                         tkgroup.setAbstand(abstand);
+                                                         tkgroup.setWirkrichtung(Just(wirkrichtung));
+                                                         tkgroup.setSeitlicher_Abstand(Just(0));
+                                                         tkgrouplist = appendright(tkgrouplist, tkgroup);
+                                                         dp1.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+                                                         TGUID dp_id = "DPHS-" + toString(counter);
+                                                         dp1.setIdentitaet(dp_id);
+                                                         dp1.setStep(step);
+                                                         dp1.setDatenpunkt_Allg_Datenpunkt_Beschreibung(Just("DP Typ HS"));
+                                                         returnval = insert(returnval, Pair(dp_id, Objecttype_Datenpunkt(dp1)));
+                                                         //}
+                                                       }
+                                                     }
+                                                   }
+                                          _ => skip;
+                                      }
+                                    }
+        _ => skip;
+      }
+      counter = counter + 1;
+    }
+    return returnval;
+  }
+
+  Map<TGUID, PlanProObject> placeDPMS(Map<TGUID, PlanProObject> m, Int step) {
+    Map<TGUID, PlanProObject> returnval = m;
+    List<PlanProObject> l = values(m);
+    Util util = new local Util();
+    Int counter = 0;
+    while(counter < length(l)) {
+      PlanProObject temp = nth(l, counter);
+      case temp {
+        Objecttype_Signal(o) =>     {
+                                      Signal t = o;
+                                      SignalFiktivReal sfr = t.getSignalFiktivReal();
+                                      case sfr {
+                                          SignalReal(sr) =>
+                                                   {
+                                                     Signal_Real sigreal = sr;
+                                                     Maybe<ENUMSignal_Art> sigartMaybe = sigreal.getSignal_Real_Aktiv_Schirm_Signal_Art();
+                                                     if(isJust(sigartMaybe)) {
+                                                       ENUMSignal_Art sigart = fromJust(sigartMaybe);
+                                                       if(sigart == ENUMSignal_Art_Mehrabschnittssignal || sigart == ENUMSignal_Art_Mehrabschnittssperrsignal) {
+                                                         List<Punkt_Objekt_TOP_Kante> kantenlist = t.getPunkt_Objekt_TOP_Kante();
+                                                         Punkt_Objekt_TOP_Kante topKantenGroup = nth(kantenlist, 0); // Take the first element (only one reference edge)
+                                                         TGUID kante = topKantenGroup.getID_TOP_Kante();
+                                                         TMeter abstand =  topKantenGroup.getAbstand();
+                                                         Maybe<TWirkrichtung> wirkrichtungMaybe = topKantenGroup.getWirkrichtung();
+                                                         TWirkrichtung wirkrichtung = fromJust(wirkrichtungMaybe);
+                                                         TMeter distFromEntry = -1;
+                                                         TMeter distToExit = -1;
+                                                         Int c = 0;
+                                                         while(c < length(entrylist) && distFromEntry < 0) {
+                                                           Punkt_Objekt entry = nth(entrylist, c);
+                                                           distFromEntry = util.calculateDistance(m, entry, t, True);
+                                                           c = c + 1;
+                                                         }
+                                                         c = 0;
+                                                         while(c < length(exitlist) && distToExit < 0) {
+                                                           Punkt_Objekt exit = nth(exitlist, c);
+                                                           distToExit = util.calculateDistance(m, t, exit, True);
+                                                           c = c + 1;
+                                                         }
+                                                         //if(distFromEntry >= 0 && distToExit >= 0) { // only for signals between entry and exit
+                                                           Datenpunkt dp1 = new local DatenpunktImpl();
+                                                           Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+                                                           List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+                                                           tkgroup.setID_TOP_Kante(kante);
+                                                           tkgroup.setAbstand(abstand);
+                                                           tkgroup.setWirkrichtung(Just(wirkrichtung));
+                                                           tkgroup.setSeitlicher_Abstand(Just(0));
+                                                           tkgrouplist = appendright(tkgrouplist, tkgroup);
+                                                           dp1.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+                                                           TGUID dp_id = "DPMS-" + toString(counter);
+                                                           dp1.setIdentitaet(dp_id);
+                                                           dp1.setStep(step);
+                                                           dp1.setDatenpunkt_Allg_Datenpunkt_Beschreibung(Just("DP Typ MS"));
+                                                           returnval = insert(returnval, Pair(dp_id, Objecttype_Datenpunkt(dp1)));
+                                                         //}
+                                                       }
+                                                     }
+                                                   }
+                                          _ => skip;
+                                      }
+                                    }
+        _ => skip;
+      }
+      counter = counter + 1;
+    }
+    return returnval;
+  }
+
+  Map<TGUID, PlanProObject> placeDPVS(Map<TGUID, PlanProObject> m, Int step) {
+    Map<TGUID, PlanProObject> returnval = m;
+    List<PlanProObject> l = values(m);
+    Util util = new local Util();
+    Int counter = 0;
+    while(counter < length(l)) {
+      PlanProObject temp = nth(l, counter);
+      case temp {
+        Objecttype_Signal(o) =>     {
+                                      Signal t = o;
+                                      SignalFiktivReal sfr = t.getSignalFiktivReal();
+                                      case sfr {
+                                          SignalReal(sr) =>
+                                                   {
+                                                     Signal_Real sigreal = sr;
+                                                     Maybe<ENUMSignal_Art> sigartMaybe = sigreal.getSignal_Real_Aktiv_Schirm_Signal_Art();
+                                                     if(isJust(sigartMaybe)) {
+                                                       ENUMSignal_Art sigart = fromJust(sigartMaybe);
+                                                       if(sigart == ENUMSignal_Art_Vorsignal) {
+                                                         List<Punkt_Objekt_TOP_Kante> kantenlist = t.getPunkt_Objekt_TOP_Kante();
+                                                         Punkt_Objekt_TOP_Kante topKantenGroup = nth(kantenlist, 0); // Take the first element (only one reference edge)
+                                                         TGUID kante = topKantenGroup.getID_TOP_Kante();
+                                                         TMeter abstand =  topKantenGroup.getAbstand();
+                                                         Maybe<TWirkrichtung> wirkrichtungMaybe = topKantenGroup.getWirkrichtung();
+                                                         TWirkrichtung wirkrichtung = fromJust(wirkrichtungMaybe);
+                                                         TMeter distFromEntry = -1;
+                                                         TMeter distToExit = -1;
+                                                         Int c = 0;
+                                                         while(c < length(entrylist) && distFromEntry < 0) {
+                                                           Punkt_Objekt entry = nth(entrylist, c);
+                                                           distFromEntry = util.calculateDistance(m, entry, t, True);
+                                                           c = c + 1;
+                                                         }
+                                                         c = 0;
+                                                         while(c < length(exitlist) && distToExit < 0) {
+                                                           Punkt_Objekt exit = nth(exitlist, c);
+                                                           distToExit = util.calculateDistance(m, t, exit, True);
+                                                           c = c + 1;
+                                                         }
+                                                         //if(distFromEntry >= 0 && distToExit >= 0) { // only for signals between entry and exit
+                                                           Datenpunkt dp1 = new local DatenpunktImpl();
+                                                           Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+                                                           List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+                                                           tkgroup.setID_TOP_Kante(kante);
+                                                           tkgroup.setAbstand(abstand);
+                                                           tkgroup.setWirkrichtung(Just(wirkrichtung));
+                                                           tkgroup.setSeitlicher_Abstand(Just(0));
+                                                           tkgrouplist = appendright(tkgrouplist, tkgroup);
+                                                           dp1.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+                                                           TGUID dp_id = "DPVS-" + toString(counter);
+                                                           dp1.setIdentitaet(dp_id);
+                                                           dp1.setStep(step);
+                                                           dp1.setDatenpunkt_Allg_Datenpunkt_Beschreibung(Just("DP Typ VS"));
+                                                           returnval = insert(returnval, Pair(dp_id, Objecttype_Datenpunkt(dp1)));
+                                                         //}
+                                                       }
+                                                     }
+                                                   }
+                                          _ => skip;
+                                      }
+                                    }
+        _ => skip;
+      }
+      counter = counter + 1;
+    }
+    return returnval;
+  }
+
+  Map<TGUID, PlanProObject> placeDPVW(Map<TGUID, PlanProObject> m, Int step) {
+    Map<TGUID, PlanProObject> returnval = m;
+    List<PlanProObject> l = values(m);
+    Util util = new local Util();
+    Int counter = 0;
+    while(counter < length(l)) {
+      PlanProObject temp = nth(l, counter);
+      case temp {
+        Objecttype_Signal(o) =>     {
+                                      Signal t = o;
+                                      SignalFiktivReal sfr = t.getSignalFiktivReal();
+                                      case sfr {
+                                          SignalReal(sr) =>
+                                                   {
+                                                     Signal_Real sigreal = sr;
+                                                     Maybe<ENUMSignal_Art> sigartMaybe = sigreal.getSignal_Real_Aktiv_Schirm_Signal_Art();
+                                                     if(isJust(sigartMaybe)) {
+                                                       ENUMSignal_Art sigart = fromJust(sigartMaybe);
+                                                       if(sigart == ENUMSignal_Art_Vorsignalwiederholer) {
+                                                         List<Punkt_Objekt_TOP_Kante> kantenlist = t.getPunkt_Objekt_TOP_Kante();
+                                                         Punkt_Objekt_TOP_Kante topKantenGroup = nth(kantenlist, 0); // Take the first element (only one reference edge)
+                                                         TGUID kante = topKantenGroup.getID_TOP_Kante();
+                                                         TMeter abstand =  topKantenGroup.getAbstand();
+                                                         Maybe<TWirkrichtung> wirkrichtungMaybe = topKantenGroup.getWirkrichtung();
+                                                         TWirkrichtung wirkrichtung = fromJust(wirkrichtungMaybe);
+                                                         TMeter distFromEntry = -1;
+                                                         TMeter distToExit = -1;
+                                                         Int c = 0;
+                                                         while(c < length(entrylist) && distFromEntry < 0) {
+                                                           Punkt_Objekt entry = nth(entrylist, c);
+                                                           distFromEntry = util.calculateDistance(m, entry, t, True);
+                                                           c = c + 1;
+                                                         }
+                                                         c = 0;
+                                                         while(c < length(exitlist) && distToExit < 0) {
+                                                           Punkt_Objekt exit = nth(exitlist, c);
+                                                           distToExit = util.calculateDistance(m, t, exit, True);
+                                                           c = c + 1;
+                                                         }
+                                                         //if(distFromEntry >= 0 && distToExit >= 0) { // only for signals between entry and exit
+                                                           Datenpunkt dp1 = new local DatenpunktImpl();
+                                                           Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+                                                           List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+                                                           tkgroup.setID_TOP_Kante(kante);
+                                                           tkgroup.setAbstand(abstand);
+                                                           tkgroup.setWirkrichtung(Just(wirkrichtung));
+                                                           tkgroup.setSeitlicher_Abstand(Just(0));
+                                                           tkgrouplist = appendright(tkgrouplist, tkgroup);
+                                                           dp1.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+                                                           TGUID dp_id = "DPVW-" + toString(counter);
+                                                           dp1.setIdentitaet(dp_id);
+                                                           dp1.setStep(step);
+                                                           dp1.setDatenpunkt_Allg_Datenpunkt_Beschreibung(Just("DP Typ VW"));
+                                                           returnval = insert(returnval, Pair(dp_id, Objecttype_Datenpunkt(dp1)));
+                                                         //}
+                                                       }
+                                                     }
+                                                   }
+                                          _ => skip;
+                                      }
+                                    }
+        _ => skip;
+      }
+      counter = counter + 1;
+    }
+    return returnval;
+  }
+
+  Map<TGUID, PlanProObject> placeDPAW(Map<TGUID, PlanProObject> m, Int step) {
+    Map<TGUID, PlanProObject> returnval = m;
+    List<PlanProObject> l = values(m);
+    Util util = new local Util();
+    Int counter = 0;
+    while(counter < length(l)) {
+      PlanProObject temp = nth(l, counter);
+      case temp {
+        Objecttype_Signal(o) =>     {
+                                      Signal t = o;
+                                      SignalFiktivReal sfr = t.getSignalFiktivReal();
+                                      case sfr {
+                                          SignalReal(sr) =>
+                                                   {
+                                                     Signal_Real sigreal = sr;
+                                                     Maybe<ENUMSignal_Art> sigartMaybe = sigreal.getSignal_Real_Aktiv_Schirm_Signal_Art();
+                                                     if(isJust(sigartMaybe)) {
+                                                       ENUMSignal_Art sigart = fromJust(sigartMaybe);
+                                                       if(sigart == ENUMSignal_Art_Hauptsignal || sigart == ENUMSignal_Art_Hauptsperrsignal || sigart == ENUMSignal_Art_Mehrabschnittssignal || sigart == ENUMSignal_Art_Mehrabschnittssperrsignal) {
+                                                         TMeter distFromEntry = -1;
+                                                         TMeter distToExit = -1;
+                                                         Int c = 0;
+                                                         while(c < length(entrylist) && distFromEntry < 0) {
+                                                           Punkt_Objekt entry = nth(entrylist, c);
+                                                           distFromEntry = util.calculateDistance(m, entry, t, True);
+                                                           c = c + 1;
+                                                         }
+                                                         c = 0;
+                                                         while(c < length(exitlist) && distToExit < 0) {
+                                                           Punkt_Objekt exit = nth(exitlist, c);
+                                                           distToExit = util.calculateDistance(m, t, exit, True);
+                                                           c = c + 1;
+                                                         }
+                                                         //if(distFromEntry >= 0 && distToExit >= 0) { // only for signals between entry and exit
+                                                           List<Punkt_Objekt> nextposlist = util.calculatePosition(m, t, -250);
+                                                           c = 0;
+                                                           while(c < length(nextposlist)) {
+                                                             Punkt_Objekt nextpos = nth(nextposlist, c);
+                                                             List<Punkt_Objekt_TOP_Kante> kantenlist = nextpos.getPunkt_Objekt_TOP_Kante();
+                                                             Punkt_Objekt_TOP_Kante topKantenGroup = nth(kantenlist, 0); // Take the first element (only one reference edge)
+                                                             TGUID kante = topKantenGroup.getID_TOP_Kante();
+                                                             TMeter abstand =  topKantenGroup.getAbstand();
+                                                             Maybe<TWirkrichtung> wirkrichtungMaybe = topKantenGroup.getWirkrichtung();
+                                                             TWirkrichtung wirkrichtung = fromJust(wirkrichtungMaybe);
+                                                             Datenpunkt dp1 = new local DatenpunktImpl();
+                                                             Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+                                                             List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+                                                             tkgroup.setID_TOP_Kante(kante);
+                                                             tkgroup.setAbstand(abstand);
+                                                             tkgroup.setWirkrichtung(Just(wirkrichtung));
+                                                             tkgroup.setSeitlicher_Abstand(Just(0));
+                                                             tkgrouplist = appendright(tkgrouplist, tkgroup);
+                                                             dp1.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+                                                             TGUID dp_id = "DPAW-" + toString(counter) + "-" + toString(c);
+                                                             dp1.setIdentitaet(dp_id);
+                                                             dp1.setStep(step);
+                                                             dp1.setDatenpunkt_Allg_Datenpunkt_Beschreibung(Just("DP Typ AW"));
+                                                             returnval = insert(returnval, Pair(dp_id, Objecttype_Datenpunkt(dp1)));
+                                                             c = c + 1;
+                                                           }
+                                                         //}
+                                                       }
+                                                     }
+                                                   }
+                                          _ => skip;
+                                      }
+                                    }
+        _ => skip;
+      }
+      counter = counter + 1;
+    }
+    return returnval;
+  }
+
+
+
+
+
+  Map<TGUID, PlanProObject> placeDP1(Map<TGUID, PlanProObject> m, Int step) {
+    Map<TGUID, PlanProObject> returnval = m;
+    Util util = new local Util();
+    Int counter = 0;
+    while(counter < length(entrylist)) {
+      Punkt_Objekt entry = nth(entrylist, counter);
+      List<Punkt_Objekt> nextposlist = util.calculatePosition(m, entry, -5700);
+      Int c = 0;
+      while(c < length(nextposlist)) {
+        Punkt_Objekt nextpos = nth(nextposlist, c);
+        List<Punkt_Objekt_TOP_Kante> kantenlist = nextpos.getPunkt_Objekt_TOP_Kante();
+        Punkt_Objekt_TOP_Kante topKantenGroup = nth(kantenlist, 0); // Take the first element (only one reference edge)
+        TGUID kante = topKantenGroup.getID_TOP_Kante();
+        TMeter abstand =  topKantenGroup.getAbstand();
+        Maybe<TWirkrichtung> wirkrichtungMaybe = topKantenGroup.getWirkrichtung();
+        TWirkrichtung wirkrichtung = fromJust(wirkrichtungMaybe);
+        Datenpunkt dp1 = new local DatenpunktImpl();
+        Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+        List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+        tkgroup.setID_TOP_Kante(kante);
+        tkgroup.setAbstand(abstand);
+        tkgroup.setWirkrichtung(Just(wirkrichtung));
+        tkgroup.setSeitlicher_Abstand(Just(0));
+        tkgrouplist = appendright(tkgrouplist, tkgroup);
+        dp1.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+        TGUID dp_id = "DP1-" + toString(counter) + "-" + toString(c);
+        dp1.setIdentitaet(dp_id);
+        dp1.setStep(step);
+        dp1.setDatenpunkt_Allg_Datenpunkt_Beschreibung(Just("Netzeinwahl-Datenpunkt (DP1)"));
+        returnval = insert(returnval, Pair(dp_id, Objecttype_Datenpunkt(dp1)));
+        c = c + 1;
+      }
+      counter = counter + 1;
+    }
+    return returnval;
+  }
+
+  Map<TGUID, PlanProObject> placeDP2(Map<TGUID, PlanProObject> m, Int step) {
+    Map<TGUID, PlanProObject> returnval = m;
+    Util util = new local Util();
+    Int counter = 0;
+    while(counter < length(entrylist)) {
+      Punkt_Objekt entry = nth(entrylist, counter);
+      List<Punkt_Objekt> nextposlist = util.calculatePosition(m, entry, -2500);
+      Int c = 0;
+      while(c < length(nextposlist)) {
+        Punkt_Objekt nextpos = nth(nextposlist, c);
+        List<Punkt_Objekt_TOP_Kante> kantenlist = nextpos.getPunkt_Objekt_TOP_Kante();
+        Punkt_Objekt_TOP_Kante topKantenGroup = nth(kantenlist, 0); // Take the first element (only one reference edge)
+        TGUID kante = topKantenGroup.getID_TOP_Kante();
+        TMeter abstand =  topKantenGroup.getAbstand();
+        Maybe<TWirkrichtung> wirkrichtungMaybe = topKantenGroup.getWirkrichtung();
+        TWirkrichtung wirkrichtung = fromJust(wirkrichtungMaybe);
+        Datenpunkt dp1 = new local DatenpunktImpl();
+        Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+        List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+        tkgroup.setID_TOP_Kante(kante);
+        tkgroup.setAbstand(abstand);
+        tkgroup.setWirkrichtung(Just(wirkrichtung));
+        tkgroup.setSeitlicher_Abstand(Just(0));
+        tkgrouplist = appendright(tkgrouplist, tkgroup);
+        dp1.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+        TGUID dp_id = "DP2-" + toString(counter) + "-" + toString(c);
+        dp1.setIdentitaet(dp_id);
+        dp1.setStep(step);
+        dp1.setDatenpunkt_Allg_Datenpunkt_Beschreibung(Just("Funkaufbau-Datenpunkt (DP2)"));
+        returnval = insert(returnval, Pair(dp_id, Objecttype_Datenpunkt(dp1)));
+        c = c + 1;
+      }
+      counter = counter + 1;
+    }
+    return returnval;
+  }
+
+  Map<TGUID, PlanProObject> placeDP3(Map<TGUID, PlanProObject> m, Int step) {
+    Map<TGUID, PlanProObject> returnval = m;
+    Util util = new local Util();
+    Int counter = 0;
+    while(counter < length(entrylist)) {
+      Punkt_Objekt entry = nth(entrylist, counter);
+      List<Punkt_Objekt> nextposlist = util.calculatePosition(m, entry, -900);
+      Int c = 0;
+      while(c < length(nextposlist)) {
+        Punkt_Objekt nextpos = nth(nextposlist, c);
+        List<Punkt_Objekt_TOP_Kante> kantenlist = nextpos.getPunkt_Objekt_TOP_Kante();
+        Punkt_Objekt_TOP_Kante topKantenGroup = nth(kantenlist, 0); // Take the first element (only one reference edge)
+        TGUID kante = topKantenGroup.getID_TOP_Kante();
+        TMeter abstand =  topKantenGroup.getAbstand();
+        Maybe<TWirkrichtung> wirkrichtungMaybe = topKantenGroup.getWirkrichtung();
+        TWirkrichtung wirkrichtung = fromJust(wirkrichtungMaybe);
+        Datenpunkt dp1 = new local DatenpunktImpl();
+        Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+        List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+        tkgroup.setID_TOP_Kante(kante);
+        tkgroup.setAbstand(abstand);
+        tkgroup.setWirkrichtung(Just(wirkrichtung));
+        tkgroup.setSeitlicher_Abstand(Just(0));
+        tkgrouplist = appendright(tkgrouplist, tkgroup);
+        dp1.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+        TGUID dp_id = "DP3-" + toString(counter) + "-" + toString(c);
+        dp1.setIdentitaet(dp_id);
+        dp1.setStep(step);
+        dp1.setDatenpunkt_Allg_Datenpunkt_Beschreibung(Just("Ortungs-Datenpunkt vor Einstieg (DP3)"));
+        returnval = insert(returnval, Pair(dp_id, Objecttype_Datenpunkt(dp1)));
+        c = c + 1;
+      }
+      counter = counter + 1;
+    }
+    return returnval;
+  }
+
+  Map<TGUID, PlanProObject> placeDP4(Map<TGUID, PlanProObject> m, Int step) {
+    Map<TGUID, PlanProObject> returnval = m;
+    Int counter = 0;
+    while(counter < length(entrylist)) {
+      Punkt_Objekt entry = nth(entrylist, counter);
+      List<Punkt_Objekt_TOP_Kante> kantenlist = entry.getPunkt_Objekt_TOP_Kante();
+      Punkt_Objekt_TOP_Kante topKantenGroup = nth(kantenlist, 0); // Take the first element (only one reference edge)
+      TGUID kante = topKantenGroup.getID_TOP_Kante();
+      TMeter abstand =  topKantenGroup.getAbstand();
+      Maybe<TWirkrichtung> wirkrichtungMaybe = topKantenGroup.getWirkrichtung();
+      TWirkrichtung wirkrichtung = fromJust(wirkrichtungMaybe);
+      Datenpunkt dp1 = new local DatenpunktImpl();
+      Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+      List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+      tkgroup.setID_TOP_Kante(kante);
+      tkgroup.setAbstand(abstand);
+      tkgroup.setWirkrichtung(Just(wirkrichtung));
+      tkgroup.setSeitlicher_Abstand(Just(0));
+      tkgrouplist = appendright(tkgrouplist, tkgroup);
+      dp1.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+      TGUID dp_id = "DP4-" + toString(counter);
+      dp1.setIdentitaet(dp_id);
+      dp1.setStep(step);
+      dp1.setDatenpunkt_Allg_Datenpunkt_Beschreibung(Just("Einstiegs-Grenzdatenpunkt (DP4)"));
+      returnval = insert(returnval, Pair(dp_id, Objecttype_Datenpunkt(dp1)));
+      counter = counter + 1;
+    }
+    return returnval;
+  }
+
+  Map<TGUID, PlanProObject> placeDP20(Map<TGUID, PlanProObject> m, Int step) {
+    Map<TGUID, PlanProObject> returnval = m;
+    List<PlanProObject> l = values(m);
+    Util util = new local Util();
+    Int counter = 0;
+    while(counter < length(l)) {
+      PlanProObject temp = nth(l, counter);
+      case temp {
+        Objecttype_Signal(o) =>     {
+                                      Signal t = o;
+                                      SignalFiktivReal sfr = t.getSignalFiktivReal();
+                                      case sfr {
+                                          SignalReal(sr) =>
+                                                   {
+                                                     Signal_Real sigreal = sr;
+                                                     Maybe<ENUMSignal_Funktion> sigfuncMaybe = sigreal.getSignal_Real_Aktiv_Signal_Funktion();
+                                                     if(isJust(sigfuncMaybe)) {
+                                                       ENUMSignal_Funktion sigfunc = fromJust(sigfuncMaybe);
+                                                       if(sigfunc == ENUMSignal_Funktion_Block_Signal || sigfunc == ENUMSignal_Funktion_Einfahr_Signal) {
+                                                         List<Punkt_Objekt_TOP_Kante> kantenlist = t.getPunkt_Objekt_TOP_Kante();
+                                                         Punkt_Objekt_TOP_Kante topKantenGroup = nth(kantenlist, 0); // Take the first element (only one reference edge)
+                                                         TGUID kante = topKantenGroup.getID_TOP_Kante();
+                                                         TMeter abstand =  topKantenGroup.getAbstand();
+                                                         Maybe<TWirkrichtung> wirkrichtungMaybe = topKantenGroup.getWirkrichtung();
+                                                         TWirkrichtung wirkrichtung = fromJust(wirkrichtungMaybe);
+                                                         TMeter distFromEntry = -1;
+                                                         TMeter distToExit = -1;
+                                                         Int c = 0;
+                                                         while(c < length(entrylist) && distFromEntry < 0) {
+                                                           Punkt_Objekt entry = nth(entrylist, c);
+                                                           distFromEntry = util.calculateDistance(m, entry, t, True);
+                                                           c = c + 1;
+                                                         }
+                                                         c = 0;
+                                                         while(c < length(exitlist) && distToExit < 0) {
+                                                           Punkt_Objekt exit = nth(exitlist, c);
+                                                           distToExit = util.calculateDistance(m, t, exit, True);
+                                                           c = c + 1;
+                                                         }
+                                                         //if(distFromEntry >= 0 && distToExit >= 0) { // only for signals between entry and exit
+                                                           Datenpunkt dp1 = new local DatenpunktImpl();
+                                                           Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+                                                           List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+                                                           tkgroup.setID_TOP_Kante(kante);
+                                                           tkgroup.setAbstand(abstand);
+                                                           tkgroup.setWirkrichtung(Just(wirkrichtung));
+                                                           tkgroup.setSeitlicher_Abstand(Just(0));
+                                                           tkgrouplist = appendright(tkgrouplist, tkgroup);
+                                                           dp1.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+                                                           TGUID dp_id = "DP20-" + toString(counter);
+                                                           dp1.setIdentitaet(dp_id);
+                                                           dp1.setStep(step);
+                                                           dp1.setDatenpunkt_Allg_Datenpunkt_Beschreibung(Just("Datenpunkt an Signalen (DP20)"));
+                                                           returnval = insert(returnval, Pair(dp_id, Objecttype_Datenpunkt(dp1)));
+                                                         //}
+                                                       }
+                                                     }
+                                                   }
+                                          _ => skip;
+                                      }
+                                    }
+        _ => skip;
+      }
+      counter = counter + 1;
+    }
+    return returnval;
+  }
+
+  Map<TGUID, PlanProObject> placeDP21(Map<TGUID, PlanProObject> m, Int step) {
+    Map<TGUID, PlanProObject> returnval = m;
+    List<PlanProObject> l = values(m);
+    Util util = new local Util();
+    Int counter = 0;
+    while(counter < length(l)) {
+      PlanProObject temp = nth(l, counter);
+      case temp {
+        Objecttype_Signal(o) =>     {
+                                      Signal t = o;
+                                      SignalFiktivReal sfr = t.getSignalFiktivReal();
+                                      case sfr {
+                                          SignalReal(sr) =>
+                                                   {
+                                                     Signal_Real sigreal = sr;
+                                                     Maybe<ENUMSignal_Funktion> sigfuncMaybe = sigreal.getSignal_Real_Aktiv_Signal_Funktion();
+                                                     if(isJust(sigfuncMaybe)) {
+                                                       ENUMSignal_Funktion sigfunc = fromJust(sigfuncMaybe);
+                                                       if(sigfunc == ENUMSignal_Funktion_Ausfahr_Signal || sigfunc == ENUMSignal_Funktion_Ausfahr_Zwischen_Signal || sigfunc == ENUMSignal_Funktion_Einfahr_Ausfahr_Signal ||
+                                                               sigfunc == ENUMSignal_Funktion_Gruppenausfahr_Gruppenzwischen_Signal || sigfunc == ENUMSignal_Funktion_Gruppenausfahr_Signal || sigfunc == ENUMSignal_Funktion_Gruppenzwischen_Signal ||
+                                                               sigfunc == ENUMSignal_Funktion_Zugdeckungs_Signal || sigfunc == ENUMSignal_Funktion_Zwischen_Signal) {
+                                                         List<Punkt_Objekt_TOP_Kante> kantenlist = t.getPunkt_Objekt_TOP_Kante();
+                                                         Punkt_Objekt_TOP_Kante topKantenGroup = nth(kantenlist, 0); // Take the first element (only one reference edge)
+                                                         TGUID kante = topKantenGroup.getID_TOP_Kante();
+                                                         TMeter abstand =  topKantenGroup.getAbstand();
+                                                         Maybe<TWirkrichtung> wirkrichtungMaybe = topKantenGroup.getWirkrichtung();
+                                                         TWirkrichtung wirkrichtung = fromJust(wirkrichtungMaybe);
+                                                         TMeter distFromEntry = -1;
+                                                         TMeter distToExit = -1;
+                                                         Int c = 0;
+                                                         while(c < length(entrylist) && distFromEntry < 0) {
+                                                           Punkt_Objekt entry = nth(entrylist, c);
+                                                           distFromEntry = util.calculateDistance(m, entry, t, True);
+                                                           c = c + 1;
+                                                         }
+                                                         c = 0;
+                                                         while(c < length(exitlist) && distToExit < 0) {
+                                                           Punkt_Objekt exit = nth(exitlist, c);
+                                                           distToExit = util.calculateDistance(m, t, exit, True);
+                                                           c = c + 1;
+                                                         }
+                                                         //if(distFromEntry >= 0 && distToExit >= 0) { // only for signals between entry and exit
+                                                           Datenpunkt dp1 = new local DatenpunktImpl();
+                                                           Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+                                                           List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+                                                           tkgroup.setID_TOP_Kante(kante);
+                                                           tkgroup.setAbstand(abstand);
+                                                           tkgroup.setWirkrichtung(Just(wirkrichtung));
+                                                           tkgroup.setSeitlicher_Abstand(Just(0));
+                                                           tkgrouplist = appendright(tkgrouplist, tkgroup);
+                                                           dp1.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+                                                           TGUID dp_id = "DP21-" + toString(counter);
+                                                           dp1.setIdentitaet(dp_id);
+                                                           dp1.setStep(step);
+                                                           dp1.setDatenpunkt_Allg_Datenpunkt_Beschreibung(Just("Datenpunkt an Ausfahrsignalen (DP21)"));
+                                                           returnval = insert(returnval, Pair(dp_id, Objecttype_Datenpunkt(dp1)));
+                                                         //}
+                                                       }
+                                                     }
+                                                   }
+                                          _ => skip;
+                                      }
+                                    }
+        _ => skip;
+      }
+      counter = counter + 1;
+    }
+    return returnval;
+  }
+
+  Map<TGUID, PlanProObject> placeDP23(Map<TGUID, PlanProObject> m, Int step) {
+    Map<TGUID, PlanProObject> returnval = m;
+    List<PlanProObject> l = values(m);
+    Util util = new local Util();
+    Int counter = 0;
+    while(counter < length(l)) {
+      PlanProObject temp = nth(l, counter);
+      case temp {
+        Objecttype_Signal(o) =>     {
+                                      Signal t = o;
+                                      SignalFiktivReal sfr = t.getSignalFiktivReal();
+                                      case sfr {
+                                          SignalReal(sr) =>
+                                                   {
+                                                     Signal_Real sigreal = sr;
+                                                     Maybe<ENUMSignal_Art> sigartMaybe = sigreal.getSignal_Real_Aktiv_Schirm_Signal_Art();
+                                                     if(isJust(sigartMaybe)) {
+                                                       ENUMSignal_Art sigart = fromJust(sigartMaybe);
+                                                       if(sigart == ENUMSignal_Art_Hauptsignal || sigart == ENUMSignal_Art_Hauptsperrsignal || sigart == ENUMSignal_Art_Mehrabschnittssignal || sigart == ENUMSignal_Art_Mehrabschnittssperrsignal ||
+                                                               sigart == ENUMSignal_Art_Zugdeckungssignal) {
+                                                         TMeter distFromEntry = -1;
+                                                         TMeter distToExit = -1;
+                                                         Int c = 0;
+                                                         while(c < length(entrylist) && distFromEntry < 0) {
+                                                           Punkt_Objekt entry = nth(entrylist, c);
+                                                           distFromEntry = util.calculateDistance(m, entry, t, True);
+                                                           c = c + 1;
+                                                         }
+                                                         c = 0;
+                                                         while(c < length(exitlist) && distToExit < 0) {
+                                                           Punkt_Objekt exit = nth(exitlist, c);
+                                                           distToExit = util.calculateDistance(m, t, exit, True);
+                                                           c = c + 1;
+                                                         }
+                                                         //if(distFromEntry >= 0 && distToExit >= 0) { // only for signals between entry and exit
+                                                           List<Punkt_Objekt> nextposlist = util.calculatePosition(m, t, -300);
+                                                           c = 0;
+                                                           while(c < length(nextposlist)) {
+                                                             Punkt_Objekt nextpos = nth(nextposlist, c);
+                                                             List<Punkt_Objekt_TOP_Kante> kantenlist = nextpos.getPunkt_Objekt_TOP_Kante();
+                                                             Punkt_Objekt_TOP_Kante topKantenGroup = nth(kantenlist, 0); // Take the first element (only one reference edge)
+                                                             TGUID kante = topKantenGroup.getID_TOP_Kante();
+                                                             TMeter abstand =  topKantenGroup.getAbstand();
+                                                             Maybe<TWirkrichtung> wirkrichtungMaybe = topKantenGroup.getWirkrichtung();
+                                                             TWirkrichtung wirkrichtung = fromJust(wirkrichtungMaybe);
+                                                             Datenpunkt dp1 = new local DatenpunktImpl();
+                                                             Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+                                                             List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+                                                             tkgroup.setID_TOP_Kante(kante);
+                                                             tkgroup.setAbstand(abstand);
+                                                             tkgroup.setWirkrichtung(Just(wirkrichtung));
+                                                             tkgroup.setSeitlicher_Abstand(Just(0));
+                                                             tkgrouplist = appendright(tkgrouplist, tkgroup);
+                                                             dp1.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+                                                             TGUID dp_id = "DP23-" + toString(counter) + "-" + toString(c);
+                                                             dp1.setIdentitaet(dp_id);
+                                                             dp1.setStep(step);
+                                                             dp1.setDatenpunkt_Allg_Datenpunkt_Beschreibung(Just("Erster Ortungs-Datenpunkt vor Signalen (DP23)"));
+                                                             returnval = insert(returnval, Pair(dp_id, Objecttype_Datenpunkt(dp1)));
+                                                             c = c + 1;
+                                                           }
+                                                         //}
+                                                       }
+                                                     }
+                                                   }
+                                          _ => skip;
+                                      }
+                                    }
+        _ => skip;
+      }
+      counter = counter + 1;
+    }
+    return returnval;
+  }
+
+  Map<TGUID, PlanProObject> placeDP24(Map<TGUID, PlanProObject> m, Int step) {
+    Map<TGUID, PlanProObject> returnval = m;
+    List<PlanProObject> l = values(m);
+    Util util = new local Util();
+    Int counter = 0;
+    while(counter < length(l)) {
+      PlanProObject temp = nth(l, counter);
+      case temp {
+        Objecttype_Signal(o) =>     {
+                                      Signal t = o;
+                                      SignalFiktivReal sfr = t.getSignalFiktivReal();
+                                      case sfr {
+                                          SignalReal(sr) =>
+                                                   {
+                                                     Signal_Real sigreal = sr;
+                                                     Maybe<ENUMSignal_Funktion> sigfuncMaybe = sigreal.getSignal_Real_Aktiv_Signal_Funktion();
+                                                     if(isJust(sigfuncMaybe)) {
+                                                       ENUMSignal_Funktion sigfunc = fromJust(sigfuncMaybe);
+                                                       if(sigfunc == ENUMSignal_Funktion_Ausfahr_Signal || sigfunc == ENUMSignal_Funktion_Ausfahr_Zwischen_Signal || sigfunc == ENUMSignal_Funktion_Einfahr_Ausfahr_Signal ||
+                                                               sigfunc == ENUMSignal_Funktion_Gruppenausfahr_Gruppenzwischen_Signal || sigfunc == ENUMSignal_Funktion_Gruppenausfahr_Signal || sigfunc == ENUMSignal_Funktion_Gruppenzwischen_Signal ||
+                                                               sigfunc == ENUMSignal_Funktion_Zugdeckungs_Signal || sigfunc == ENUMSignal_Funktion_Zwischen_Signal) {
+                                                         TMeter distFromEntry = -1;
+                                                         TMeter distToExit = -1;
+                                                         Int c = 0;
+                                                         while(c < length(entrylist) && distFromEntry < 0) {
+                                                           Punkt_Objekt entry = nth(entrylist, c);
+                                                           distFromEntry = util.calculateDistance(m, entry, t, True);
+                                                           c = c + 1;
+                                                         }
+                                                         c = 0;
+                                                         while(c < length(exitlist) && distToExit < 0) {
+                                                           Punkt_Objekt exit = nth(exitlist, c);
+                                                           distToExit = util.calculateDistance(m, t, exit, True);
+                                                           c = c + 1;
+                                                         }
+                                                         //if(distFromEntry >= 0 && distToExit >= 0) { // only for signals between entry and exit
+                                                           List<Punkt_Objekt> nextposlist = util.calculatePosition(m, t, -50);
+                                                           c = 0;
+                                                           while(c < length(nextposlist)) {
+                                                             Punkt_Objekt nextpos = nth(nextposlist, c);
+                                                             List<Punkt_Objekt_TOP_Kante> kantenlist = nextpos.getPunkt_Objekt_TOP_Kante();
+                                                             Punkt_Objekt_TOP_Kante topKantenGroup = nth(kantenlist, 0); // Take the first element (only one reference edge)
+                                                             TGUID kante = topKantenGroup.getID_TOP_Kante();
+                                                             TMeter abstand =  topKantenGroup.getAbstand();
+                                                             Maybe<TWirkrichtung> wirkrichtungMaybe = topKantenGroup.getWirkrichtung();
+                                                             TWirkrichtung wirkrichtung = fromJust(wirkrichtungMaybe);
+                                                             Datenpunkt dp1 = new local DatenpunktImpl();
+                                                             Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+                                                             List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+                                                             tkgroup.setID_TOP_Kante(kante);
+                                                             tkgroup.setAbstand(abstand);
+                                                             tkgroup.setWirkrichtung(Just(wirkrichtung));
+                                                             tkgroup.setSeitlicher_Abstand(Just(0));
+                                                             tkgrouplist = appendright(tkgrouplist, tkgroup);
+                                                             dp1.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+                                                             TGUID dp_id = "DP24-" + toString(counter) + "-" + toString(c);
+                                                             dp1.setIdentitaet(dp_id);
+                                                             dp1.setStep(step);
+                                                             dp1.setDatenpunkt_Allg_Datenpunkt_Beschreibung(Just("Zweiter Ortungs-Datenpunkt vor Signalen (DP24)"));
+                                                             returnval = insert(returnval, Pair(dp_id, Objecttype_Datenpunkt(dp1)));
+                                                             c = c + 1;
+                                                           }
+                                                         //}
+                                                       }
+                                                     }
+                                                   }
+                                          _ => skip;
+                                      }
+                                    }
+        _ => skip;
+      }
+      counter = counter + 1;
+    }
+    return returnval;
+  }
+
+  Map<TGUID, PlanProObject> placeDP25(Map<TGUID, PlanProObject> m, Int step) {
+    Map<TGUID, PlanProObject> returnval = m;
+    Util util = new local Util();
+    Bool finished = False;
+    Bool modified = False;
+    Int newDpCount = 0;
+    while(!finished) {
+      List<PlanProObject> l = values(returnval);
+      Int counter = 0;
+      while(counter < length(l) && !modified) {
+        PlanProObject temp = nth(l, counter);
+        case temp {
+          Objecttype_Datenpunkt(o) => {
+                                        Datenpunkt t = o;
+                                        List<Triple<List<TOP_Kante>, Datenpunkt, TMeter>> nextlist_forward = util.getNextDatenpunktPaths(returnval, t, True);
+                                        List<Triple<List<TOP_Kante>, Datenpunkt, TMeter>> nextlist_reverse = util.getNextDatenpunktPaths(returnval, t, False);
+                                        List<TOP_Kante> nodelist = Nil;
+                                        Datenpunkt maxDP = null;
+                                        TMeter maxDist = 0;
+                                        Bool searchForward = True;
+                                        Int c1 = 0;
+                                        while(c1 < length(nextlist_forward)) {
+                                          Triple<List<TOP_Kante>, Datenpunkt, TMeter> nextTriple = nth(nextlist_forward, c1);
+                                          TMeter tempdist = trdT(nextTriple);
+                                          if(tempdist > maxDist) {
+                                            maxDist = tempdist;
+                                            nodelist = fstT(nextTriple);
+                                            maxDP = sndT(nextTriple);
+                                          }
+                                          c1 = c1 + 1;
+                                        }
+                                        c1 = 0;
+                                        while(c1 < length(nextlist_reverse)) {
+                                          Triple<List<TOP_Kante>, Datenpunkt, TMeter> nextTriple = nth(nextlist_reverse, c1);
+                                          TMeter tempdist = trdT(nextTriple);
+                                          if(tempdist > maxDist) {
+                                            maxDist = tempdist;
+                                            nodelist = fstT(nextTriple);
+                                            maxDP = sndT(nextTriple);
+                                            searchForward = False;
+                                          }
+                                          c1 = c1 + 1;
+                                        }
+                                        //println(toString(maxDist));
+                                        if(maxDist > 1800) {
+                                          Int segmentCount = 1;
+                                          while(maxDist / segmentCount > 1800) { segmentCount = segmentCount + 1; }
+                                          Rat segmentLength = maxDist / segmentCount;
+                                          Punkt_Objekt nextpos = util.calculatePositionOnPath(returnval, t, nodelist, segmentLength * (segmentCount - 1), searchForward);
+                                          List<Punkt_Objekt_TOP_Kante> kantenlist = nextpos.getPunkt_Objekt_TOP_Kante();
+                                          Punkt_Objekt_TOP_Kante topKantenGroup = nth(kantenlist, 0); // Take the first element (only one reference edge)
+                                          TGUID kante = topKantenGroup.getID_TOP_Kante();
+                                          TMeter abstand =  topKantenGroup.getAbstand();
+                                          Maybe<TWirkrichtung> wirkrichtungMaybe = topKantenGroup.getWirkrichtung();
+                                          TWirkrichtung wirkrichtung = fromJust(wirkrichtungMaybe);
+                                          Datenpunkt dp1 = new local DatenpunktImpl();
+                                          Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+                                          List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+                                          tkgroup.setID_TOP_Kante(kante);
+                                          tkgroup.setAbstand(abstand);
+                                          tkgroup.setWirkrichtung(Just(wirkrichtung));
+                                          tkgroup.setSeitlicher_Abstand(Just(0));
+                                          tkgrouplist = appendright(tkgrouplist, tkgroup);
+                                          dp1.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+                                          TGUID dp_id = "DP25-" + toString(newDpCount);
+                                          dp1.setIdentitaet(dp_id);
+                                          dp1.setStep(step);
+                                          dp1.setDatenpunkt_Allg_Datenpunkt_Beschreibung(Just("Allgemeiner Ortungs-Datenpunkt (DP25)"));
+                                          returnval = insert(returnval, Pair(dp_id, Objecttype_Datenpunkt(dp1)));
+                                          modified = True;
+                                          newDpCount = newDpCount + 1;
+                                        }
+                                      }
+          _ => skip;
+        }
+        counter = counter + 1;
+      }
+      if(!modified) {
+        finished = True;
+      }
+      else {
+        modified = False;
+      }
+    }
+    return returnval;
+  }
+
+  Map<TGUID, PlanProObject> placeDP25old(Map<TGUID, PlanProObject> m, Int step) {
+    Map<TGUID, PlanProObject> returnval = m;
+    List<PlanProObject> l = values(m);
+    Util util = new local Util();
+    Int counter = 0;
+    while(counter < length(l)) {
+      PlanProObject temp = nth(l, counter);
+      case temp {
+        Objecttype_Datenpunkt(o) => {
+                                      Datenpunkt t = o;
+                                      Datenpunkt next = util.getNextDatenpunkt(m, t, True);
+                                      if(next != null) {
+                                        //TGUID tkante = t.getPunkt_Objekt_TOP_Kante_ID_TOP_Kante();
+                                        //TMeter tabstand = t.getPunkt_Objekt_TOP_Kante_Abstand();
+                                        //TGUID nextkante = next.getPunkt_Objekt_TOP_Kante_ID_TOP_Kante();
+                                        //TMeter nextabstand = next.getPunkt_Objekt_TOP_Kante_Abstand();
+                                        TMeter dpdist = util.calculateDistance(m, t, next, True);
+                                        Int segmentCount = 1;
+                                        while(dpdist / segmentCount > 1800) { segmentCount = segmentCount + 1; }
+                                        Rat segmentLength = dpdist / segmentCount;
+                                        //println(toString(dpdist) + "/" + toString(segmentCount) + "/" + toString(segmentLength));
+                                        while(segmentCount > 1) {
+                                          segmentCount = segmentCount - 1;
+                                          //Pair<TGUID, TMeter> nextpos = util.calculatePosition(m, Pair(tkante,tabstand), (segmentCount * segmentLength));
+                                          List<Punkt_Objekt> nextposlist = util.calculatePosition(m, t, (segmentCount * segmentLength));
+                                          Int c = 0;
+                                          while(c < length(nextposlist)) {
+                                            Punkt_Objekt nextpos = nth(nextposlist, c);
+                                            List<Punkt_Objekt_TOP_Kante> kantenlist = nextpos.getPunkt_Objekt_TOP_Kante();
+                                            Punkt_Objekt_TOP_Kante topKantenGroup = nth(kantenlist, 0); // Take the first element (only one reference edge)
+                                            TGUID kante = topKantenGroup.getID_TOP_Kante();
+                                            TMeter abstand =  topKantenGroup.getAbstand();
+                                            Maybe<TWirkrichtung> wirkrichtungMaybe = topKantenGroup.getWirkrichtung();
+                                            TWirkrichtung wirkrichtung = fromJust(wirkrichtungMaybe);
+                                            Datenpunkt dp1 = new local DatenpunktImpl();
+                                            Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+                                            List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+                                            tkgroup.setID_TOP_Kante(kante);
+                                            tkgroup.setAbstand(abstand);
+                                            tkgroup.setWirkrichtung(Just(wirkrichtung));
+                                            tkgroup.setSeitlicher_Abstand(Just(0));
+                                            tkgrouplist = appendright(tkgrouplist, tkgroup);
+                                            dp1.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+                                            TGUID dp_id = "DP25-" + toString(counter) + "-" + toString(segmentCount) + "-" + toString(c);
+                                            dp1.setIdentitaet(dp_id);
+                                            dp1.setStep(step);
+                                            dp1.setDatenpunkt_Allg_Datenpunkt_Beschreibung(Just("Allgemeiner Ortungs-Datenpunkt (DP25)"));
+                                            returnval = insert(returnval, Pair(dp_id, Objecttype_Datenpunkt(dp1)));
+                                            c = c + 1;
+                                          }
+                                        }
+                                      }
+                                    }
+        _ => skip;
+      }
+      counter = counter + 1;
+    }
+    return returnval;
+  }
+
+  Map<TGUID, PlanProObject> placeDP60(Map<TGUID, PlanProObject> m, Int step) {
+    Map<TGUID, PlanProObject> returnval = m;
+    Util util = new local Util();
+    Int counter = 0;
+    while(counter < length(exitlist)) {
+      Punkt_Objekt exit = nth(exitlist, counter);
+      List<Punkt_Objekt> nextposlist = util.calculatePosition(m, exit, 71);
+      Int c = 0;
+      while(c < length(nextposlist)) {
+        Punkt_Objekt nextpos = nth(nextposlist, c);
+        List<Punkt_Objekt_TOP_Kante> kantenlist = nextpos.getPunkt_Objekt_TOP_Kante();
+        Punkt_Objekt_TOP_Kante topKantenGroup = nth(kantenlist, 0); // Take the first element (only one reference edge)
+        TGUID kante = topKantenGroup.getID_TOP_Kante();
+        TMeter abstand =  topKantenGroup.getAbstand();
+        Maybe<TWirkrichtung> wirkrichtungMaybe = topKantenGroup.getWirkrichtung();
+        TWirkrichtung wirkrichtung = fromJust(wirkrichtungMaybe);
+        Datenpunkt dp1 = new local DatenpunktImpl();
+        Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+        List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+        tkgroup.setID_TOP_Kante(kante);
+        tkgroup.setAbstand(abstand);
+        tkgroup.setWirkrichtung(Just(wirkrichtung));
+        tkgroup.setSeitlicher_Abstand(Just(0));
+        tkgrouplist = appendright(tkgrouplist, tkgroup);
+        dp1.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+        TGUID dp_id = "DP60-" + toString(counter) + "-" + toString(c);
+        dp1.setIdentitaet(dp_id);
+        dp1.setStep(step);
+        dp1.setDatenpunkt_Allg_Datenpunkt_Beschreibung(Just("Grenz-Datenpunkt fuer regulaere Ausstiege (DP60)"));
+        returnval = insert(returnval, Pair(dp_id, Objecttype_Datenpunkt(dp1)));
+        c = c + 1;
+      }
+      counter = counter + 1;
+    }
+    return returnval;
+  }
+}
+

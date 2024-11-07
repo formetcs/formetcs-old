@@ -1,0 +1,1329 @@
+module ETCS;
+
+export *;
+import * from BasisTypen;
+import * from Basisobjekte;
+import * from Block;
+import * from Metaobject;
+
+
+// Enums
+data ENUMAnwendungssystem = ENUMAnwendungssystem_unused | ENUMAnwendungssystem_ESG | ENUMAnwendungssystem_ETCS | ENUMAnwendungssystem_GNT | ENUMAnwendungssystem_ZBS | ENUMAnwendungssystem_sonstige;
+
+data ENUMAusrichtung = ENUMAusrichtung_unused | ENUMAusrichtung_gegen | ENUMAusrichtung_in | ENUMAusrichtung_keine;
+
+data ENUMDP_Bezug_Betrieblich_Art = ENUMDP_Bezug_Betrieblich_Art_unused | ENUMDP_Bezug_Betrieblich_Art_mittelbar | ENUMDP_Bezug_Betrieblich_Art_unmittelbar | ENUMDP_Bezug_Betrieblich_Art_sonstige;
+
+data ENUMDP_Typ_ETCS_Ls = ENUMDP_Typ_ETCS_Ls_unused | ENUMDP_Typ_ETCS_Ls_AS | ENUMDP_Typ_ETCS_Ls_AW | ENUMDP_Typ_ETCS_Ls_BA | ENUMDP_Typ_ETCS_Ls_BP | ENUMDP_Typ_ETCS_Ls_BM | ENUMDP_Typ_ETCS_Ls_BR | ENUMDP_Typ_ETCS_Ls_BS | ENUMDP_Typ_ETCS_Ls_HS | ENUMDP_Typ_ETCS_Ls_LF | ENUMDP_Typ_ETCS_Ls_MS | ENUMDP_Typ_ETCS_Ls_NV | ENUMDP_Typ_ETCS_Ls_SA | ENUMDP_Typ_ETCS_Ls_SB | ENUMDP_Typ_ETCS_Ls_SK | ENUMDP_Typ_ETCS_Ls_SS | ENUMDP_Typ_ETCS_Ls_ST | ENUMDP_Typ_ETCS_Ls_TA | ENUMDP_Typ_ETCS_Ls_TE | ENUMDP_Typ_ETCS_Ls_TG | ENUMDP_Typ_ETCS_Ls_TM | ENUMDP_Typ_ETCS_Ls_TP | ENUMDP_Typ_ETCS_Ls_TS | ENUMDP_Typ_ETCS_Ls_TV | ENUMDP_Typ_ETCS_Ls_VS | ENUMDP_Typ_ETCS_Ls_VW | ENUMDP_Typ_ETCS_Ls_sonstige;
+
+data ENUMDP_Typ_GNT = ENUMDP_Typ_GNT_unused | ENUMDP_Typ_GNT_B1 | ENUMDP_Typ_GNT_B2 | ENUMDP_Typ_GNT_B3 | ENUMDP_Typ_GNT_sonstige;
+
+data ENUMDP_Typ_Trans = ENUMDP_Typ_Trans_unused | ENUMDP_Typ_Trans_A | ENUMDP_Typ_Trans_TR | ENUMDP_Typ_Trans_sonstige;
+
+data ENUMDP_Typ_ZBS = ENUMDP_Typ_ZBS_unused | ENUMDP_Typ_ZBS_RBE | ENUMDP_Typ_ZBS_RS | ENUMDP_Typ_ZBS_RSp | ENUMDP_Typ_ZBS_ZA | ENUMDP_Typ_ZBS_ZBbP | ENUMDP_Typ_ZBS_ZBP | ENUMDP_Typ_ZBS_ZF | ENUMDP_Typ_ZBS_ZH | ENUMDP_Typ_ZBS_ZHF | ENUMDP_Typ_ZBS_ZLiH | ENUMDP_Typ_ZBS_ZLiV | ENUMDP_Typ_ZBS_ZO | ENUMDP_Typ_ZBS_ZRE | ENUMDP_Typ_ZBS_ZRH | ENUMDP_Typ_ZBS_ZRHF | ENUMDP_Typ_ZBS_ZRLa | ENUMDP_Typ_ZBS_ZRV | ENUMDP_Typ_ZBS_ZUE | ENUMDP_Typ_ZBS_ZV | ENUMDP_Typ_ZBS_sonstige;
+
+data ENUMFT_Hinweis_Funktion = ENUMFT_Hinweis_Funktion_unused | ENUMFT_Hinweis_Funktion_Ortung | ENUMFT_Hinweis_Funktion_ZBS_Ende | ENUMFT_Hinweis_Funktion_sonstige;
+
+data ENUMFT_ZBS_Typ = ENUMFT_ZBS_Typ_unused | ENUMFT_ZBS_Typ_RBE | ENUMFT_ZBS_Typ_RS | ENUMFT_ZBS_Typ_RSp | ENUMFT_ZBS_Typ_TLa | ENUMFT_ZBS_Typ_ZA | ENUMFT_ZBS_Typ_ZBbP | ENUMFT_ZBS_Typ_ZBP | ENUMFT_ZBS_Typ_ZF | ENUMFT_ZBS_Typ_ZH | ENUMFT_ZBS_Typ_ZHF | ENUMFT_ZBS_Typ_ZLiH | ENUMFT_ZBS_Typ_ZLiV | ENUMFT_ZBS_Typ_ZO | ENUMFT_ZBS_Typ_ZRE | ENUMFT_ZBS_Typ_ZRH | ENUMFT_ZBS_Typ_ZRHF | ENUMFT_ZBS_Typ_ZRLa | ENUMFT_ZBS_Typ_ZRV | ENUMFT_ZBS_Typ_ZUE | ENUMFT_ZBS_Typ_ZV | ENUMFT_ZBS_Typ_Null | ENUMFT_ZBS_Typ_sonstige;
+
+data ENUMDP_Link_Art = ENUMDP_Link_Art_unused | ENUMDP_Link_Art_Grund | ENUMDP_Link_Art_Hilfs | ENUMDP_Link_Art_sonstige;
+
+data ENUMZBS_Reaktion = ENUMZBS_Reaktion_unused | ENUMZBS_Reaktion_Meldereaktion | ENUMZBS_Reaktion_Sicherheitsreaktion | ENUMZBS_Reaktion_sonstige;
+
+data ENUMVerwendung_Als_Rueckfall = ENUMVerwendung_Als_Rueckfall_unused | ENUMVerwendung_Als_Rueckfall_Rueckfall | ENUMVerwendung_Als_Rueckfall_nur_Rueckfall | ENUMVerwendung_Als_Rueckfall_sonstige;
+
+data ENUMArt_Bedingung = ENUMArt_Bedingung_unused | ENUMArt_Bedingung_Festdaten | ENUMArt_Bedingung_Default | ENUMArt_Bedingung_Stoertelegramm | ENUMArt_Bedingung_sonstige;
+
+data ENUMW_Anschluss = ENUMW_Anschluss_unused | ENUMW_Anschluss_links | ENUMW_Anschluss_rechts | ENUMW_Anschluss_Spitze;
+
+data ENUMETCS_Knoten_Art_Sonstige = ENUMETCS_Knoten_Art_Sonstige_unused | ENUMETCS_Knoten_Art_Sonstige_KrW | ENUMETCS_Knoten_Art_Sonstige_Gleisabschluss | ENUMETCS_Knoten_Art_Sonstige_Streckenwechsel | ENUMETCS_Knoten_Art_Sonstige_Streckenende | ENUMETCS_Knoten_Art_Sonstige_Grenze_Ausruestungsbereich;
+
+data ENUMLEU_Modul_Art = ENUMLEU_Modul_Art_unused | ENUMLEU_Modul_Art_LEU_P | ENUMLEU_Modul_Art_Voll_LEU;
+
+data ENUMPosition = ENUMPosition_unused | ENUMPosition_am | ENUMPosition_hinter | ENUMPosition_vor;
+
+data ENUMSpannung_Art = ENUMSpannung_Art_unused | ENUMSpannung_Art_AC_110 | ENUMSpannung_Art_DC_110 | ENUMSpannung_Art_AC_230 | ENUMSpannung_Art_AC_400 | ENUMSpannung_Art_DC_136 | ENUMSpannung_Art_DC_60 | ENUMSpannung_Art_DC_48| ENUMSpannung_Art_DC_36 | ENUMSpannung_Art_DC_24;
+
+data ENUMStandortangabe = ENUMStandortangabe_unused | ENUMStandortangabe_Signal | ENUMStandortangabe_Signal_Gleis | ENUMStandortangabe_Streckenkilometer_Gleis;
+
+data ENUMEV_Modul_Art = ENUMEV_Modul_Art_unused | ENUMEV_Modul_Art_autonom | ENUMEV_Modul_Art_autonom_klein | ENUMEV_Modul_Art_PoP_V | ENUMEV_Modul_Art_netzgebunden | ENUMEV_Modul_Art_sonstige;
+
+data ENUMEnergie_Eingang_Art = ENUMEnergie_Eingang_Art_unused | ENUMEnergie_Eingang_Art_Landesnetz | ENUMEnergie_Eingang_Art_Fahrleitung | ENUMEnergie_Eingang_Art_Solar | ENUMEnergie_Eingang_Art_Brennstoffzelle | ENUMEnergie_Eingang_Art_sonstige;
+
+data ENUMPruefsumme_Art = ENUMPruefsumme_Art_unused | ENUMPruefsumme_Art_MD4 | ENUMPruefsumme_Art_MD5 | ENUMPruefsumme_Art_SHA1 | ENUMPruefsumme_Art_SHA256 | ENUMPruefsumme_Art_sonstige;
+
+data ENUMEinzeldatei_Art = ENUMEinzeldatei_Art_unused | ENUMEinzeldatei_Art_Ladedatei | ENUMEinzeldatei_Art_Hilfsdatei;
+
+data ENUMVerbot_WB_Art = ENUMVerbot_WB_Art_unused | ENUMVerbot_WB_Art_vollstaendig | ENUMVerbot_WB_Art_Betriebsbremsung;
+
+data ENUMSystem_Vor_Grenze = ENUMSystem_Vor_Grenze_unused | ENUMSystem_Vor_Grenze_L2 | ENUMSystem_Vor_Grenze_ESG | ENUMSystem_Vor_Grenze_PZB | ENUMSystem_Vor_Grenze_LZB | ENUMSystem_Vor_Grenze_GNT | ENUMSystem_Vor_Grenze_ohne | ENUMSystem_Vor_Grenze_sonstige;
+
+data ENUMDP_Typ_Art = ENUMDP_Typ_Art_unused | ENUMDP_Typ_Art_primaer | ENUMDP_Typ_Art_sekundaer;
+
+
+
+// Functions to print the enum values
+def String printAnwendungssystem(ENUMAnwendungssystem e) =
+  case e {
+    ENUMAnwendungssystem_unused => "";
+    ENUMAnwendungssystem_ESG => "ESG";
+    ENUMAnwendungssystem_ETCS => "ETCS";
+    ENUMAnwendungssystem_GNT => "GNT";
+    ENUMAnwendungssystem_ZBS => "ZBS";
+    ENUMAnwendungssystem_sonstige => "sonstige";
+  };
+
+def String printAusrichtung(ENUMAusrichtung e) =
+  case e {
+    ENUMAusrichtung_unused => "";
+    ENUMAusrichtung_gegen => "gegen";
+    ENUMAusrichtung_in => "in";
+    ENUMAusrichtung_keine => "keine";
+  };
+
+def String printDP_Bezug_Betrieblich_Art(ENUMDP_Bezug_Betrieblich_Art e) =
+  case e {
+    ENUMDP_Bezug_Betrieblich_Art_unused => "";
+    ENUMDP_Bezug_Betrieblich_Art_mittelbar => "mittelbar";
+    ENUMDP_Bezug_Betrieblich_Art_unmittelbar => "unmittelbar";
+    ENUMDP_Bezug_Betrieblich_Art_sonstige => "sonstige";
+  };
+
+def String printDP_Typ_ETCS_Ls(ENUMDP_Typ_ETCS_Ls e) =
+  case e {
+    ENUMDP_Typ_ETCS_Ls_unused => "";
+    ENUMDP_Typ_ETCS_Ls_AS => "AS";
+    ENUMDP_Typ_ETCS_Ls_AW => "AW";
+    ENUMDP_Typ_ETCS_Ls_BA => "BA";
+    ENUMDP_Typ_ETCS_Ls_BP => "BP";
+    ENUMDP_Typ_ETCS_Ls_BM => "BM";
+    ENUMDP_Typ_ETCS_Ls_BR => "BR";
+    ENUMDP_Typ_ETCS_Ls_BS => "BS";
+    ENUMDP_Typ_ETCS_Ls_HS => "HS";
+    ENUMDP_Typ_ETCS_Ls_LF => "LF";
+    ENUMDP_Typ_ETCS_Ls_MS => "MS";
+    ENUMDP_Typ_ETCS_Ls_NV => "NV";
+    ENUMDP_Typ_ETCS_Ls_SA => "SA";
+    ENUMDP_Typ_ETCS_Ls_SB => "SB";
+    ENUMDP_Typ_ETCS_Ls_SK => "SK";
+    ENUMDP_Typ_ETCS_Ls_SS => "SS";
+    ENUMDP_Typ_ETCS_Ls_ST => "ST";
+    ENUMDP_Typ_ETCS_Ls_TA => "TA";
+    ENUMDP_Typ_ETCS_Ls_TE => "TE";
+    ENUMDP_Typ_ETCS_Ls_TG => "TG";
+    ENUMDP_Typ_ETCS_Ls_TM => "TM";
+    ENUMDP_Typ_ETCS_Ls_TP => "TP";
+    ENUMDP_Typ_ETCS_Ls_TS => "TS";
+    ENUMDP_Typ_ETCS_Ls_TV => "TV";
+    ENUMDP_Typ_ETCS_Ls_VS => "VS";
+    ENUMDP_Typ_ETCS_Ls_VW => "VW";
+    ENUMDP_Typ_ETCS_Ls_sonstige => "sonstige";
+  };
+
+def String printDP_Typ_GNT(ENUMDP_Typ_GNT e) =
+  case e {
+    ENUMDP_Typ_GNT_unused => "";
+    ENUMDP_Typ_GNT_B1 => "B1";
+    ENUMDP_Typ_GNT_B2 => "B2";
+    ENUMDP_Typ_GNT_B3 => "B3";
+    ENUMDP_Typ_GNT_sonstige => "sonstige";
+  };
+
+def String printDP_Typ_Trans(ENUMDP_Typ_Trans e) =
+  case e {
+    ENUMDP_Typ_Trans_unused => "";
+    ENUMDP_Typ_Trans_A => "A";
+    ENUMDP_Typ_Trans_TR => "TR";
+    ENUMDP_Typ_Trans_sonstige => "sonstige";
+  };
+
+def String printDP_Typ_ZBS(ENUMDP_Typ_ZBS e) =
+  case e {
+    ENUMDP_Typ_ZBS_unused => "";
+    ENUMDP_Typ_ZBS_RBE => "RBE";
+    ENUMDP_Typ_ZBS_RS => "RS";
+    ENUMDP_Typ_ZBS_RSp => "RSp";
+    ENUMDP_Typ_ZBS_ZA => "ZA";
+    ENUMDP_Typ_ZBS_ZBbP => "ZBbP";
+    ENUMDP_Typ_ZBS_ZBP => "ZBP";
+    ENUMDP_Typ_ZBS_ZF => "ZF";
+    ENUMDP_Typ_ZBS_ZH => "ZH";
+    ENUMDP_Typ_ZBS_ZHF => "ZHF";
+    ENUMDP_Typ_ZBS_ZLiH => "ZLiH";
+    ENUMDP_Typ_ZBS_ZLiV => "ZLiV";
+    ENUMDP_Typ_ZBS_ZO => "ZO";
+    ENUMDP_Typ_ZBS_ZRE => "ZRE";
+    ENUMDP_Typ_ZBS_ZRH => "ZRH";
+    ENUMDP_Typ_ZBS_ZRHF => "ZRHF";
+    ENUMDP_Typ_ZBS_ZRLa => "ZRLa";
+    ENUMDP_Typ_ZBS_ZRV => "ZRV";
+    ENUMDP_Typ_ZBS_ZUE => "ZUE";
+    ENUMDP_Typ_ZBS_ZV => "ZV";
+    ENUMDP_Typ_ZBS_sonstige => "sonstige";
+  };
+
+def String printFT_Hinweis_Funktion(ENUMFT_Hinweis_Funktion e) =
+  case e {
+    ENUMFT_Hinweis_Funktion_unused => "";
+    ENUMFT_Hinweis_Funktion_Ortung => "Ortung";
+    ENUMFT_Hinweis_Funktion_ZBS_Ende => "ZBS_Ende";
+    ENUMFT_Hinweis_Funktion_sonstige => "sonstige";
+  };
+
+def String printFT_ZBS_Typ(ENUMFT_ZBS_Typ e) =
+  case e {
+    ENUMFT_ZBS_Typ_unused => "";
+    ENUMFT_ZBS_Typ_RBE => "RBE";
+    ENUMFT_ZBS_Typ_RS => "RS";
+    ENUMFT_ZBS_Typ_RSp => "RSp";
+    ENUMFT_ZBS_Typ_TLa => "TLa";
+    ENUMFT_ZBS_Typ_ZA => "ZA";
+    ENUMFT_ZBS_Typ_ZBbP => "ZBbP";
+    ENUMFT_ZBS_Typ_ZBP => "ZBP";
+    ENUMFT_ZBS_Typ_ZF => "ZF";
+    ENUMFT_ZBS_Typ_ZH => "ZH";
+    ENUMFT_ZBS_Typ_ZHF => "ZHF";
+    ENUMFT_ZBS_Typ_ZLiH => "ZLiH";
+    ENUMFT_ZBS_Typ_ZLiV => "ZLiV";
+    ENUMFT_ZBS_Typ_ZO => "ZO";
+    ENUMFT_ZBS_Typ_ZRE => "ZRE";
+    ENUMFT_ZBS_Typ_ZRH => "ZRH";
+    ENUMFT_ZBS_Typ_ZRHF => "ZRHF";
+    ENUMFT_ZBS_Typ_ZRLa => "ZRLa";
+    ENUMFT_ZBS_Typ_ZRV => "ZRV";
+    ENUMFT_ZBS_Typ_ZUE => "ZUE";
+    ENUMFT_ZBS_Typ_ZV => "ZV";
+    ENUMFT_ZBS_Typ_Null => "Null";
+    ENUMFT_ZBS_Typ_sonstige => "sonstige";
+  };
+
+def String printDP_Link_Art(ENUMDP_Link_Art e) =
+  case e {
+    ENUMDP_Link_Art_unused => "";
+    ENUMDP_Link_Art_Grund => "Grund";
+    ENUMDP_Link_Art_Hilfs => "Hilfs";
+    ENUMDP_Link_Art_sonstige => "sonstige";
+  };
+
+def String printZBS_Reaktion(ENUMZBS_Reaktion e) =
+  case e {
+    ENUMZBS_Reaktion_unused => "";
+    ENUMZBS_Reaktion_Meldereaktion => "Meldereaktion";
+    ENUMZBS_Reaktion_Sicherheitsreaktion => "Sicherheitsreaktion";
+    ENUMZBS_Reaktion_sonstige => "sonstige";
+  };
+
+def String printVerwendung_Als_Rueckfall(ENUMVerwendung_Als_Rueckfall e) =
+  case e {
+    ENUMVerwendung_Als_Rueckfall_unused => "";
+    ENUMVerwendung_Als_Rueckfall_Rueckfall => "Rueckfall";
+    ENUMVerwendung_Als_Rueckfall_nur_Rueckfall => "nur_Rueckfall";
+    ENUMVerwendung_Als_Rueckfall_sonstige => "sonstige";
+  };
+
+def String printArt_Bedingung(ENUMArt_Bedingung e) =
+  case e {
+    ENUMArt_Bedingung_unused => "";
+    ENUMArt_Bedingung_Festdaten => "Festdaten";
+    ENUMArt_Bedingung_Default => "Default";
+    ENUMArt_Bedingung_Stoertelegramm => "Stoertelegramm";
+    ENUMArt_Bedingung_sonstige => "sonstige";
+  };
+
+def String printW_Anschluss(ENUMW_Anschluss e) =
+  case e {
+    ENUMW_Anschluss_unused => "";
+    ENUMW_Anschluss_links => "links";
+    ENUMW_Anschluss_rechts => "rechts";
+    ENUMW_Anschluss_Spitze => "Spitze";
+  };
+
+def String printETCS_Knoten_Art_Sonstige(ENUMETCS_Knoten_Art_Sonstige e) =
+  case e {
+    ENUMETCS_Knoten_Art_Sonstige_unused => "";
+    ENUMETCS_Knoten_Art_Sonstige_KrW => "KrW";
+    ENUMETCS_Knoten_Art_Sonstige_Gleisabschluss => "Gleisabschluss";
+    ENUMETCS_Knoten_Art_Sonstige_Streckenwechsel => "Streckenwechsel";
+    ENUMETCS_Knoten_Art_Sonstige_Streckenende => "Streckenende";
+    ENUMETCS_Knoten_Art_Sonstige_Grenze_Ausruestungsbereich => "Grenze_Ausruestungsbereich";
+  };
+
+def String printLEU_Modul_Art(ENUMLEU_Modul_Art e) =
+  case e {
+    ENUMLEU_Modul_Art_unused => "";
+    ENUMLEU_Modul_Art_LEU_P => "LEU_P";
+    ENUMLEU_Modul_Art_Voll_LEU => "Voll_LEU";
+  };
+
+def String printPosition(ENUMPosition e) =
+  case e {
+    ENUMPosition_unused => "";
+    ENUMPosition_am => "am";
+    ENUMPosition_hinter => "hinter";
+    ENUMPosition_vor => "vor";
+  };
+
+def String printSpannung_Art(ENUMSpannung_Art e) =
+  case e {
+    ENUMSpannung_Art_unused => "";
+    ENUMSpannung_Art_AC_110 => "AC_110";
+    ENUMSpannung_Art_DC_110 => "DC_110";
+    ENUMSpannung_Art_AC_230 => "AC_230";
+    ENUMSpannung_Art_AC_400 => "AC_400";
+    ENUMSpannung_Art_DC_136 => "DC_136";
+    ENUMSpannung_Art_DC_60 => "DC_60";
+    ENUMSpannung_Art_DC_48 => "DC_48";
+    ENUMSpannung_Art_DC_36 => "DC_36";
+    ENUMSpannung_Art_DC_24 => "DC_24";
+  };
+
+def String printStandortangabe(ENUMStandortangabe e) =
+  case e {
+    ENUMStandortangabe_unused => "";
+    ENUMStandortangabe_Signal => "Signal";
+    ENUMStandortangabe_Signal_Gleis => "Signal_Gleis";
+    ENUMStandortangabe_Streckenkilometer_Gleis => "Streckenkilometer_Gleis";
+  };
+
+def String printEV_Modul_Art(ENUMEV_Modul_Art e) =
+  case e {
+    ENUMEV_Modul_Art_unused => "";
+    ENUMEV_Modul_Art_autonom => "autonom";
+    ENUMEV_Modul_Art_autonom_klein => "autonom_klein";
+    ENUMEV_Modul_Art_PoP_V => "PoP_V";
+    ENUMEV_Modul_Art_netzgebunden => "netzgebunden";
+    ENUMEV_Modul_Art_sonstige => "sonstige";
+  };
+
+def String printEnergie_Eingang_Art(ENUMEnergie_Eingang_Art e) =
+  case e {
+    ENUMEnergie_Eingang_Art_unused => "";
+    ENUMEnergie_Eingang_Art_Landesnetz => "Landesnetz";
+    ENUMEnergie_Eingang_Art_Fahrleitung => "Fahrleitung";
+    ENUMEnergie_Eingang_Art_Solar => "Solar";
+    ENUMEnergie_Eingang_Art_Brennstoffzelle => "Brennstoffzelle";
+    ENUMEnergie_Eingang_Art_sonstige => "sonstige";
+  };
+
+def String printPruefsumme_Art(ENUMPruefsumme_Art e) =
+  case e {
+    ENUMPruefsumme_Art_unused => "";
+    ENUMPruefsumme_Art_MD4 => "MD4";
+    ENUMPruefsumme_Art_MD5 => "MD5";
+    ENUMPruefsumme_Art_SHA1 => "SHA1";
+    ENUMPruefsumme_Art_SHA256 => "SHA256";
+    ENUMPruefsumme_Art_sonstige => "sonstige";
+  };
+
+def String printEinzeldatei_Art(ENUMEinzeldatei_Art e) =
+  case e {
+    ENUMEinzeldatei_Art_unused => "";
+    ENUMEinzeldatei_Art_Ladedatei => "Ladedatei";
+    ENUMEinzeldatei_Art_Hilfsdatei => "Hilfsdatei";
+  };
+
+def String printVerbot_WB_Art(ENUMVerbot_WB_Art e) =
+  case e {
+    ENUMVerbot_WB_Art_unused => "";
+    ENUMVerbot_WB_Art_vollstaendig => "vollstaendig";
+    ENUMVerbot_WB_Art_Betriebsbremsung => "Betriebsbremsung";
+  };
+
+def String printSystem_Vor_Grenze(ENUMSystem_Vor_Grenze e) =
+  case e {
+    ENUMSystem_Vor_Grenze_unused => "";
+    ENUMSystem_Vor_Grenze_L2 => "L2";
+    ENUMSystem_Vor_Grenze_ESG => "ESG";
+    ENUMSystem_Vor_Grenze_PZB => "PZB";
+    ENUMSystem_Vor_Grenze_LZB => "LZB";
+    ENUMSystem_Vor_Grenze_GNT => "GNT";
+    ENUMSystem_Vor_Grenze_ohne => "ohne";
+    ENUMSystem_Vor_Grenze_sonstige => "sonstige";
+  };
+
+def String printDP_Typ_Art(ENUMDP_Typ_Art e) =
+  case e {
+    ENUMDP_Typ_Art_unused => "";
+    ENUMDP_Typ_Art_primaer => "primaer";
+    ENUMDP_Typ_Art_sekundaer => "sekundaer";
+  };
+
+
+// Data type to choice between data point types
+data ChoiceDPType = DPTypeUnknown | DPTypeZBS(DP_Typ_GZBS typeZbs) | DPTypeGNT(DP_Typ_GGNT typeGnt) | DPTypeETCS(DP_Typ_GETCS typeEtcs) | DPTypeGETCSLs(DP_Typ_GETCS_Ls typeEtcsLs) | DPTypeTrans(DP_Typ_GTrans typeTrans) | DPTypeSonst(DP_Typ_GSonst typeSonst);
+
+//Attribute group DP_Typ_GZBS used in DP_Typ
+interface DP_Typ_GZBS {
+  ENUMDP_Typ_ZBS getDP_Typ_ZBS();
+  Unit setDP_Typ_ZBS(ENUMDP_Typ_ZBS i);
+}
+
+//Attribute group DP_Typ_GGNT used in DP_Typ
+interface DP_Typ_GGNT {
+  ENUMDP_Typ_GNT getDP_Typ_GNT();
+  Unit setDP_Typ_GNT(ENUMDP_Typ_GNT i);
+}
+
+//Attribute group DP_Typ_GETCS used in DP_Typ
+interface DP_Typ_GETCS {
+  List<Int> getDP_Typ_ETCS();
+  Unit setDP_Typ_ETCS(List<Int> i);
+}
+
+//Attribute group DP_Typ_GETCS_Ls used in DP_Typ
+interface DP_Typ_GETCS_Ls {
+  ENUMDP_Typ_ETCS_Ls getDP_Typ_ETCS_Ls();
+  Unit setDP_Typ_ETCS_Ls(ENUMDP_Typ_ETCS_Ls i);
+  Maybe<Int> getLfd_Nr_Am_Bezugspunkt();
+  Unit setLfd_Nr_Am_Bezugspunkt(Maybe<Int> i);
+}
+
+//Attribute group DP_Typ_GTrans used in DP_Typ
+interface DP_Typ_GTrans {
+  ENUMDP_Typ_Trans getDP_Typ_Trans();
+  Unit setDP_Typ_Trans(ENUMDP_Typ_Trans i);
+}
+
+//Attribute group DP_Typ_GSonst used in DP_Typ
+interface DP_Typ_GSonst {
+  TText getDP_Typ_Sonst();
+  Unit setDP_Typ_Sonst(TText i);
+  TText getAnwendung_Sonst();
+  Unit setAnwendung_Sonst(TText i);
+}
+
+//Attribute group DP_Typ used in Datenpunkt
+interface DP_Typ {
+  ENUMDP_Typ_Art getDP_Typ_Art();
+  Unit setDP_Typ_Art(ENUMDP_Typ_Art b);
+  ChoiceDPType getChoiceDPType();
+  Unit setChoiceDPType(ChoiceDPType i);
+}
+
+//Attribute group DP_Telegramm used in Datenpunkt
+interface DP_Telegramm {
+  TText getSRS_Version();
+  Unit setSRS_Version(TText i);
+  TText getSRS_Unterversion();
+  Unit setSRS_Unterversion(TText i);
+  List<TGUID> getID_FT_Anschaltbedingung();
+  Unit setID_FT_Anschaltbedingung(List<TGUID> i);
+  List<TGUID> getID_Fachtelegramm();
+  Unit setID_Fachtelegramm(List<TGUID> i);
+}
+
+
+//Datenpunkt
+interface Datenpunkt extends Punkt_Objekt {
+  Maybe<ENUMDP_Bezug_Betrieblich_Art> getDP_Bezug_Betrieblich_DP_Bezug_Betrieblich_Art();
+  Unit setDP_Bezug_Betrieblich_DP_Bezug_Betrieblich_Art(Maybe<ENUMDP_Bezug_Betrieblich_Art> i);
+  Maybe<TGUID> getDP_Bezug_Betrieblich_ID_DP_Bezugspunkt();
+  Unit setDP_Bezug_Betrieblich_ID_DP_Bezugspunkt(Maybe<TGUID> i);
+  Maybe<TText> getDatenpunkt_Allg_Datenpunkt_Beschreibung();
+  Unit setDatenpunkt_Allg_Datenpunkt_Beschreibung(Maybe<TText> i);
+  Maybe<ENUMStandortangabe> getDatenpunkt_Allg_Standortangabe();
+  Unit setDatenpunkt_Allg_Standortangabe(Maybe<ENUMStandortangabe> i);
+  Maybe<TText> getDatenpunkt_Allg_Sonstige_Standortangabe();
+  Unit setDatenpunkt_Allg_Sonstige_Standortangabe(Maybe<TText> i);
+  Int getDP_ETCS_Adresse_ETCS_Adresse_Kennung();
+  Unit setDP_ETCS_Adresse_ETCS_Adresse_Kennung(Int i);
+  Int getDP_ETCS_Adresse_ETCS_Adresse_NID_BG();
+  Unit setDP_ETCS_Adresse_ETCS_Adresse_NID_BG(Int i);
+  Int getDP_ETCS_Adresse_ETCS_Adresse_NID_C();
+  Unit setDP_ETCS_Adresse_ETCS_Adresse_NID_C(Int i);
+  Maybe<TGUID> getID_Einmesspunkt();
+  Unit setID_Einmesspunkt(Maybe<TGUID> i);
+  List<TGUID> getID_RBC();
+  Unit setID_RBC(List<TGUID> i);
+  TMeter getDatenpunkt_Allg_Datenpunktlaenge();
+  Unit setDatenpunkt_Allg_Datenpunktlaenge(TMeter i);
+  Maybe<TGUID> getLEU_Steuernde_ID_LEU_Anlage();
+  Unit setLEU_Steuernde_ID_LEU_Anlage(Maybe<TGUID> i);
+  List<Int> getLEU_Steuernde_Referenz_Port_Nr_Ausgang();
+  Unit setLEU_Steuernde_Referenz_Port_Nr_Ausgang(List<Int> i);
+  ENUMAnwendungssystem getDatenpunkt_Allg_Anwendungssystem();
+  Unit setDatenpunkt_Allg_Anwendungssystem(ENUMAnwendungssystem i);
+  ENUMAusrichtung getDatenpunkt_Allg_Ausrichtung();
+  Unit setDatenpunkt_Allg_Ausrichtung(ENUMAusrichtung i);
+  Maybe<TMeter> getDatenpunkt_Allg_Einmesspunkt_Distanz();
+  Unit setDatenpunkt_Allg_Einmesspunkt_Distanz(Maybe<TMeter> i);
+  List<DP_Typ> getDP_Typ();
+  Unit setDP_Typ(List<DP_Typ> i);
+  List<DP_Telegramm> getDP_Telegramm();
+  Unit setDP_Telegramm(List<DP_Telegramm> i);
+  List<DP_Telegramm> getDP_Telegramm_ESG();
+  Unit setDP_Telegramm_ESG(List<DP_Telegramm> i);
+}
+
+/*
+//Fachtelegramm
+interface Fachtelegramm extends Basis_Objekt {
+  TGUID getID_Doku_Telegrammkodierung();
+  Unit setID_Doku_Telegrammkodierung(TGUID i);
+  TWirkrichtung getWirkrichtung_In_Datenpunkt();
+  Unit setWirkrichtung_In_Datenpunkt(TWirkrichtung i);
+  ENUMFT_ZBS_Typ getZBS_Merkmale_FT_ZBS_Typ();
+  Unit setZBS_Merkmale_FT_ZBS_Typ(ENUMFT_ZBS_Typ i);
+  Int getZBS_Merkmale_Telegrammnummer();
+  Unit setZBS_Merkmale_Telegrammnummer(Int i);
+  Bool getZBS_Merkmale_Mastschild();
+  Unit setZBS_Merkmale_Mastschild(Bool i);
+  TGeschwindigkeit getZBS_Merkmale_V_Zul_Strecke();
+  Unit setZBS_Merkmale_V_Zul_Strecke(TGeschwindigkeit i);
+  TMeter getZBS_Merkmale_Schutzstrecke_Vorhanden();
+  Unit setZBS_Merkmale_Schutzstrecke_Vorhanden(TMeter i);
+  TMeter getZBS_Merkmale_Schutzstrecke_Erforderlich();
+  Unit setZBS_Merkmale_Schutzstrecke_Erforderlich(TMeter i);
+  Rat getZBS_Merkmale_Massgebende_Neig_Schutzstrecke();
+  Unit setZBS_Merkmale_Massgebende_Neig_Schutzstrecke(Rat i);
+  ENUMFT_Hinweis_Funktion getZBS_Merkmale_FT_Hinweis_Funktion();
+  Unit setZBS_Merkmale_FT_Hinweis_Funktion(ENUMFT_Hinweis_Funktion i);
+  Bool getZBS_Merkmale_LM_G();
+  Unit setZBS_Merkmale_LM_G(Bool i);
+  TGeschwindigkeit getZBS_Merkmale_V_Befehl_Z();
+  Unit setZBS_Merkmale_V_Befehl_Z(TGeschwindigkeit i);
+  TGeschwindigkeit getZBS_Merkmale_V_Befehl_R();
+  Unit setZBS_Merkmale_V_Befehl_R(TGeschwindigkeit i);
+  TGeschwindigkeit getZBS_Merkmale_V_Frei();
+  Unit setZBS_Merkmale_V_Frei(TGeschwindigkeit i);
+  TGeschwindigkeit getZBS_Merkmale_VGR_1();
+  Unit setZBS_Merkmale_VGR_1(TGeschwindigkeit i);
+  TMeter getZBS_Merkmale_Laenge_1();
+  Unit setZBS_Merkmale_Laenge_1(TMeter i);
+  Rat getZBS_Merkmale_Massgebende_Neigung_1();
+  Unit setZBS_Merkmale_Massgebende_Neigung_1(Rat i);
+  TGeschwindigkeit getZBS_Merkmale_VGR_2();
+  Unit setZBS_Merkmale_VGR_2(TGeschwindigkeit i);
+  TGeschwindigkeit getFT_ZBS_Merkmale_La_ZBS_La_Bereich_Geschwindigkeit();
+  Unit setFT_ZBS_Merkmale_La_ZBS_La_Bereich_Geschwindigkeit(TGeschwindigkeit i);
+  Rat getFT_ZBS_Merkmale_La_ZBS_La_Bereich_Neigung();
+  Unit setFT_ZBS_Merkmale_La_ZBS_La_Bereich_Neigung(Rat i);
+  TMeter getFT_ZBS_Merkmale_La_ZBS_La_Bereich_Distanz();
+  Unit setFT_ZBS_Merkmale_La_ZBS_La_Bereich_Distanz(TMeter i);
+  TMeter getFT_ZBS_Merkmale_La_ZBS_La_Bereich_Laenge();
+  Unit setFT_ZBS_Merkmale_La_ZBS_La_Bereich_Laenge(TMeter i);
+  Int getFT_ETCS_L2_Merkmale_FT_ETCS_L2_Typ();
+  Unit setFT_ETCS_L2_Merkmale_FT_ETCS_L2_Typ(Int i);
+  TZeichenkette getFT_ETCS_Ls_Merkmale_FT_ETCS_Ls_Typ();
+  Unit setFT_ETCS_Ls_Merkmale_FT_ETCS_Ls_Typ(TZeichenkette i);
+  TText getFT_ETCS_Ls_Merkmale_FT_ETCS_Ls_Subtyp();
+  Unit setFT_ETCS_Ls_Merkmale_FT_ETCS_Ls_Subtyp(TText i);
+  ENUMBremsweg getFT_ETCS_Ls_Merkmale_Bremsweg();
+  Unit setFT_ETCS_Ls_Merkmale_Bremsweg(ENUMBremsweg i);
+  Int getETCS_Ls_Spezifische_Merkmale_LfdNr_in_Telegr_Spec();
+  Unit setETCS_Ls_Spezifische_Merkmale_LfdNr_in_Telegr_Spec(Int i);
+  Int getETCS_Ls_Spezifische_Merkmale_ETCS_Ls_Paketnummer();
+  Unit setETCS_Ls_Spezifische_Merkmale_ETCS_Ls_Paketnummer(Int i);
+  TText getETCS_Ls_Spezifische_Merkmale_ETCS_Ls_Parametername();
+  Unit setETCS_Ls_Spezifische_Merkmale_ETCS_Ls_Parametername(TText i);
+  Int getETCS_Ls_Spezifische_Merkmale_Parameterwert();
+  Unit setETCS_Ls_Spezifische_Merkmale_Parameterwert(Int i);
+  TText getETCS_Ls_Spezifische_Merkmale_ETCS_Ls_Erlaeuterung();
+  Unit setETCS_Ls_Spezifische_Merkmale_ETCS_Ls_Erlaeuterung(TText i);
+  TText getETCS_Ls_Individuelle_Merkmale_ETCS_Ls_Parameter();
+  Unit setETCS_Ls_Individuelle_Merkmale_ETCS_Ls_Parameter(TText i);
+  Int getETCS_Ls_Individuelle_Merkmale_Parameterwert();
+  Unit setETCS_Ls_Individuelle_Merkmale_Parameterwert(Int i);
+  TText getETCS_Ls_Individuelle_Merkmale_ETCS_Ls_Erlaeuterung();
+  Unit setETCS_Ls_Individuelle_Merkmale_ETCS_Ls_Erlaeuterung(TText i);
+  TGUID getFT_Fahrweg_Teile_ID_FT_Fahrweg_Teil();
+  Unit setFT_Fahrweg_Teile_ID_FT_Fahrweg_Teil(TGUID i);
+  Int getFT_Fahrweg_Teile_Position_Im_Fahrweg();
+  Unit setFT_Fahrweg_Teile_Position_Im_Fahrweg(Int i);
+  Bool getFT_Fahrweg_Teile_Ist_Befahren();
+  Unit setFT_Fahrweg_Teile_Ist_Befahren(Bool i);
+}
+
+//Datenpunkt_Link
+interface Datenpunkt_Link extends Basis_Objekt {
+  TGUID getID_Fachtelegramm();
+  Unit setID_Fachtelegramm(TGUID i);
+  TGUID getID_DP_Link_Start();
+  Unit setID_DP_Link_Start(TGUID i);
+  TGUID getID_DP_Link_Ziel();
+  Unit setID_DP_Link_Ziel(TGUID i);
+  TMeter getLink_Distanz();
+  Unit setLink_Distanz(TMeter i);
+  ENUMAusrichtung getZiel_DP_Ausrichtung();
+  Unit setZiel_DP_Ausrichtung(ENUMAusrichtung i);
+  ENUMETCS_Reaktion getETCS_Merkmale_ETCS_Reaktion();
+  Unit setETCS_Merkmale_ETCS_Reaktion(ENUMETCS_Reaktion i);
+  Int getETCS_Merkmale_Genauigkeit();
+  Unit setETCS_Merkmale_Genauigkeit(Int i);
+  ENUMDP_Link_Art getZBS_Merkmale_DP_Link_Art();
+  Unit setZBS_Merkmale_DP_Link_Art(ENUMDP_Link_Art i);
+  ENUMZBS_Reaktion getZBS_Merkmale_ZBS_Reaktion();
+  Unit setZBS_Merkmale_ZBS_Reaktion(ENUMZBS_Reaktion i);
+}
+
+//FT_Anschaltbedingung
+interface FT_Anschaltbedingung extends Basis_Objekt {
+  TGUID getBedingung_Signal_ID_Signal_Signalbegriff();
+  Unit setBedingung_Signal_ID_Signal_Signalbegriff(TGUID i);
+  ENUMVerwendung_Als_Rueckfall getBedingung_Signal_Verwendung_Als_Rueckfall();
+  Unit setBedingung_Signal_Verwendung_Als_Rueckfall(ENUMVerwendung_Als_Rueckfall i);
+  TGUID getBedingung_Weiche_ID_W_Element();
+  Unit setBedingung_Weiche_ID_W_Element(TGUID i);
+  TLinksRechts getBedingung_Weiche_Bedingung_Weichenlage();
+  Unit setBedingung_Weiche_Bedingung_Weichenlage(TLinksRechts i);
+  TGUID getBedingung_PZB_ID_PZB_Element();
+  Unit setBedingung_PZB_ID_PZB_Element(TGUID i);
+  Bool getBedingung_PZB_Wirksam();
+  Unit setBedingung_PZB_Wirksam(Bool i);
+  ENUMArt_Bedingung getBedingung_Besondere_Art_Bedingung();
+  Unit setBedingung_Besondere_Art_Bedingung(ENUMArt_Bedingung i);
+  TText getBedingung_Sonstige_Anlagenteil_Sonstige();
+  Unit setBedingung_Sonstige_Anlagenteil_Sonstige(TText i);
+  TText getBedingung_Sonstige_Text_Bedingung();
+  Unit setBedingung_Sonstige_Text_Bedingung(TText i);
+}
+
+//FT_Fahrweg_Teil
+interface FT_Fahrweg_Teil extends Basis_Objekt {
+  ENUMBesonderes_Merkmal getFT_Fahrweg_Teil_Allg_Besonderes_Merkmal();
+  Unit setFT_Fahrweg_Teil_Allg_Besonderes_Merkmal(ENUMBesonderes_Merkmal i);
+  Bool getFT_Fahrweg_Teil_Allg_Ziel_Ist_Fahrwegende();
+  Unit setFT_Fahrweg_Teil_Allg_Ziel_Ist_Fahrwegende(Bool i);
+  TGUID getID_Start_Datenpunkt();
+  Unit setID_Start_Datenpunkt(TGUID i);
+  TGUID getID_Start_Signal();
+  Unit setID_Start_Signal(TGUID i);
+  TGUID getStart_W_Element_ID_Start_W_Element();
+  Unit setStart_W_Element_ID_Start_W_Element(TGUID i);
+  ENUMW_Anschluss getStart_W_Element_W_Anschluss();
+  Unit setStart_W_Element_W_Anschluss(ENUMW_Anschluss i);
+  TGUID getID_Ziel_Datenpunkt();
+  Unit setID_Ziel_Datenpunkt(TGUID i);
+  TGUID getID_Ziel_Signal();
+  Unit setID_Ziel_Signal(TGUID i);
+  TGUID getZiel_W_Element_ID_Ziel_W_Element();
+  Unit setZiel_W_Element_ID_Ziel_W_Element(TGUID i);
+  ENUMW_Anschluss getZiel_W_Element_W_Anschluss();
+  Unit setZiel_W_Element_W_Anschluss(ENUMW_Anschluss i);
+}
+
+//ETCS_Knoten
+interface ETCS_Knoten extends Basis_Objekt {
+  TGUID getID_TOP_Knoten();
+  Unit setID_TOP_Knoten(TGUID i);
+  ENUMETCS_Knoten_Art_Sonstige getKnoten_Auf_TOP_Kante_ETCS_Knoten_Art_Sonstige();
+  Unit setKnoten_Auf_TOP_Kante_ETCS_Knoten_Art_Sonstige(ENUMETCS_Knoten_Art_Sonstige i);
+  TGUID getPunkt_Objekt_TOP_Kante_ID_TOP_Kante();
+  Unit setPunkt_Objekt_TOP_Kante_ID_TOP_Kante(TGUID i);
+  TMeter getPunkt_Objekt_TOP_Kante_Abstand();
+  Unit setPunkt_Objekt_TOP_Kante_Abstand(TMeter i);
+  TWirkrichtung getPunkt_Objekt_TOP_Kante_Wirkrichtung();
+  Unit setPunkt_Objekt_TOP_Kante_Wirkrichtung(TWirkrichtung i);
+  TLinksRechts getPunkt_Objekt_TOP_Kante_Seitliche_Lage();
+  Unit setPunkt_Objekt_TOP_Kante_Seitliche_Lage(TLinksRechts i);
+  TMeter getPunkt_Objekt_TOP_Kante_Seitlicher_Abstand();
+  Unit setPunkt_Objekt_TOP_Kante_Seitlicher_Abstand(TMeter i);
+}
+
+//ETCS_Kante
+interface ETCS_Kante extends Bereich_Objekt {
+  TZeichenkette getBezeichnung_Bezeichnung_ETCS_Kante();
+  Unit setBezeichnung_Bezeichnung_ETCS_Kante(TZeichenkette i);
+  TGUID getID_RBC();
+  Unit setID_RBC(TGUID i);
+  TGUID getID_ETCS_Knoten_A();
+  Unit setID_ETCS_Knoten_A(TGUID i);
+  TGUID getID_ETCS_Knoten_B();
+  Unit setID_ETCS_Knoten_B(TGUID i);
+}
+*/
+
+
+
+
+
+class DP_Typ_GZBS implements DP_Typ_GZBS {
+  ENUMDP_Typ_ZBS m_DP_Typ_ZBS = ENUMDP_Typ_ZBS_unused;
+
+  ENUMDP_Typ_ZBS getDP_Typ_ZBS() { return m_DP_Typ_ZBS; }
+  Unit setDP_Typ_ZBS(ENUMDP_Typ_ZBS i) { m_DP_Typ_ZBS = i; }
+}
+
+class DP_Typ_GGNT implements DP_Typ_GGNT {
+  ENUMDP_Typ_GNT m_DP_Typ_GNT = ENUMDP_Typ_GNT_unused;
+
+  ENUMDP_Typ_GNT getDP_Typ_GNT() { return m_DP_Typ_GNT; }
+  Unit setDP_Typ_GNT(ENUMDP_Typ_GNT i) { m_DP_Typ_GNT = i; }
+}
+
+class DP_Typ_GETCS implements DP_Typ_GETCS {
+  List<Int> m_DP_Typ_ETCS = Nil;
+
+  List<Int> getDP_Typ_ETCS() { return m_DP_Typ_ETCS; }
+  Unit setDP_Typ_ETCS(List<Int> i) { m_DP_Typ_ETCS = i; }
+}
+
+class DP_Typ_GETCS_Ls implements DP_Typ_GETCS_Ls {
+  ENUMDP_Typ_ETCS_Ls m_DP_Typ_ETCS_Ls = ENUMDP_Typ_ETCS_Ls_unused;
+  Maybe<Int> m_Lfd_Nr_Am_Bezugspunkt = Nothing;
+
+  ENUMDP_Typ_ETCS_Ls getDP_Typ_ETCS_Ls() { return m_DP_Typ_ETCS_Ls; }
+  Unit setDP_Typ_ETCS_Ls(ENUMDP_Typ_ETCS_Ls i) { m_DP_Typ_ETCS_Ls = i; }
+  Maybe<Int> getLfd_Nr_Am_Bezugspunkt() { return m_Lfd_Nr_Am_Bezugspunkt; }
+  Unit setLfd_Nr_Am_Bezugspunkt(Maybe<Int> i) { m_Lfd_Nr_Am_Bezugspunkt = i; }
+}
+
+class DP_Typ_GTrans implements DP_Typ_GTrans {
+  ENUMDP_Typ_Trans m_DP_Typ_Trans = ENUMDP_Typ_Trans_unused;
+
+  ENUMDP_Typ_Trans getDP_Typ_Trans() { return m_DP_Typ_Trans; }
+  Unit setDP_Typ_Trans(ENUMDP_Typ_Trans i) { m_DP_Typ_Trans = i; }
+}
+
+class DP_Typ_GSonst implements DP_Typ_GSonst {
+  TText m_DP_Typ_Sonst = "";
+  TText m_Anwendung_Sonst = "";
+
+  TText getDP_Typ_Sonst() { return m_DP_Typ_Sonst; }
+  Unit setDP_Typ_Sonst(TText i) { m_DP_Typ_Sonst = i; }
+  TText getAnwendung_Sonst() { return m_Anwendung_Sonst; }
+  Unit setAnwendung_Sonst(TText i) { m_Anwendung_Sonst = i; }
+}
+
+class DP_Typ implements DP_Typ {
+  ENUMDP_Typ_Art m_DP_Typ_Art = ENUMDP_Typ_Art_unused;
+  ChoiceDPType m_ChoiceDPType = DPTypeUnknown;
+
+  ENUMDP_Typ_Art getDP_Typ_Art() { return m_DP_Typ_Art; }
+  Unit setDP_Typ_Art(ENUMDP_Typ_Art b) { m_DP_Typ_Art = b; }
+  ChoiceDPType getChoiceDPType() { return m_ChoiceDPType; }
+  Unit setChoiceDPType(ChoiceDPType i) { m_ChoiceDPType = i; }
+}
+
+class DP_Telegramm implements DP_Telegramm {
+  TText m_SRS_Version = "";
+  TText m_SRS_Unterversion = "";
+  List<TGUID> m_ID_FT_Anschaltbedingung = Nil;
+  List<TGUID> m_ID_Fachtelegramm = Nil;
+
+  TText getSRS_Version() { return m_SRS_Version; }
+  Unit setSRS_Version(TText i) { m_SRS_Version = i; }
+  TText getSRS_Unterversion() { return m_SRS_Unterversion; }
+  Unit setSRS_Unterversion(TText i) { m_SRS_Unterversion = i; }
+  List<TGUID> getID_FT_Anschaltbedingung() { return m_ID_FT_Anschaltbedingung; }
+  Unit setID_FT_Anschaltbedingung(List<TGUID> i) { m_ID_FT_Anschaltbedingung = i; }
+  List<TGUID> getID_Fachtelegramm() { return m_ID_Fachtelegramm; }
+  Unit setID_Fachtelegramm(List<TGUID> i) { m_ID_Fachtelegramm = i; }
+}
+
+
+
+class DatenpunktImpl implements Datenpunkt {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Basis_Objekt
+  List<TGUID> m_ID_Bearbeitungsvermerk = Nil;
+  Maybe<TText> m_ObjektreferenzenDB_GDI_Referenz = Nothing;
+  Maybe<TText> m_ObjektreferenzenTechnischer_Platz = Nothing;
+  Maybe<ENUMObjektzustand_Besonders> m_Basis_Objekt_Allg_Objektzustand_Besonders = Nothing;
+  Maybe<TGUID> m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = Nothing;
+  Maybe<Date> m_Basis_Objekt_Allg_Datum_Regelwerk = Nothing;
+
+  // Fields from Punkt_Objekt
+  List<Punkt_Objekt_Strecke> m_Punkt_Objekt_Strecke = Nil;
+  List<Punkt_Objekt_TOP_Kante> m_Punkt_Objekt_TOP_Kante = Nil;
+
+  // Fields from Datenpunkt
+  Maybe<ENUMDP_Bezug_Betrieblich_Art> m_DP_Bezug_Betrieblich_DP_Bezug_Betrieblich_Art = Nothing;
+  Maybe<TGUID> m_DP_Bezug_Betrieblich_ID_DP_Bezugspunkt = Nothing;
+  Maybe<TText> m_Datenpunkt_Allg_Datenpunkt_Beschreibung = Nothing;
+  Maybe<ENUMStandortangabe> m_Datenpunkt_Allg_Standortangabe = Nothing;
+  Maybe<TText> m_Datenpunkt_Allg_Sonstige_Standortangabe = Nothing;
+  Int m_DP_ETCS_Adresse_ETCS_Adresse_Kennung = 0;
+  Int m_DP_ETCS_Adresse_ETCS_Adresse_NID_BG = 0;
+  Int m_DP_ETCS_Adresse_ETCS_Adresse_NID_C = 0;
+  Maybe<TGUID> m_ID_Einmesspunkt = Nothing;
+  List<TGUID> m_ID_RBC = Nil;
+  TMeter m_Datenpunkt_Allg_Datenpunktlaenge = 0;
+  Maybe<TGUID> m_LEU_Steuernde_ID_LEU_Anlage = Nothing;
+  List<Int> m_LEU_Steuernde_Referenz_Port_Nr_Ausgang = Nil;
+  ENUMAnwendungssystem m_Datenpunkt_Allg_Anwendungssystem = ENUMAnwendungssystem_unused;
+  ENUMAusrichtung m_Datenpunkt_Allg_Ausrichtung = ENUMAusrichtung_unused;
+  Maybe<TMeter> m_Datenpunkt_Allg_Einmesspunkt_Distanz = Nothing;
+  List<DP_Typ> m_DP_Typ = Nil;
+  List<DP_Telegramm> m_DP_Telegramm = Nil;
+  List<DP_Telegramm> m_DP_Telegramm_ESG = Nil;
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_Datenpunkt; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Basis_Objekt
+  List<TGUID> getID_Bearbeitungsvermerk() { return m_ID_Bearbeitungsvermerk; }
+  Unit setID_Bearbeitungsvermerk(List<TGUID> i) { m_ID_Bearbeitungsvermerk = i; }
+  Maybe<TText> getObjektreferenzenDB_GDI_Referenz() { return m_ObjektreferenzenDB_GDI_Referenz; }
+  Unit setObjektreferenzenDB_GDI_Referenz(Maybe<TText> r) { m_ObjektreferenzenDB_GDI_Referenz = r; }
+  Maybe<TText> getObjektreferenzenTechnischer_Platz() { return m_ObjektreferenzenTechnischer_Platz; }
+  Unit setObjektreferenzenTechnischer_Platz(Maybe<TText> p) { m_ObjektreferenzenTechnischer_Platz = p; }
+  Maybe<ENUMObjektzustand_Besonders> getBasis_Objekt_Allg_Objektzustand_Besonders() { return m_Basis_Objekt_Allg_Objektzustand_Besonders; }
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(Maybe<ENUMObjektzustand_Besonders> o) { m_Basis_Objekt_Allg_Objektzustand_Besonders = o; }
+  Maybe<TGUID> getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders() { return m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders; }
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(Maybe<TGUID> i) { m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = i; }
+  Maybe<Date> getBasis_Objekt_Allg_Datum_Regelwerk() { return m_Basis_Objekt_Allg_Datum_Regelwerk; }
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Maybe<Date> d) { m_Basis_Objekt_Allg_Datum_Regelwerk = d; }
+
+  // Methods from Punkt_Objekt
+  List<Punkt_Objekt_Strecke> getPunkt_Objekt_Strecke() { return m_Punkt_Objekt_Strecke; }
+  Unit setPunkt_Objekt_Strecke(List<Punkt_Objekt_Strecke> i) { m_Punkt_Objekt_Strecke = i; }
+  List<Punkt_Objekt_TOP_Kante> getPunkt_Objekt_TOP_Kante() { return m_Punkt_Objekt_TOP_Kante; }
+  Unit setPunkt_Objekt_TOP_Kante(List<Punkt_Objekt_TOP_Kante> a) { m_Punkt_Objekt_TOP_Kante = a; }
+
+  // Methods from Datenpunkt
+  Maybe<ENUMDP_Bezug_Betrieblich_Art> getDP_Bezug_Betrieblich_DP_Bezug_Betrieblich_Art() { return m_DP_Bezug_Betrieblich_DP_Bezug_Betrieblich_Art; }
+  Unit setDP_Bezug_Betrieblich_DP_Bezug_Betrieblich_Art(Maybe<ENUMDP_Bezug_Betrieblich_Art> i) { m_DP_Bezug_Betrieblich_DP_Bezug_Betrieblich_Art = i; }
+  Maybe<TGUID> getDP_Bezug_Betrieblich_ID_DP_Bezugspunkt() { return m_DP_Bezug_Betrieblich_ID_DP_Bezugspunkt; }
+  Unit setDP_Bezug_Betrieblich_ID_DP_Bezugspunkt(Maybe<TGUID> i) { m_DP_Bezug_Betrieblich_ID_DP_Bezugspunkt = i; }
+  Maybe<TText> getDatenpunkt_Allg_Datenpunkt_Beschreibung() { return m_Datenpunkt_Allg_Datenpunkt_Beschreibung; }
+  Unit setDatenpunkt_Allg_Datenpunkt_Beschreibung(Maybe<TText> i) { m_Datenpunkt_Allg_Datenpunkt_Beschreibung = i; }
+  Maybe<ENUMStandortangabe> getDatenpunkt_Allg_Standortangabe() { return m_Datenpunkt_Allg_Standortangabe; }
+  Unit setDatenpunkt_Allg_Standortangabe(Maybe<ENUMStandortangabe> i) { m_Datenpunkt_Allg_Standortangabe = i; }
+  Maybe<TText> getDatenpunkt_Allg_Sonstige_Standortangabe() { return m_Datenpunkt_Allg_Sonstige_Standortangabe; }
+  Unit setDatenpunkt_Allg_Sonstige_Standortangabe(Maybe<TText> i) { m_Datenpunkt_Allg_Sonstige_Standortangabe = i; }
+  Int getDP_ETCS_Adresse_ETCS_Adresse_Kennung() { return m_DP_ETCS_Adresse_ETCS_Adresse_Kennung; }
+  Unit setDP_ETCS_Adresse_ETCS_Adresse_Kennung(Int i) { m_DP_ETCS_Adresse_ETCS_Adresse_Kennung = i; }
+  Int getDP_ETCS_Adresse_ETCS_Adresse_NID_BG() { return m_DP_ETCS_Adresse_ETCS_Adresse_NID_BG; }
+  Unit setDP_ETCS_Adresse_ETCS_Adresse_NID_BG(Int i) { m_DP_ETCS_Adresse_ETCS_Adresse_NID_BG = i; }
+  Int getDP_ETCS_Adresse_ETCS_Adresse_NID_C() { return m_DP_ETCS_Adresse_ETCS_Adresse_NID_C; }
+  Unit setDP_ETCS_Adresse_ETCS_Adresse_NID_C(Int i) { m_DP_ETCS_Adresse_ETCS_Adresse_NID_C = i; }
+  Maybe<TGUID> getID_Einmesspunkt() { return m_ID_Einmesspunkt; }
+  Unit setID_Einmesspunkt(Maybe<TGUID> i) { m_ID_Einmesspunkt = i; }
+  List<TGUID> getID_RBC() { return m_ID_RBC; }
+  Unit setID_RBC(List<TGUID> i) { m_ID_RBC = i; }
+  TMeter getDatenpunkt_Allg_Datenpunktlaenge() { return m_Datenpunkt_Allg_Datenpunktlaenge; }
+  Unit setDatenpunkt_Allg_Datenpunktlaenge(TMeter i) { m_Datenpunkt_Allg_Datenpunktlaenge = i; }
+  Maybe<TGUID> getLEU_Steuernde_ID_LEU_Anlage() { return m_LEU_Steuernde_ID_LEU_Anlage; }
+  Unit setLEU_Steuernde_ID_LEU_Anlage(Maybe<TGUID> i) { m_LEU_Steuernde_ID_LEU_Anlage = i; }
+  List<Int> getLEU_Steuernde_Referenz_Port_Nr_Ausgang() { return m_LEU_Steuernde_Referenz_Port_Nr_Ausgang; }
+  Unit setLEU_Steuernde_Referenz_Port_Nr_Ausgang(List<Int> i) { m_LEU_Steuernde_Referenz_Port_Nr_Ausgang = i; }
+  ENUMAnwendungssystem getDatenpunkt_Allg_Anwendungssystem() { return m_Datenpunkt_Allg_Anwendungssystem; }
+  Unit setDatenpunkt_Allg_Anwendungssystem(ENUMAnwendungssystem i) { m_Datenpunkt_Allg_Anwendungssystem = i; }
+  ENUMAusrichtung getDatenpunkt_Allg_Ausrichtung() { return m_Datenpunkt_Allg_Ausrichtung; }
+  Unit setDatenpunkt_Allg_Ausrichtung(ENUMAusrichtung i) { m_Datenpunkt_Allg_Ausrichtung = i; }
+  Maybe<TMeter> getDatenpunkt_Allg_Einmesspunkt_Distanz() { return m_Datenpunkt_Allg_Einmesspunkt_Distanz; }
+  Unit setDatenpunkt_Allg_Einmesspunkt_Distanz(Maybe<TMeter> i) { m_Datenpunkt_Allg_Einmesspunkt_Distanz = i; }
+  List<DP_Typ> getDP_Typ() { return m_DP_Typ; }
+  Unit setDP_Typ(List<DP_Typ> i) { m_DP_Typ = i; }
+  List<DP_Telegramm> getDP_Telegramm() { return m_DP_Telegramm; }
+  Unit setDP_Telegramm(List<DP_Telegramm> i) { m_DP_Telegramm = i; }
+  List<DP_Telegramm> getDP_Telegramm_ESG() { return m_DP_Telegramm_ESG; }
+  Unit setDP_Telegramm_ESG(List<DP_Telegramm> i) { m_DP_Telegramm_ESG = i; }
+}
+
+/*
+class FachtelegrammImpl implements Fachtelegramm {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Basis_Objekt
+  TGUID m_ID_Bearbeitungsvermerk = "";
+  TText m_ObjektreferenzenDB_GDI_Referenz = "";
+  TText m_ObjektreferenzenTechnischer_Platz = "";
+  ENUMObjektzustand_Besonders m_Basis_Objekt_Allg_Objektzustand_Besonders = ENUMObjektzustand_Besonders_unused;
+  TGUID m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = "";
+  Date m_Basis_Objekt_Allg_Datum_Regelwerk = "";
+
+  // Fields from Fachtelegramm
+  TGUID m_ID_Doku_Telegrammkodierung = "";
+  TWirkrichtung m_Wirkrichtung_In_Datenpunkt = ENUMWirkrichtung_beide;
+  ENUMFT_ZBS_Typ m_ZBS_Merkmale_FT_ZBS_Typ = ENUMFT_ZBS_Typ_Sonstige;
+  Int m_ZBS_Merkmale_Telegrammnummer = 0;
+  Bool m_ZBS_Merkmale_Mastschild = False;
+  TGeschwindigkeit m_ZBS_Merkmale_V_Zul_Strecke = 0;
+  TMeter m_ZBS_Merkmale_Schutzstrecke_Vorhanden = 0;
+  TMeter m_ZBS_Merkmale_Schutzstrecke_Erforderlich = 0;
+  Rat m_ZBS_Merkmale_Massgebende_Neig_Schutzstrecke = 0;
+  ENUMFT_Hinweis_Funktion m_ZBS_Merkmale_FT_Hinweis_Funktion = ENUMFT_Hinweis_Funktion_Sonstige;
+  Bool m_ZBS_Merkmale_LM_G = False;
+  TGeschwindigkeit m_ZBS_Merkmale_V_Befehl_Z = 0;
+  TGeschwindigkeit m_ZBS_Merkmale_V_Befehl_R = 0;
+  TGeschwindigkeit m_ZBS_Merkmale_V_Frei = 0;
+  TGeschwindigkeit m_ZBS_Merkmale_VGR_1 = 0;
+  TMeter m_ZBS_Merkmale_Laenge_1 = 0;
+  Rat m_ZBS_Merkmale_Massgebende_Neigung_1 = 0;
+  TGeschwindigkeit m_ZBS_Merkmale_VGR_2 = 0;
+  TGeschwindigkeit m_FT_ZBS_Merkmale_La_ZBS_La_Bereich_Geschwindigkeit = 0;
+  Rat m_FT_ZBS_Merkmale_La_ZBS_La_Bereich_Neigung = 0;
+  TMeter m_FT_ZBS_Merkmale_La_ZBS_La_Bereich_Distanz = 0;
+  TMeter m_FT_ZBS_Merkmale_La_ZBS_La_Bereich_Laenge = 0;
+  Int m_FT_ETCS_L2_Merkmale_FT_ETCS_L2_Typ = 0;
+  TZeichenkette m_FT_ETCS_Ls_Merkmale_FT_ETCS_Ls_Typ = "";
+  TText m_FT_ETCS_Ls_Merkmale_FT_ETCS_Ls_Subtyp = "";
+  ENUMBremsweg m_FT_ETCS_Ls_Merkmale_Bremsweg = ENUMBremsweg_sonstige;
+  Int m_ETCS_Ls_Spezifische_Merkmale_LfdNr_in_Telegr_Spec = 0;
+  Int m_ETCS_Ls_Spezifische_Merkmale_ETCS_Ls_Paketnummer = 0;
+  TText m_ETCS_Ls_Spezifische_Merkmale_ETCS_Ls_Parametername = "";
+  Int m_ETCS_Ls_Spezifische_Merkmale_Parameterwert = 0;
+  TText m_ETCS_Ls_Spezifische_Merkmale_ETCS_Ls_Erlaeuterung = "";
+  TText m_ETCS_Ls_Individuelle_Merkmale_ETCS_Ls_Parameter = "";
+  Int m_ETCS_Ls_Individuelle_Merkmale_Parameterwert = 0;
+  TText m_ETCS_Ls_Individuelle_Merkmale_ETCS_Ls_Erlaeuterung = "";
+  TGUID m_FT_Fahrweg_Teile_ID_FT_Fahrweg_Teil = "";
+  Int m_FT_Fahrweg_Teile_Position_Im_Fahrweg = 0;
+  Bool m_FT_Fahrweg_Teile_Ist_Befahren = False;
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_Fachtelegramm; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Basis_Objekt
+  TGUID getID_Bearbeitungsvermerk() { return m_ID_Bearbeitungsvermerk; }
+  Unit setID_Bearbeitungsvermerk(TGUID i) { m_ID_Bearbeitungsvermerk = i; }
+  TText getObjektreferenzenDB_GDI_Referenz() { return m_ObjektreferenzenDB_GDI_Referenz; }
+  Unit setObjektreferenzenDB_GDI_Referenz(TText r) { m_ObjektreferenzenDB_GDI_Referenz = r; }
+  TText getObjektreferenzenTechnischer_Platz() { return m_ObjektreferenzenTechnischer_Platz; }
+  Unit setObjektreferenzenTechnischer_Platz(TText p) { m_ObjektreferenzenTechnischer_Platz = p; }
+  ENUMObjektzustand_Besonders getBasis_Objekt_Allg_Objektzustand_Besonders() { return m_Basis_Objekt_Allg_Objektzustand_Besonders; }
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(ENUMObjektzustand_Besonders o) { m_Basis_Objekt_Allg_Objektzustand_Besonders = o; }
+  TGUID getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders() { return m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders; }
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(TGUID i) { m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = i; }
+  Date getBasis_Objekt_Allg_Datum_Regelwerk() { return m_Basis_Objekt_Allg_Datum_Regelwerk; }
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Date d) { m_Basis_Objekt_Allg_Datum_Regelwerk = d; }
+
+  // Methods from Fachtelegramm
+  TGUID getID_Doku_Telegrammkodierung() { return m_ID_Doku_Telegrammkodierung; }
+  Unit setID_Doku_Telegrammkodierung(TGUID i) { m_ID_Doku_Telegrammkodierung = i; }
+  TWirkrichtung getWirkrichtung_In_Datenpunkt() { return m_Wirkrichtung_In_Datenpunkt; }
+  Unit setWirkrichtung_In_Datenpunkt(TWirkrichtung i) { m_Wirkrichtung_In_Datenpunkt = i; }
+  ENUMFT_ZBS_Typ getZBS_Merkmale_FT_ZBS_Typ() { return m_ZBS_Merkmale_FT_ZBS_Typ; }
+  Unit setZBS_Merkmale_FT_ZBS_Typ(ENUMFT_ZBS_Typ i) { m_ZBS_Merkmale_FT_ZBS_Typ = i; }
+  Int getZBS_Merkmale_Telegrammnummer() { return m_ZBS_Merkmale_Telegrammnummer; }
+  Unit setZBS_Merkmale_Telegrammnummer(Int i) { m_ZBS_Merkmale_Telegrammnummer = i; }
+  Bool getZBS_Merkmale_Mastschild() { return m_ZBS_Merkmale_Mastschild; }
+  Unit setZBS_Merkmale_Mastschild(Bool i) { m_ZBS_Merkmale_Mastschild = i; }
+  TGeschwindigkeit getZBS_Merkmale_V_Zul_Strecke() { return m_ZBS_Merkmale_V_Zul_Strecke; }
+  Unit setZBS_Merkmale_V_Zul_Strecke(TGeschwindigkeit i) { m_ZBS_Merkmale_V_Zul_Strecke = i; }
+  TMeter getZBS_Merkmale_Schutzstrecke_Vorhanden() { return m_ZBS_Merkmale_Schutzstrecke_Vorhanden; }
+  Unit setZBS_Merkmale_Schutzstrecke_Vorhanden(TMeter i) { m_ZBS_Merkmale_Schutzstrecke_Vorhanden = i; }
+  TMeter getZBS_Merkmale_Schutzstrecke_Erforderlich() { return m_ZBS_Merkmale_Schutzstrecke_Erforderlich; }
+  Unit setZBS_Merkmale_Schutzstrecke_Erforderlich(TMeter i) { m_ZBS_Merkmale_Schutzstrecke_Erforderlich = i; }
+  Rat getZBS_Merkmale_Massgebende_Neig_Schutzstrecke() { return m_ZBS_Merkmale_Massgebende_Neig_Schutzstrecke; }
+  Unit setZBS_Merkmale_Massgebende_Neig_Schutzstrecke(Rat i) { m_ZBS_Merkmale_Massgebende_Neig_Schutzstrecke = i; }
+  ENUMFT_Hinweis_Funktion getZBS_Merkmale_FT_Hinweis_Funktion() { return m_ZBS_Merkmale_FT_Hinweis_Funktion; }
+  Unit setZBS_Merkmale_FT_Hinweis_Funktion(ENUMFT_Hinweis_Funktion i) { m_ZBS_Merkmale_FT_Hinweis_Funktion = i; }
+  Bool getZBS_Merkmale_LM_G() { return m_ZBS_Merkmale_LM_G; }
+  Unit setZBS_Merkmale_LM_G(Bool i) { m_ZBS_Merkmale_LM_G = i; }
+  TGeschwindigkeit getZBS_Merkmale_V_Befehl_Z() { return m_ZBS_Merkmale_V_Befehl_Z; }
+  Unit setZBS_Merkmale_V_Befehl_Z(TGeschwindigkeit i) { m_ZBS_Merkmale_V_Befehl_Z = i; }
+  TGeschwindigkeit getZBS_Merkmale_V_Befehl_R() { return m_ZBS_Merkmale_V_Befehl_R; }
+  Unit setZBS_Merkmale_V_Befehl_R(TGeschwindigkeit i) { m_ZBS_Merkmale_V_Befehl_R = i; }
+  TGeschwindigkeit getZBS_Merkmale_V_Frei() { return m_ZBS_Merkmale_V_Frei; }
+  Unit setZBS_Merkmale_V_Frei(TGeschwindigkeit i) { m_ZBS_Merkmale_V_Frei = i; }
+  TGeschwindigkeit getZBS_Merkmale_VGR_1() { return m_ZBS_Merkmale_VGR_1; }
+  Unit setZBS_Merkmale_VGR_1(TGeschwindigkeit i) { m_ZBS_Merkmale_VGR_1 = i; }
+  TMeter getZBS_Merkmale_Laenge_1() { return m_ZBS_Merkmale_Laenge_1; }
+  Unit setZBS_Merkmale_Laenge_1(TMeter i) { m_ZBS_Merkmale_Laenge_1 = i; }
+  Rat getZBS_Merkmale_Massgebende_Neigung_1() { return m_ZBS_Merkmale_Massgebende_Neigung_1; }
+  Unit setZBS_Merkmale_Massgebende_Neigung_1(Rat i) { m_ZBS_Merkmale_Massgebende_Neigung_1 = i; }
+  TGeschwindigkeit getZBS_Merkmale_VGR_2() { return m_ZBS_Merkmale_VGR_2; }
+  Unit setZBS_Merkmale_VGR_2(TGeschwindigkeit i) { m_ZBS_Merkmale_VGR_2 = i; }
+  TGeschwindigkeit getFT_ZBS_Merkmale_La_ZBS_La_Bereich_Geschwindigkeit() { return m_FT_ZBS_Merkmale_La_ZBS_La_Bereich_Geschwindigkeit; }
+  Unit setFT_ZBS_Merkmale_La_ZBS_La_Bereich_Geschwindigkeit(TGeschwindigkeit i) { m_FT_ZBS_Merkmale_La_ZBS_La_Bereich_Geschwindigkeit = i; }
+  Rat getFT_ZBS_Merkmale_La_ZBS_La_Bereich_Neigung() { return m_FT_ZBS_Merkmale_La_ZBS_La_Bereich_Neigung; }
+  Unit setFT_ZBS_Merkmale_La_ZBS_La_Bereich_Neigung(Rat i) { m_FT_ZBS_Merkmale_La_ZBS_La_Bereich_Neigung = i; }
+  TMeter getFT_ZBS_Merkmale_La_ZBS_La_Bereich_Distanz() { return m_FT_ZBS_Merkmale_La_ZBS_La_Bereich_Distanz; }
+  Unit setFT_ZBS_Merkmale_La_ZBS_La_Bereich_Distanz(TMeter i) { m_FT_ZBS_Merkmale_La_ZBS_La_Bereich_Distanz = i; }
+  TMeter getFT_ZBS_Merkmale_La_ZBS_La_Bereich_Laenge() { return m_FT_ZBS_Merkmale_La_ZBS_La_Bereich_Laenge; }
+  Unit setFT_ZBS_Merkmale_La_ZBS_La_Bereich_Laenge(TMeter i) { m_FT_ZBS_Merkmale_La_ZBS_La_Bereich_Laenge = i; }
+  Int getFT_ETCS_L2_Merkmale_FT_ETCS_L2_Typ() { return m_FT_ETCS_L2_Merkmale_FT_ETCS_L2_Typ; }
+  Unit setFT_ETCS_L2_Merkmale_FT_ETCS_L2_Typ(Int i) { m_FT_ETCS_L2_Merkmale_FT_ETCS_L2_Typ = i; }
+  TZeichenkette getFT_ETCS_Ls_Merkmale_FT_ETCS_Ls_Typ() { return m_FT_ETCS_Ls_Merkmale_FT_ETCS_Ls_Typ; }
+  Unit setFT_ETCS_Ls_Merkmale_FT_ETCS_Ls_Typ(TZeichenkette i) { m_FT_ETCS_Ls_Merkmale_FT_ETCS_Ls_Typ = i; }
+  TText getFT_ETCS_Ls_Merkmale_FT_ETCS_Ls_Subtyp() { return m_FT_ETCS_Ls_Merkmale_FT_ETCS_Ls_Subtyp; }
+  Unit setFT_ETCS_Ls_Merkmale_FT_ETCS_Ls_Subtyp(TText i) { m_FT_ETCS_Ls_Merkmale_FT_ETCS_Ls_Subtyp = i; }
+  ENUMBremsweg getFT_ETCS_Ls_Merkmale_Bremsweg() { return m_FT_ETCS_Ls_Merkmale_Bremsweg; }
+  Unit setFT_ETCS_Ls_Merkmale_Bremsweg(ENUMBremsweg i) { m_FT_ETCS_Ls_Merkmale_Bremsweg = i; }
+  Int getETCS_Ls_Spezifische_Merkmale_LfdNr_in_Telegr_Spec() { return m_ETCS_Ls_Spezifische_Merkmale_LfdNr_in_Telegr_Spec; }
+  Unit setETCS_Ls_Spezifische_Merkmale_LfdNr_in_Telegr_Spec(Int i) { m_ETCS_Ls_Spezifische_Merkmale_LfdNr_in_Telegr_Spec = i; }
+  Int getETCS_Ls_Spezifische_Merkmale_ETCS_Ls_Paketnummer() { return m_ETCS_Ls_Spezifische_Merkmale_ETCS_Ls_Paketnummer; }
+  Unit setETCS_Ls_Spezifische_Merkmale_ETCS_Ls_Paketnummer(Int i) { m_ETCS_Ls_Spezifische_Merkmale_ETCS_Ls_Paketnummer = i; }
+  TText getETCS_Ls_Spezifische_Merkmale_ETCS_Ls_Parametername() { return m_ETCS_Ls_Spezifische_Merkmale_ETCS_Ls_Parametername; }
+  Unit setETCS_Ls_Spezifische_Merkmale_ETCS_Ls_Parametername(TText i) { m_ETCS_Ls_Spezifische_Merkmale_ETCS_Ls_Parametername = i; }
+  Int getETCS_Ls_Spezifische_Merkmale_Parameterwert() { return m_ETCS_Ls_Spezifische_Merkmale_Parameterwert; }
+  Unit setETCS_Ls_Spezifische_Merkmale_Parameterwert(Int i) { m_ETCS_Ls_Spezifische_Merkmale_Parameterwert = i; }
+  TText getETCS_Ls_Spezifische_Merkmale_ETCS_Ls_Erlaeuterung() { return m_ETCS_Ls_Spezifische_Merkmale_ETCS_Ls_Erlaeuterung; }
+  Unit setETCS_Ls_Spezifische_Merkmale_ETCS_Ls_Erlaeuterung(TText i) { m_ETCS_Ls_Spezifische_Merkmale_ETCS_Ls_Erlaeuterung = i; }
+  TText getETCS_Ls_Individuelle_Merkmale_ETCS_Ls_Parameter() { return m_ETCS_Ls_Individuelle_Merkmale_ETCS_Ls_Parameter; }
+  Unit setETCS_Ls_Individuelle_Merkmale_ETCS_Ls_Parameter(TText i) { m_ETCS_Ls_Individuelle_Merkmale_ETCS_Ls_Parameter = i; }
+  Int getETCS_Ls_Individuelle_Merkmale_Parameterwert() { return m_ETCS_Ls_Individuelle_Merkmale_Parameterwert; }
+  Unit setETCS_Ls_Individuelle_Merkmale_Parameterwert(Int i) { m_ETCS_Ls_Individuelle_Merkmale_Parameterwert = i; }
+  TText getETCS_Ls_Individuelle_Merkmale_ETCS_Ls_Erlaeuterung() { return m_ETCS_Ls_Individuelle_Merkmale_ETCS_Ls_Erlaeuterung; }
+  Unit setETCS_Ls_Individuelle_Merkmale_ETCS_Ls_Erlaeuterung(TText i) { m_ETCS_Ls_Individuelle_Merkmale_ETCS_Ls_Erlaeuterung = i; }
+  TGUID getFT_Fahrweg_Teile_ID_FT_Fahrweg_Teil() { return m_FT_Fahrweg_Teile_ID_FT_Fahrweg_Teil; }
+  Unit setFT_Fahrweg_Teile_ID_FT_Fahrweg_Teil(TGUID i) { m_FT_Fahrweg_Teile_ID_FT_Fahrweg_Teil = i; }
+  Int getFT_Fahrweg_Teile_Position_Im_Fahrweg() { return m_FT_Fahrweg_Teile_Position_Im_Fahrweg; }
+  Unit setFT_Fahrweg_Teile_Position_Im_Fahrweg(Int i) { m_FT_Fahrweg_Teile_Position_Im_Fahrweg = i; }
+  Bool getFT_Fahrweg_Teile_Ist_Befahren() { return m_FT_Fahrweg_Teile_Ist_Befahren; }
+  Unit setFT_Fahrweg_Teile_Ist_Befahren(Bool i) { m_FT_Fahrweg_Teile_Ist_Befahren = i; }
+}
+
+class Datenpunkt_LinkImpl implements Datenpunkt_Link {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Basis_Objekt
+  TGUID m_ID_Bearbeitungsvermerk = "";
+  TText m_ObjektreferenzenDB_GDI_Referenz = "";
+  TText m_ObjektreferenzenTechnischer_Platz = "";
+  ENUMObjektzustand_Besonders m_Basis_Objekt_Allg_Objektzustand_Besonders = ENUMObjektzustand_Besonders_unused;
+  TGUID m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = "";
+  Date m_Basis_Objekt_Allg_Datum_Regelwerk = "";
+
+  // Fields from Datenpunkt_Link
+  TGUID m_ID_Fachtelegramm = "";
+  TGUID m_ID_DP_Link_Start = "";
+  TGUID m_ID_DP_Link_Ziel = "";
+  TMeter m_Link_Distanz = 0;
+  ENUMAusrichtung m_Ziel_DP_Ausrichtung = ENUMAusrichtung_Sonstige;
+  ENUMETCS_Reaktion m_ETCS_Merkmale_ETCS_Reaktion = ENUMETCS_Reaktion_No_reaction;
+  Int m_ETCS_Merkmale_Genauigkeit = 0;
+  ENUMDP_Link_Art m_ZBS_Merkmale_DP_Link_Art = ENUMDP_Link_Art_Sonstige;
+  ENUMZBS_Reaktion m_ZBS_Merkmale_ZBS_Reaktion = ENUMZBS_Reaktion_Sonstige;
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_Datenpunkt_Link; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Basis_Objekt
+  TGUID getID_Bearbeitungsvermerk() { return m_ID_Bearbeitungsvermerk; }
+  Unit setID_Bearbeitungsvermerk(TGUID i) { m_ID_Bearbeitungsvermerk = i; }
+  TText getObjektreferenzenDB_GDI_Referenz() { return m_ObjektreferenzenDB_GDI_Referenz; }
+  Unit setObjektreferenzenDB_GDI_Referenz(TText r) { m_ObjektreferenzenDB_GDI_Referenz = r; }
+  TText getObjektreferenzenTechnischer_Platz() { return m_ObjektreferenzenTechnischer_Platz; }
+  Unit setObjektreferenzenTechnischer_Platz(TText p) { m_ObjektreferenzenTechnischer_Platz = p; }
+  ENUMObjektzustand_Besonders getBasis_Objekt_Allg_Objektzustand_Besonders() { return m_Basis_Objekt_Allg_Objektzustand_Besonders; }
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(ENUMObjektzustand_Besonders o) { m_Basis_Objekt_Allg_Objektzustand_Besonders = o; }
+  TGUID getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders() { return m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders; }
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(TGUID i) { m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = i; }
+  Date getBasis_Objekt_Allg_Datum_Regelwerk() { return m_Basis_Objekt_Allg_Datum_Regelwerk; }
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Date d) { m_Basis_Objekt_Allg_Datum_Regelwerk = d; }
+
+  // Methods from Datenpunkt_Link
+  TGUID getID_Fachtelegramm() { return m_ID_Fachtelegramm; }
+  Unit setID_Fachtelegramm(TGUID i) { m_ID_Fachtelegramm = i; }
+  TGUID getID_DP_Link_Start() { return m_ID_DP_Link_Start; }
+  Unit setID_DP_Link_Start(TGUID i) { m_ID_DP_Link_Start = i; }
+  TGUID getID_DP_Link_Ziel() { return m_ID_DP_Link_Ziel; }
+  Unit setID_DP_Link_Ziel(TGUID i) { m_ID_DP_Link_Ziel = i; }
+  TMeter getLink_Distanz() { return m_Link_Distanz; }
+  Unit setLink_Distanz(TMeter i) { m_Link_Distanz = i; }
+  ENUMAusrichtung getZiel_DP_Ausrichtung() { return m_Ziel_DP_Ausrichtung; }
+  Unit setZiel_DP_Ausrichtung(ENUMAusrichtung i) { m_Ziel_DP_Ausrichtung = i; }
+  ENUMETCS_Reaktion getETCS_Merkmale_ETCS_Reaktion() { return m_ETCS_Merkmale_ETCS_Reaktion; }
+  Unit setETCS_Merkmale_ETCS_Reaktion(ENUMETCS_Reaktion i) { m_ETCS_Merkmale_ETCS_Reaktion = i; }
+  Int getETCS_Merkmale_Genauigkeit() { return m_ETCS_Merkmale_Genauigkeit; }
+  Unit setETCS_Merkmale_Genauigkeit(Int i) { m_ETCS_Merkmale_Genauigkeit = i; }
+  ENUMDP_Link_Art getZBS_Merkmale_DP_Link_Art() { return m_ZBS_Merkmale_DP_Link_Art; }
+  Unit setZBS_Merkmale_DP_Link_Art(ENUMDP_Link_Art i) { m_ZBS_Merkmale_DP_Link_Art = i; }
+  ENUMZBS_Reaktion getZBS_Merkmale_ZBS_Reaktion() { return m_ZBS_Merkmale_ZBS_Reaktion; }
+  Unit setZBS_Merkmale_ZBS_Reaktion(ENUMZBS_Reaktion i) { m_ZBS_Merkmale_ZBS_Reaktion = i; }
+}
+
+class FT_AnschaltbedingungImpl implements FT_Anschaltbedingung {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Basis_Objekt
+  TGUID m_ID_Bearbeitungsvermerk = "";
+  TText m_ObjektreferenzenDB_GDI_Referenz = "";
+  TText m_ObjektreferenzenTechnischer_Platz = "";
+  ENUMObjektzustand_Besonders m_Basis_Objekt_Allg_Objektzustand_Besonders = ENUMObjektzustand_Besonders_unused;
+  TGUID m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = "";
+  Date m_Basis_Objekt_Allg_Datum_Regelwerk = "";
+
+  // Fields from FT_Anschaltbedingung
+  TGUID m_Bedingung_Signal_ID_Signal_Signalbegriff = "";
+  ENUMVerwendung_Als_Rueckfall m_Bedingung_Signal_Verwendung_Als_Rueckfall = ENUMVerwendung_Als_Rueckfall_Sonstige;
+  TGUID m_Bedingung_Weiche_ID_W_Element = "";
+  TLinksRechts m_Bedingung_Weiche_Bedingung_Weichenlage = ENUMLinksRechts_links;
+  TGUID m_Bedingung_PZB_ID_PZB_Element = "";
+  Bool m_Bedingung_PZB_Wirksam = False;
+  ENUMArt_Bedingung m_Bedingung_Besondere_Art_Bedingung = ENUMArt_Bedingung_Sonstige;
+  TText m_Bedingung_Sonstige_Anlagenteil_Sonstige = "";
+  TText m_Bedingung_Sonstige_Text_Bedingung = "";
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_FT_Anschaltbedingung; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Basis_Objekt
+  TGUID getID_Bearbeitungsvermerk() { return m_ID_Bearbeitungsvermerk; }
+  Unit setID_Bearbeitungsvermerk(TGUID i) { m_ID_Bearbeitungsvermerk = i; }
+  TText getObjektreferenzenDB_GDI_Referenz() { return m_ObjektreferenzenDB_GDI_Referenz; }
+  Unit setObjektreferenzenDB_GDI_Referenz(TText r) { m_ObjektreferenzenDB_GDI_Referenz = r; }
+  TText getObjektreferenzenTechnischer_Platz() { return m_ObjektreferenzenTechnischer_Platz; }
+  Unit setObjektreferenzenTechnischer_Platz(TText p) { m_ObjektreferenzenTechnischer_Platz = p; }
+  ENUMObjektzustand_Besonders getBasis_Objekt_Allg_Objektzustand_Besonders() { return m_Basis_Objekt_Allg_Objektzustand_Besonders; }
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(ENUMObjektzustand_Besonders o) { m_Basis_Objekt_Allg_Objektzustand_Besonders = o; }
+  TGUID getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders() { return m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders; }
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(TGUID i) { m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = i; }
+  Date getBasis_Objekt_Allg_Datum_Regelwerk() { return m_Basis_Objekt_Allg_Datum_Regelwerk; }
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Date d) { m_Basis_Objekt_Allg_Datum_Regelwerk = d; }
+
+  // Methods from FT_Anschaltbedingung
+  TGUID getBedingung_Signal_ID_Signal_Signalbegriff() { return m_Bedingung_Signal_ID_Signal_Signalbegriff; }
+  Unit setBedingung_Signal_ID_Signal_Signalbegriff(TGUID i) { m_Bedingung_Signal_ID_Signal_Signalbegriff = i; }
+  ENUMVerwendung_Als_Rueckfall getBedingung_Signal_Verwendung_Als_Rueckfall() { return m_Bedingung_Signal_Verwendung_Als_Rueckfall; }
+  Unit setBedingung_Signal_Verwendung_Als_Rueckfall(ENUMVerwendung_Als_Rueckfall i) { m_Bedingung_Signal_Verwendung_Als_Rueckfall = i; }
+  TGUID getBedingung_Weiche_ID_W_Element() { return m_Bedingung_Weiche_ID_W_Element; }
+  Unit setBedingung_Weiche_ID_W_Element(TGUID i) { m_Bedingung_Weiche_ID_W_Element = i; }
+  TLinksRechts getBedingung_Weiche_Bedingung_Weichenlage() { return m_Bedingung_Weiche_Bedingung_Weichenlage; }
+  Unit setBedingung_Weiche_Bedingung_Weichenlage(TLinksRechts i) { m_Bedingung_Weiche_Bedingung_Weichenlage = i; }
+  TGUID getBedingung_PZB_ID_PZB_Element() { return m_Bedingung_PZB_ID_PZB_Element; }
+  Unit setBedingung_PZB_ID_PZB_Element(TGUID i) { m_Bedingung_PZB_ID_PZB_Element = i; }
+  Bool getBedingung_PZB_Wirksam() { return m_Bedingung_PZB_Wirksam; }
+  Unit setBedingung_PZB_Wirksam(Bool i) { m_Bedingung_PZB_Wirksam = i; }
+  ENUMArt_Bedingung getBedingung_Besondere_Art_Bedingung() { return m_Bedingung_Besondere_Art_Bedingung; }
+  Unit setBedingung_Besondere_Art_Bedingung(ENUMArt_Bedingung i) { m_Bedingung_Besondere_Art_Bedingung = i; }
+  TText getBedingung_Sonstige_Anlagenteil_Sonstige() { return m_Bedingung_Sonstige_Anlagenteil_Sonstige; }
+  Unit setBedingung_Sonstige_Anlagenteil_Sonstige(TText i) { m_Bedingung_Sonstige_Anlagenteil_Sonstige = i; }
+  TText getBedingung_Sonstige_Text_Bedingung() { return m_Bedingung_Sonstige_Text_Bedingung; }
+  Unit setBedingung_Sonstige_Text_Bedingung(TText i) { m_Bedingung_Sonstige_Text_Bedingung = i; }
+}
+
+class FT_Fahrweg_TeilImpl implements FT_Fahrweg_Teil {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Basis_Objekt
+  TGUID m_ID_Bearbeitungsvermerk = "";
+  TText m_ObjektreferenzenDB_GDI_Referenz = "";
+  TText m_ObjektreferenzenTechnischer_Platz = "";
+  ENUMObjektzustand_Besonders m_Basis_Objekt_Allg_Objektzustand_Besonders = ENUMObjektzustand_Besonders_unused;
+  TGUID m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = "";
+  Date m_Basis_Objekt_Allg_Datum_Regelwerk = "";
+
+  // Fields from FT_Fahrweg_Teil
+  ENUMBesonderes_Merkmal m_FT_Fahrweg_Teil_Allg_Besonderes_Merkmal = ENUMBesonderes_Merkmal_Sonstige;
+  Bool m_FT_Fahrweg_Teil_Allg_Ziel_Ist_Fahrwegende = False;
+  TGUID m_ID_Start_Datenpunkt = "";
+  TGUID m_ID_Start_Signal = "";
+  TGUID m_Start_W_Element_ID_Start_W_Element = "";
+  ENUMW_Anschluss m_Start_W_Element_W_Anschluss = ENUMW_Anschluss_L;
+  TGUID m_ID_Ziel_Datenpunkt = "";
+  TGUID m_ID_Ziel_Signal = "";
+  TGUID m_Ziel_W_Element_ID_Ziel_W_Element = "";
+  ENUMW_Anschluss m_Ziel_W_Element_W_Anschluss = ENUMW_Anschluss_L;
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_FT_Fahrweg_Teil; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Basis_Objekt
+  TGUID getID_Bearbeitungsvermerk() { return m_ID_Bearbeitungsvermerk; }
+  Unit setID_Bearbeitungsvermerk(TGUID i) { m_ID_Bearbeitungsvermerk = i; }
+  TText getObjektreferenzenDB_GDI_Referenz() { return m_ObjektreferenzenDB_GDI_Referenz; }
+  Unit setObjektreferenzenDB_GDI_Referenz(TText r) { m_ObjektreferenzenDB_GDI_Referenz = r; }
+  TText getObjektreferenzenTechnischer_Platz() { return m_ObjektreferenzenTechnischer_Platz; }
+  Unit setObjektreferenzenTechnischer_Platz(TText p) { m_ObjektreferenzenTechnischer_Platz = p; }
+  ENUMObjektzustand_Besonders getBasis_Objekt_Allg_Objektzustand_Besonders() { return m_Basis_Objekt_Allg_Objektzustand_Besonders; }
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(ENUMObjektzustand_Besonders o) { m_Basis_Objekt_Allg_Objektzustand_Besonders = o; }
+  TGUID getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders() { return m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders; }
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(TGUID i) { m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = i; }
+  Date getBasis_Objekt_Allg_Datum_Regelwerk() { return m_Basis_Objekt_Allg_Datum_Regelwerk; }
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Date d) { m_Basis_Objekt_Allg_Datum_Regelwerk = d; }
+
+  // Methods from FT_Fahrweg_Teil
+  ENUMBesonderes_Merkmal getFT_Fahrweg_Teil_Allg_Besonderes_Merkmal() { return m_FT_Fahrweg_Teil_Allg_Besonderes_Merkmal; }
+  Unit setFT_Fahrweg_Teil_Allg_Besonderes_Merkmal(ENUMBesonderes_Merkmal i) { m_FT_Fahrweg_Teil_Allg_Besonderes_Merkmal = i; }
+  Bool getFT_Fahrweg_Teil_Allg_Ziel_Ist_Fahrwegende() { return m_FT_Fahrweg_Teil_Allg_Ziel_Ist_Fahrwegende; }
+  Unit setFT_Fahrweg_Teil_Allg_Ziel_Ist_Fahrwegende(Bool i) { m_FT_Fahrweg_Teil_Allg_Ziel_Ist_Fahrwegende = i; }
+  TGUID getID_Start_Datenpunkt() { return m_ID_Start_Datenpunkt; }
+  Unit setID_Start_Datenpunkt(TGUID i) { m_ID_Start_Datenpunkt = i; }
+  TGUID getID_Start_Signal() { return m_ID_Start_Signal; }
+  Unit setID_Start_Signal(TGUID i) { m_ID_Start_Signal = i; }
+  TGUID getStart_W_Element_ID_Start_W_Element() { return m_Start_W_Element_ID_Start_W_Element; }
+  Unit setStart_W_Element_ID_Start_W_Element(TGUID i) { m_Start_W_Element_ID_Start_W_Element = i; }
+  ENUMW_Anschluss getStart_W_Element_W_Anschluss() { return m_Start_W_Element_W_Anschluss; }
+  Unit setStart_W_Element_W_Anschluss(ENUMW_Anschluss i) { m_Start_W_Element_W_Anschluss = i; }
+  TGUID getID_Ziel_Datenpunkt() { return m_ID_Ziel_Datenpunkt; }
+  Unit setID_Ziel_Datenpunkt(TGUID i) { m_ID_Ziel_Datenpunkt = i; }
+  TGUID getID_Ziel_Signal() { return m_ID_Ziel_Signal; }
+  Unit setID_Ziel_Signal(TGUID i) { m_ID_Ziel_Signal = i; }
+  TGUID getZiel_W_Element_ID_Ziel_W_Element() { return m_Ziel_W_Element_ID_Ziel_W_Element; }
+  Unit setZiel_W_Element_ID_Ziel_W_Element(TGUID i) { m_Ziel_W_Element_ID_Ziel_W_Element = i; }
+  ENUMW_Anschluss getZiel_W_Element_W_Anschluss() { return m_Ziel_W_Element_W_Anschluss; }
+  Unit setZiel_W_Element_W_Anschluss(ENUMW_Anschluss i) { m_Ziel_W_Element_W_Anschluss = i; }
+}
+
+class ETCS_KnotenImpl implements ETCS_Knoten {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Basis_Objekt
+  TGUID m_ID_Bearbeitungsvermerk = "";
+  TText m_ObjektreferenzenDB_GDI_Referenz = "";
+  TText m_ObjektreferenzenTechnischer_Platz = "";
+  ENUMObjektzustand_Besonders m_Basis_Objekt_Allg_Objektzustand_Besonders = ENUMObjektzustand_Besonders_unused;
+  TGUID m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = "";
+  Date m_Basis_Objekt_Allg_Datum_Regelwerk = "";
+
+  // Fields from ETCS_Knoten
+  TGUID m_ID_TOP_Knoten = "";
+  ENUMETCS_Knoten_Art_Sonstige m_Knoten_Auf_TOP_Kante_ETCS_Knoten_Art_Sonstige = ENUMETCS_Knoten_Art_Sonstige_KrW;
+  TGUID m_Punkt_Objekt_TOP_Kante_ID_TOP_Kante = "";
+  TMeter m_Punkt_Objekt_TOP_Kante_Abstand = 0;
+  TWirkrichtung m_Punkt_Objekt_TOP_Kante_Wirkrichtung = ENUMWirkrichtung_beide;
+  TLinksRechts m_Punkt_Objekt_TOP_Kante_Seitliche_Lage = ENUMLinksRechts_links;
+  TMeter m_Punkt_Objekt_TOP_Kante_Seitlicher_Abstand = 0;
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_ETCS_Knoten; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Basis_Objekt
+  TGUID getID_Bearbeitungsvermerk() { return m_ID_Bearbeitungsvermerk; }
+  Unit setID_Bearbeitungsvermerk(TGUID i) { m_ID_Bearbeitungsvermerk = i; }
+  TText getObjektreferenzenDB_GDI_Referenz() { return m_ObjektreferenzenDB_GDI_Referenz; }
+  Unit setObjektreferenzenDB_GDI_Referenz(TText r) { m_ObjektreferenzenDB_GDI_Referenz = r; }
+  TText getObjektreferenzenTechnischer_Platz() { return m_ObjektreferenzenTechnischer_Platz; }
+  Unit setObjektreferenzenTechnischer_Platz(TText p) { m_ObjektreferenzenTechnischer_Platz = p; }
+  ENUMObjektzustand_Besonders getBasis_Objekt_Allg_Objektzustand_Besonders() { return m_Basis_Objekt_Allg_Objektzustand_Besonders; }
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(ENUMObjektzustand_Besonders o) { m_Basis_Objekt_Allg_Objektzustand_Besonders = o; }
+  TGUID getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders() { return m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders; }
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(TGUID i) { m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = i; }
+  Date getBasis_Objekt_Allg_Datum_Regelwerk() { return m_Basis_Objekt_Allg_Datum_Regelwerk; }
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Date d) { m_Basis_Objekt_Allg_Datum_Regelwerk = d; }
+
+  // Methods from ETCS_Knoten
+  TGUID getID_TOP_Knoten() { return m_ID_TOP_Knoten; }
+  Unit setID_TOP_Knoten(TGUID i) { m_ID_TOP_Knoten = i; }
+  ENUMETCS_Knoten_Art_Sonstige getKnoten_Auf_TOP_Kante_ETCS_Knoten_Art_Sonstige() { return m_Knoten_Auf_TOP_Kante_ETCS_Knoten_Art_Sonstige; }
+  Unit setKnoten_Auf_TOP_Kante_ETCS_Knoten_Art_Sonstige(ENUMETCS_Knoten_Art_Sonstige i) { m_Knoten_Auf_TOP_Kante_ETCS_Knoten_Art_Sonstige = i; }
+  TGUID getPunkt_Objekt_TOP_Kante_ID_TOP_Kante() { return m_Punkt_Objekt_TOP_Kante_ID_TOP_Kante; }
+  Unit setPunkt_Objekt_TOP_Kante_ID_TOP_Kante(TGUID i) { m_Punkt_Objekt_TOP_Kante_ID_TOP_Kante = i; }
+  TMeter getPunkt_Objekt_TOP_Kante_Abstand() { return m_Punkt_Objekt_TOP_Kante_Abstand; }
+  Unit setPunkt_Objekt_TOP_Kante_Abstand(TMeter i) { m_Punkt_Objekt_TOP_Kante_Abstand = i; }
+  TWirkrichtung getPunkt_Objekt_TOP_Kante_Wirkrichtung() { return m_Punkt_Objekt_TOP_Kante_Wirkrichtung; }
+  Unit setPunkt_Objekt_TOP_Kante_Wirkrichtung(TWirkrichtung i) { m_Punkt_Objekt_TOP_Kante_Wirkrichtung = i; }
+  TLinksRechts getPunkt_Objekt_TOP_Kante_Seitliche_Lage() { return m_Punkt_Objekt_TOP_Kante_Seitliche_Lage; }
+  Unit setPunkt_Objekt_TOP_Kante_Seitliche_Lage(TLinksRechts i) { m_Punkt_Objekt_TOP_Kante_Seitliche_Lage = i; }
+  TMeter getPunkt_Objekt_TOP_Kante_Seitlicher_Abstand() { return m_Punkt_Objekt_TOP_Kante_Seitlicher_Abstand; }
+  Unit setPunkt_Objekt_TOP_Kante_Seitlicher_Abstand(TMeter i) { m_Punkt_Objekt_TOP_Kante_Seitlicher_Abstand = i; }
+}
+
+class ETCS_KanteImpl implements ETCS_Kante {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Basis_Objekt
+  TGUID m_ID_Bearbeitungsvermerk = "";
+  TText m_ObjektreferenzenDB_GDI_Referenz = "";
+  TText m_ObjektreferenzenTechnischer_Platz = "";
+  ENUMObjektzustand_Besonders m_Basis_Objekt_Allg_Objektzustand_Besonders = ENUMObjektzustand_Besonders_unused;
+  TGUID m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = "";
+  Date m_Basis_Objekt_Allg_Datum_Regelwerk = "";
+
+  // Fields from Bereich_Objekt
+  TMeter m_Bereich_Objekt_Teilbereich_Begrenzung_A = 0;
+  TWirkrichtung m_Bereich_Objekt_Teilbereich_Richtungsbezug = ENUMWirkrichtung_beide;
+  TMeter m_Bereich_Objekt_Teilbereich_Begrenzung_B = 0;
+  TGUID m_Bereich_Objekt_Teilbereich_ID_TOP_Kante = "";
+
+  // Fields from ETCS_Kante
+  TZeichenkette m_Bezeichnung_Bezeichnung_ETCS_Kante = "";
+  TGUID m_ID_RBC = "";
+  TGUID m_ID_ETCS_Knoten_A = "";
+  TGUID m_ID_ETCS_Knoten_B = "";
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_ETCS_Kante; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Basis_Objekt
+  TGUID getID_Bearbeitungsvermerk() { return m_ID_Bearbeitungsvermerk; }
+  Unit setID_Bearbeitungsvermerk(TGUID i) { m_ID_Bearbeitungsvermerk = i; }
+  TText getObjektreferenzenDB_GDI_Referenz() { return m_ObjektreferenzenDB_GDI_Referenz; }
+  Unit setObjektreferenzenDB_GDI_Referenz(TText r) { m_ObjektreferenzenDB_GDI_Referenz = r; }
+  TText getObjektreferenzenTechnischer_Platz() { return m_ObjektreferenzenTechnischer_Platz; }
+  Unit setObjektreferenzenTechnischer_Platz(TText p) { m_ObjektreferenzenTechnischer_Platz = p; }
+  ENUMObjektzustand_Besonders getBasis_Objekt_Allg_Objektzustand_Besonders() { return m_Basis_Objekt_Allg_Objektzustand_Besonders; }
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(ENUMObjektzustand_Besonders o) { m_Basis_Objekt_Allg_Objektzustand_Besonders = o; }
+  TGUID getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders() { return m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders; }
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(TGUID i) { m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = i; }
+  Date getBasis_Objekt_Allg_Datum_Regelwerk() { return m_Basis_Objekt_Allg_Datum_Regelwerk; }
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Date d) { m_Basis_Objekt_Allg_Datum_Regelwerk = d; }
+
+  // Methods from Bereich_Objekt
+  TMeter getBereich_Objekt_Teilbereich_Begrenzung_A() { return m_Bereich_Objekt_Teilbereich_Begrenzung_A; }
+  Unit setBereich_Objekt_Teilbereich_Begrenzung_A(TMeter b) { m_Bereich_Objekt_Teilbereich_Begrenzung_A = b; }
+  TWirkrichtung getBereich_Objekt_Teilbereich_Richtungsbezug() { return m_Bereich_Objekt_Teilbereich_Richtungsbezug; }
+  Unit setBereich_Objekt_Teilbereich_Richtungsbezug(TWirkrichtung w) { m_Bereich_Objekt_Teilbereich_Richtungsbezug = w; }
+  TMeter getBereich_Objekt_Teilbereich_Begrenzung_B() { return m_Bereich_Objekt_Teilbereich_Begrenzung_B; }
+  Unit setBereich_Objekt_Teilbereich_Begrenzung_B(TMeter b) { m_Bereich_Objekt_Teilbereich_Begrenzung_B = b; }
+  TGUID getBereich_Objekt_Teilbereich_ID_TOP_Kante() { return m_Bereich_Objekt_Teilbereich_ID_TOP_Kante; }
+  Unit setBereich_Objekt_Teilbereich_ID_TOP_Kante(TGUID i) { m_Bereich_Objekt_Teilbereich_ID_TOP_Kante = i; }
+
+  // Methods from ETCS_Kante
+  TZeichenkette getBezeichnung_Bezeichnung_ETCS_Kante() { return m_Bezeichnung_Bezeichnung_ETCS_Kante; }
+  Unit setBezeichnung_Bezeichnung_ETCS_Kante(TZeichenkette i) { m_Bezeichnung_Bezeichnung_ETCS_Kante = i; }
+  TGUID getID_RBC() { return m_ID_RBC; }
+  Unit setID_RBC(TGUID i) { m_ID_RBC = i; }
+  TGUID getID_ETCS_Knoten_A() { return m_ID_ETCS_Knoten_A; }
+  Unit setID_ETCS_Knoten_A(TGUID i) { m_ID_ETCS_Knoten_A = i; }
+  TGUID getID_ETCS_Knoten_B() { return m_ID_ETCS_Knoten_B; }
+  Unit setID_ETCS_Knoten_B(TGUID i) { m_ID_ETCS_Knoten_B = i; }
+}
+*/
+

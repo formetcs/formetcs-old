@@ -1,0 +1,19 @@
+module Metaobject;
+
+export *;
+
+// Metaobject is the base class for all other classes and contains methods that are not part of the PlanPro model but needed for the FormETCS model.
+// In the FormETCS class hierarchy, Metaobject is the base class of Ur_Objekt (which is the root class in PlanPro).
+
+
+// Enums
+data ENUMMetaobject_Objecttype = ENUMMetaobject_Objecttype_Unknown | ENUMMetaobject_Objecttype_Anhang | ENUMMetaobject_Objecttype_Basis_Objekt | ENUMMetaobject_Objecttype_Bearbeitungsvermerk | ENUMMetaobject_Objecttype_Bereich_Objekt | ENUMMetaobject_Objecttype_Proxy_Objekt | ENUMMetaobject_Objecttype_Punkt_Objekt | ENUMMetaobject_Objecttype_Ur_Objekt | ENUMMetaobject_Objecttype_Block_Anlage | ENUMMetaobject_Objecttype_Block_Element | ENUMMetaobject_Objecttype_Block_Strecke | ENUMMetaobject_Objecttype_GEO_Kante | ENUMMetaobject_Objecttype_GEO_Knoten | ENUMMetaobject_Objecttype_GEO_Punkt | ENUMMetaobject_Objecttype_Geschwindigkeitsprofil | ENUMMetaobject_Objecttype_Hoehenpunkt | ENUMMetaobject_Objecttype_Oertlichkeit | ENUMMetaobject_Objecttype_Strecke | ENUMMetaobject_Objecttype_Strecke_Punkt | ENUMMetaobject_Objecttype_Technischer_Bereich | ENUMMetaobject_Objecttype_Technischer_Punkt | ENUMMetaobject_Objecttype_TOP_Kante | ENUMMetaobject_Objecttype_TOP_Knoten | ENUMMetaobject_Objecttype_Ueberhoehung | ENUMMetaobject_Objecttype_Signal | ENUMMetaobject_Objecttype_Signal_Befestigung | ENUMMetaobject_Objecttype_Signal_Rahmen | ENUMMetaobject_Objecttype_Signal_Signalbegriff | ENUMMetaobject_Objecttype_Datenpunkt | ENUMMetaobject_Objecttype_Fachtelegramm | ENUMMetaobject_Objecttype_Datenpunkt_Link | ENUMMetaobject_Objecttype_FT_Anschaltbedingung | ENUMMetaobject_Objecttype_FT_Fahrweg_Teil | ENUMMetaobject_Objecttype_ETCS_Knoten | ENUMMetaobject_Objecttype_ETCS_Kante;
+
+
+//Metaobject
+interface Metaobject {
+  ENUMMetaobject_Objecttype getObjecttype();
+  Int getStep();
+  Unit setStep(Int i);
+}
+

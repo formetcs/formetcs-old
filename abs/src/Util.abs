@@ -1,0 +1,749 @@
+module Util;
+
+export *;
+import * from Metaobject;
+import * from BasisTypen;
+import * from Basisobjekte;
+import * from Geodaten;
+import * from Signale;
+import * from ETCS;
+import * from Block;
+
+
+data PlanProObject = Objecttype_Unknown | Objecttype_Anhang(Anhang) | Objecttype_Basis_Objekt(Basis_Objekt) | Objecttype_Bearbeitungsvermerk(Bearbeitungsvermerk) | Objecttype_Bereich_Objekt(Bereich_Objekt) | Objecttype_Proxy_Objekt(Proxy_Objekt) | Objecttype_Punkt_Objekt(Punkt_Objekt) | Objecttype_Ur_Objekt(Ur_Objekt) | Objecttype_Block_Anlage(Block_Anlage) | Objecttype_Block_Element(Block_Element) | Objecttype_Block_Strecke(Block_Strecke) | Objecttype_GEO_Kante(GEO_Kante) | Objecttype_GEO_Knoten(GEO_Knoten) | Objecttype_GEO_Punkt(GEO_Punkt) | Objecttype_Geschwindigkeitsprofil(Geschwindigkeitsprofil) | Objecttype_Hoehenpunkt(Hoehenpunkt) | Objecttype_Oertlichkeit(Oertlichkeit) | Objecttype_Strecke(Strecke) | Objecttype_Strecke_Punkt(Strecke_Punkt) | Objecttype_Technischer_Bereich(Technischer_Bereich) | Objecttype_Technischer_Punkt(Technischer_Punkt) | Objecttype_TOP_Kante(TOP_Kante) | Objecttype_TOP_Knoten(TOP_Knoten) | Objecttype_Ueberhoehung(Ueberhoehung) | Objecttype_Signal(Signal) | Objecttype_Signal_Befestigung(Signal_Befestigung) | Objecttype_Signal_Rahmen(Signal_Rahmen) | Objecttype_Signal_Signalbegriff(Signal_Signalbegriff) | Objecttype_Datenpunkt(Datenpunkt);
+
+
+
+
+
+interface Util {
+  String toFloatString(Rat r, Int maxDigits);
+  List<Punkt_Objekt> calculatePosition(Map<TGUID, PlanProObject> m, Punkt_Objekt startpos, TMeter distance);
+  Punkt_Objekt calculatePositionOnPath(Map<TGUID, PlanProObject> m, Punkt_Objekt startpos, List<TOP_Kante> klist, TMeter distance, Bool forward);
+  TMeter calculateDistance(Map<TGUID, PlanProObject> m, Punkt_Objekt startpos, Punkt_Objekt endpos, Bool forward);
+  List<Pair<TOP_Kante, Bool>> getNextTOP_Kante(Map<TGUID, PlanProObject> m, TOP_Kante k, Bool forward);
+  Datenpunkt getNextDatenpunkt(Map<TGUID, PlanProObject> m, Datenpunkt d, Bool forward);
+  List<Triple<List<TOP_Kante>, Datenpunkt, TMeter>> getNextDatenpunktPaths(Map<TGUID, PlanProObject> m, Datenpunkt startpos, Bool forward);
+}
+
+class Util implements Util {
+
+  String toFloatString(Rat r, Int maxDigits) {
+    String returnval = "";
+    Rat tempr = r;
+    if(tempr < 0) {
+      tempr = tempr * -1;
+      returnval = "-";
+    }
+    returnval = returnval + toString(truncate(tempr));
+    Int remainder = numerator(tempr) % denominator(tempr);
+    if(remainder != 0) {
+      returnval = returnval + ".";
+    }
+    Int digits = 0;
+    while(remainder != 0 && digits < maxDigits) {
+      remainder = remainder * 10;
+      Int quotient = truncate(remainder / denominator(tempr));
+      returnval = returnval + toString(quotient);
+      remainder = remainder % denominator(tempr);
+      digits = digits + 1;
+    }
+    return returnval;
+  }
+
+
+
+
+  // forward bedeutet vorwaerts bezogen auf die Topologierichtung (A->B) der Kante k
+  List<Pair<TOP_Kante, Bool>> getNextTOP_Kante(Map<TGUID, PlanProObject> m, TOP_Kante k, Bool forward) {
+    List<Pair<TOP_Kante, Bool>> returnval = Nil;
+    TGUID src_knoten_a = k.getID_TOP_Knoten_A();
+    TGUID src_knoten_b = k.getID_TOP_Knoten_B();
+    ENUMTOP_Anschluss src_anschluss_a = k.getTOP_Kante_Allg_TOP_Anschluss_A();
+    ENUMTOP_Anschluss src_anschluss_b = k.getTOP_Kante_Allg_TOP_Anschluss_B();
+    List<PlanProObject> l = values(m);
+    Int counter = 0;
+    while(counter < length(l)) {
+      PlanProObject temp = nth(l, counter);
+      case temp {
+        Objecttype_TOP_Kante(o) =>  {
+                                      TOP_Kante t = o;
+                                      if(t != k) {
+                                        TGUID knoten_a = t.getID_TOP_Knoten_A();
+                                        TGUID knoten_b = t.getID_TOP_Knoten_B();
+                                        ENUMTOP_Anschluss anschluss_a = t.getTOP_Kante_Allg_TOP_Anschluss_A();
+                                        ENUMTOP_Anschluss anschluss_b = t.getTOP_Kante_Allg_TOP_Anschluss_B();
+                                        if(forward && (src_knoten_b == knoten_a) && src_anschluss_b == ENUMTOP_Anschluss_Verbindung && anschluss_a == ENUMTOP_Anschluss_Verbindung) {
+                                          Pair<TOP_Kante, Bool> v = Pair(t, True);
+                                          returnval = appendright(returnval, v);
+                                        }
+                                        else if(forward && (src_knoten_b == knoten_a) && src_anschluss_b == ENUMTOP_Anschluss_Links && anschluss_a == ENUMTOP_Anschluss_Spitze) {
+                                          Pair<TOP_Kante, Bool> v = Pair(t, True);
+                                          returnval = appendright(returnval, v);
+                                        }
+                                        else if(forward && (src_knoten_b == knoten_a) && src_anschluss_b == ENUMTOP_Anschluss_Rechts && anschluss_a == ENUMTOP_Anschluss_Spitze) {
+                                          Pair<TOP_Kante, Bool> v = Pair(t, True);
+                                          returnval = appendright(returnval, v);
+                                        }
+                                        else if(forward && (src_knoten_b == knoten_a) && src_anschluss_b == ENUMTOP_Anschluss_Spitze && anschluss_a == ENUMTOP_Anschluss_Links) {
+                                          Pair<TOP_Kante, Bool> v = Pair(t, True);
+                                          returnval = appendright(returnval, v);
+                                        }
+                                        else if(forward && (src_knoten_b == knoten_a) && src_anschluss_b == ENUMTOP_Anschluss_Spitze && anschluss_a == ENUMTOP_Anschluss_Rechts) {
+                                          Pair<TOP_Kante, Bool> v = Pair(t, True);
+                                          returnval = appendright(returnval, v);
+                                        }
+
+
+                                        else if(forward && (src_knoten_b == knoten_b) && src_anschluss_b == ENUMTOP_Anschluss_Verbindung && anschluss_b == ENUMTOP_Anschluss_Verbindung) {
+                                          Pair<TOP_Kante, Bool> v = Pair(t, False);
+                                          returnval = appendright(returnval, v);
+                                        }
+                                        else if(forward && (src_knoten_b == knoten_b) && src_anschluss_b == ENUMTOP_Anschluss_Links && anschluss_b == ENUMTOP_Anschluss_Spitze) {
+                                          Pair<TOP_Kante, Bool> v = Pair(t, False);
+                                          returnval = appendright(returnval, v);
+                                        }
+                                        else if(forward && (src_knoten_b == knoten_b) && src_anschluss_b == ENUMTOP_Anschluss_Rechts && anschluss_b == ENUMTOP_Anschluss_Spitze) {
+                                          Pair<TOP_Kante, Bool> v = Pair(t, False);
+                                          returnval = appendright(returnval, v);
+                                        }
+                                        else if(forward && (src_knoten_b == knoten_b) && src_anschluss_b == ENUMTOP_Anschluss_Spitze && anschluss_b == ENUMTOP_Anschluss_Links) {
+                                          Pair<TOP_Kante, Bool> v = Pair(t, False);
+                                          returnval = appendright(returnval, v);
+                                        }
+                                        else if(forward && (src_knoten_b == knoten_b) && src_anschluss_b == ENUMTOP_Anschluss_Spitze && anschluss_b == ENUMTOP_Anschluss_Rechts) {
+                                          Pair<TOP_Kante, Bool> v = Pair(t, False);
+                                          returnval = appendright(returnval, v);
+                                        }
+
+
+                                        else if(!forward && (src_knoten_a == knoten_b) && src_anschluss_a == ENUMTOP_Anschluss_Verbindung && anschluss_b == ENUMTOP_Anschluss_Verbindung) {
+                                          Pair<TOP_Kante, Bool> v = Pair(t, False);
+                                          returnval = appendright(returnval, v);
+                                        }
+                                        else if(!forward && (src_knoten_a == knoten_b) && src_anschluss_a == ENUMTOP_Anschluss_Links && anschluss_b == ENUMTOP_Anschluss_Spitze) {
+                                          Pair<TOP_Kante, Bool> v = Pair(t, False);
+                                          returnval = appendright(returnval, v);
+                                        }
+                                        else if(!forward && (src_knoten_a == knoten_b) && src_anschluss_a == ENUMTOP_Anschluss_Rechts && anschluss_b == ENUMTOP_Anschluss_Spitze) {
+                                          Pair<TOP_Kante, Bool> v = Pair(t, False);
+                                          returnval = appendright(returnval, v);
+                                        }
+                                        else if(!forward && (src_knoten_a == knoten_b) && src_anschluss_a == ENUMTOP_Anschluss_Spitze && anschluss_b == ENUMTOP_Anschluss_Links) {
+                                          Pair<TOP_Kante, Bool> v = Pair(t, False);
+                                          returnval = appendright(returnval, v);
+                                        }
+                                        else if(!forward && (src_knoten_a == knoten_b) && src_anschluss_a == ENUMTOP_Anschluss_Spitze && anschluss_b == ENUMTOP_Anschluss_Rechts) {
+                                          Pair<TOP_Kante, Bool> v = Pair(t, False);
+                                          returnval = appendright(returnval, v);
+                                        }
+
+
+                                        else if(!forward && (src_knoten_a == knoten_a) && src_anschluss_a == ENUMTOP_Anschluss_Verbindung && anschluss_a == ENUMTOP_Anschluss_Verbindung) {
+                                          Pair<TOP_Kante, Bool> v = Pair(t, True);
+                                          returnval = appendright(returnval, v);
+                                        }
+                                        else if(!forward && (src_knoten_a == knoten_a) && src_anschluss_a == ENUMTOP_Anschluss_Links && anschluss_a == ENUMTOP_Anschluss_Spitze) {
+                                          Pair<TOP_Kante, Bool> v = Pair(t, True);
+                                          returnval = appendright(returnval, v);
+                                        }
+                                        else if(!forward && (src_knoten_a == knoten_a) && src_anschluss_a == ENUMTOP_Anschluss_Rechts && anschluss_a == ENUMTOP_Anschluss_Spitze) {
+                                          Pair<TOP_Kante, Bool> v = Pair(t, True);
+                                          returnval = appendright(returnval, v);
+                                        }
+                                        else if(!forward && (src_knoten_a == knoten_a) && src_anschluss_a == ENUMTOP_Anschluss_Spitze && anschluss_a == ENUMTOP_Anschluss_Links) {
+                                          Pair<TOP_Kante, Bool> v = Pair(t, True);
+                                          returnval = appendright(returnval, v);
+                                        }
+                                        else if(!forward && (src_knoten_a == knoten_a) && src_anschluss_a == ENUMTOP_Anschluss_Spitze && anschluss_a == ENUMTOP_Anschluss_Rechts) {
+                                          Pair<TOP_Kante, Bool> v = Pair(t, True);
+                                          returnval = appendright(returnval, v);
+                                        }
+                                      }
+                                    }
+        _ => skip;
+      }
+      counter = counter + 1;
+    }
+    return returnval;
+  }
+
+
+
+  // forward bedeutet vorwaerts bezogen auf die Wirkrichtung des Datenpunktes startpos (Wirkrichtung "beide" wird behandelt wie Wirkrichtung "in")
+  Datenpunkt getNextDatenpunkt(Map<TGUID, PlanProObject> m, Datenpunkt d, Bool forward) {
+    Datenpunkt returnval = null;
+    TMeter minimumDistance = 99999999;
+    //TGUID dkante = d.getPunkt_Objekt_TOP_Kante_ID_TOP_Kante();
+    //TMeter dabstand = d.getPunkt_Objekt_TOP_Kante_Abstand();
+    List<PlanProObject> l = values(m);
+    Int counter = 0;
+    while(counter < length(l)) {
+      PlanProObject temp = nth(l, counter);
+      case temp {
+        Objecttype_Datenpunkt(o) =>  {
+                                       Datenpunkt tdp = o;
+                                       if(tdp != d) {
+                                         //TGUID tdpkante = tdp.getPunkt_Objekt_TOP_Kante_ID_TOP_Kante();
+                                         //TMeter tdpabstand = tdp.getPunkt_Objekt_TOP_Kante_Abstand();
+                                         TMeter dist = this.calculateDistance(m, d, tdp, forward);
+                                         //println(tdpkante + "/" + toString(tdpabstand) + "/" + toString(dist));
+                                         if(dist >= 0 && dist < minimumDistance) {
+                                           minimumDistance = dist;
+                                           returnval = tdp;
+                                         }
+                                       }
+                                     }
+        _ => skip;
+      }
+      counter = counter + 1;
+    }
+    return returnval;
+  }
+
+
+
+  // forward bedeutet vorwaerts bezogen auf die Wirkrichtung des Datenpunktes startpos (Wirkrichtung "beide" wird behandelt wie Wirkrichtung "in")
+  List<Triple<List<TOP_Kante>, Datenpunkt, TMeter>> getNextDatenpunktPaths(Map<TGUID, PlanProObject> m, Datenpunkt startpos, Bool forward) {
+    List<Triple<List<TOP_Kante>, Datenpunkt, TMeter>> returnval = Nil;
+    TMeter minimumDistance = -1;
+    Datenpunkt minimumDp = null;
+    List<Punkt_Objekt_TOP_Kante> startkantenlist = startpos.getPunkt_Objekt_TOP_Kante();
+    Punkt_Objekt_TOP_Kante startTopKantenGroup = nth(startkantenlist, 0); // Take the first element (a datapoint has only one reference edge)
+    TGUID startGuid = startTopKantenGroup.getID_TOP_Kante();
+    TMeter startAbstand =  startTopKantenGroup.getAbstand();
+    Maybe<TWirkrichtung> startWirkrichtungMaybe = startTopKantenGroup.getWirkrichtung();
+    TWirkrichtung startWirkrichtung = fromJust(startWirkrichtungMaybe);
+    List<PlanProObject> l = values(m);
+    Int counter = 0;
+    while(counter < length(l)) {
+      PlanProObject temp = nth(l, counter);
+      case temp {
+        Objecttype_Datenpunkt(o) =>  {
+                                       Datenpunkt tdp = o;
+                                       if(tdp != startpos) {
+                                         List<Punkt_Objekt_TOP_Kante> tdpkantenlist = tdp.getPunkt_Objekt_TOP_Kante();
+                                         Punkt_Objekt_TOP_Kante tdpTopKantenGroup = nth(tdpkantenlist, 0); // Take the first element (a datapoint has only one reference edge)
+                                         TGUID tdpkante = tdpTopKantenGroup.getID_TOP_Kante();
+                                         TMeter tdpabstand =  tdpTopKantenGroup.getAbstand();
+                                         Maybe<TWirkrichtung> tdpwirkrichtungMaybe = tdpTopKantenGroup.getWirkrichtung();
+                                         TWirkrichtung tdpwirkrichtung = fromJust(tdpwirkrichtungMaybe);
+                                         TMeter dist = -1;
+                                         if(startGuid == tdpkante && startWirkrichtung != ENUMWirkrichtung_gegen && forward) { // both positions are on the same edge
+                                           dist = tdpabstand - startAbstand;
+                                         }
+                                         else if(startGuid == tdpkante && startWirkrichtung != ENUMWirkrichtung_gegen && !forward) { // both positions are on the same edge
+                                           dist = startAbstand - tdpabstand;
+                                         }
+                                         else if(startGuid == tdpkante && startWirkrichtung == ENUMWirkrichtung_gegen && !forward) { // both positions are on the same edge
+                                           dist = tdpabstand - startAbstand;
+                                         }
+                                         else if(startGuid == tdpkante && startWirkrichtung == ENUMWirkrichtung_gegen && forward) { // both positions are on the same edge
+                                           dist = startAbstand - tdpabstand;
+                                         }
+
+                                         if(dist >= 0 && (minimumDistance < 0 || dist < minimumDistance)) {
+                                           minimumDistance = dist;
+                                           minimumDp = tdp;
+                                         }
+                                       }
+                                     }
+        _ => skip;
+      }
+      counter = counter + 1;
+    }
+
+    TOP_Kante tempEdge = null;
+    PlanProObject temp = lookupDefault(m, startGuid, Objecttype_Unknown);
+    case temp {
+      Objecttype_TOP_Kante(o) =>  {
+                                    tempEdge = o;
+                                  }
+      _ => { tempEdge = null; }
+    }
+    TMeter edgeLength = tempEdge.getTOP_Kante_Allg_TOP_Laenge();
+
+    if(minimumDistance >= 0) { // Datenpunkt found on the same edge
+      List<TOP_Kante> klist = Cons(tempEdge, Nil);
+      Triple<List<TOP_Kante>, Datenpunkt, TMeter> returntriple = Triple(klist, minimumDp, minimumDistance);
+      returnval = Cons(returntriple, Nil);
+    }
+    else { // continue searching on the next edge(s)
+      Bool direction = True;
+      if(startWirkrichtung != ENUMWirkrichtung_gegen && forward) {
+        direction = True;
+      }
+      else if(startWirkrichtung != ENUMWirkrichtung_gegen && !forward) {
+        direction = False;
+      }
+      else if(startWirkrichtung == ENUMWirkrichtung_gegen && forward) {
+        direction = False;
+      }
+      else if(startWirkrichtung == ENUMWirkrichtung_gegen && !forward) {
+        direction = True;
+      }
+      List<Pair<TOP_Kante, Bool>> edgelist = this.getNextTOP_Kante(m, tempEdge, direction);
+      counter = 0;
+      while(counter < length(edgelist)) {
+        Pair<TOP_Kante, Bool> temppair = nth(edgelist, counter);
+        TOP_Kante newKante = fst(temppair);
+        Bool newDirection = snd(temppair);
+        TGUID newKanteId = newKante.getIdentitaet();
+        TMeter newKanteLength = newKante.getTOP_Kante_Allg_TOP_Laenge();
+        if(direction && newDirection) {
+          Datenpunkt newStartDp = new local DatenpunktImpl();
+          Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+          List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+          tkgroup.setID_TOP_Kante(newKanteId);
+          tkgroup.setAbstand(0);
+          tkgroup.setWirkrichtung(Just(ENUMWirkrichtung_in));
+          tkgrouplist = appendright(tkgrouplist, tkgroup);
+          newStartDp.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+          List<Triple<List<TOP_Kante>, Datenpunkt, TMeter>> tempresultlist = this.getNextDatenpunktPaths(m, newStartDp, True);
+          Int c1 = 0;
+          while(c1 < length(tempresultlist)) {
+            Triple<List<TOP_Kante>, Datenpunkt, TMeter> tempresult = nth(tempresultlist, c1);
+            List<TOP_Kante> trKantenList = fstT(tempresult);
+            Datenpunkt trDp = sndT(tempresult);
+            TMeter trDist = trdT(tempresult);
+            TMeter additionalDistance = edgeLength - startAbstand;
+            trKantenList = Cons(tempEdge, trKantenList);
+            trDist = trDist + additionalDistance;
+            tempresult = Triple(trKantenList, trDp, trDist);
+            returnval = appendright(returnval, tempresult);
+            c1 = c1 + 1;
+          }
+        }
+        else if(direction && !newDirection) {
+          Datenpunkt newStartDp = new local DatenpunktImpl();
+          Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+          List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+          tkgroup.setID_TOP_Kante(newKanteId);
+          tkgroup.setAbstand(newKanteLength);
+          tkgroup.setWirkrichtung(Just(ENUMWirkrichtung_gegen));
+          tkgrouplist = appendright(tkgrouplist, tkgroup);
+          newStartDp.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+          List<Triple<List<TOP_Kante>, Datenpunkt, TMeter>> tempresultlist = this.getNextDatenpunktPaths(m, newStartDp, True);
+          Int c1 = 0;
+          while(c1 < length(tempresultlist)) {
+            Triple<List<TOP_Kante>, Datenpunkt, TMeter> tempresult = nth(tempresultlist, c1);
+            List<TOP_Kante> trKantenList = fstT(tempresult);
+            Datenpunkt trDp = sndT(tempresult);
+            TMeter trDist = trdT(tempresult);
+            TMeter additionalDistance = edgeLength - startAbstand;
+            trKantenList = Cons(tempEdge, trKantenList);
+            trDist = trDist + additionalDistance;
+            tempresult = Triple(trKantenList, trDp, trDist);
+            returnval = appendright(returnval, tempresult);
+            c1 = c1 + 1;
+          }
+        }
+        else if(!direction && newDirection) {
+          Datenpunkt newStartDp = new local DatenpunktImpl();
+          Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+          List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+          tkgroup.setID_TOP_Kante(newKanteId);
+          tkgroup.setAbstand(0);
+          tkgroup.setWirkrichtung(Just(ENUMWirkrichtung_in));
+          tkgrouplist = appendright(tkgrouplist, tkgroup);
+          newStartDp.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+          List<Triple<List<TOP_Kante>, Datenpunkt, TMeter>> tempresultlist = this.getNextDatenpunktPaths(m, newStartDp, True);
+          Int c1 = 0;
+          while(c1 < length(tempresultlist)) {
+            Triple<List<TOP_Kante>, Datenpunkt, TMeter> tempresult = nth(tempresultlist, c1);
+            List<TOP_Kante> trKantenList = fstT(tempresult);
+            Datenpunkt trDp = sndT(tempresult);
+            TMeter trDist = trdT(tempresult);
+            TMeter additionalDistance = startAbstand;
+            trKantenList = Cons(tempEdge, trKantenList);
+            trDist = trDist + additionalDistance;
+            tempresult = Triple(trKantenList, trDp, trDist);
+            returnval = appendright(returnval, tempresult);
+            c1 = c1 + 1;
+          }
+        }
+        else if(!direction && !newDirection) {
+          Datenpunkt newStartDp = new local DatenpunktImpl();
+          Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+          List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+          tkgroup.setID_TOP_Kante(newKanteId);
+          tkgroup.setAbstand(newKanteLength);
+          tkgroup.setWirkrichtung(Just(ENUMWirkrichtung_gegen));
+          tkgrouplist = appendright(tkgrouplist, tkgroup);
+          newStartDp.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+          List<Triple<List<TOP_Kante>, Datenpunkt, TMeter>> tempresultlist = this.getNextDatenpunktPaths(m, newStartDp, True);
+          Int c1 = 0;
+          while(c1 < length(tempresultlist)) {
+            Triple<List<TOP_Kante>, Datenpunkt, TMeter> tempresult = nth(tempresultlist, c1);
+            List<TOP_Kante> trKantenList = fstT(tempresult);
+            Datenpunkt trDp = sndT(tempresult);
+            TMeter trDist = trdT(tempresult);
+            TMeter additionalDistance = startAbstand;
+            trKantenList = Cons(tempEdge, trKantenList);
+            trDist = trDist + additionalDistance;
+            tempresult = Triple(trKantenList, trDp, trDist);
+            returnval = appendright(returnval, tempresult);
+            c1 = c1 + 1;
+          }
+        }
+        counter = counter + 1;
+      }
+    }
+    return returnval;
+  }
+
+
+
+  // forward bedeutet vorwaerts bezogen auf die Wirkrichtung des Punkt_Objektes startpos (Wirkrichtung "beide" wird behandelt wie Wirkrichtung "in")
+  // distance muss positiv sein, klist muss alle alle TOP_Kanten in der zu durchlaufenden Reihenfolge enthalten
+  Punkt_Objekt calculatePositionOnPath(Map<TGUID, PlanProObject> m, Punkt_Objekt startpos, List<TOP_Kante> klist, TMeter distance, Bool forward) {
+    Punkt_Objekt returnval = null;
+    List<Punkt_Objekt_TOP_Kante> startkantenlist = startpos.getPunkt_Objekt_TOP_Kante();
+    Punkt_Objekt_TOP_Kante startTopKantenGroup = nth(startkantenlist, 0); // Take the first element (only one reference edge)
+    TGUID startGuid = startTopKantenGroup.getID_TOP_Kante();
+    TMeter startAbstand =  startTopKantenGroup.getAbstand();
+    Maybe<TWirkrichtung> startWirkrichtungMaybe = startTopKantenGroup.getWirkrichtung();
+    TWirkrichtung startWirkrichtung = fromJust(startWirkrichtungMaybe);
+    TOP_Kante startEdge = null;
+    PlanProObject temp = lookupDefault(m, startGuid, Objecttype_Unknown);
+    case temp {
+      Objecttype_TOP_Kante(o) =>  {
+                                    startEdge = o;
+                                  }
+      _ => { startEdge = null; }
+    }
+    if(startEdge != null && !isEmpty(klist) && startEdge == head(klist)) {
+      TMeter edgeLength = startEdge.getTOP_Kante_Allg_TOP_Laenge();
+      TMeter newPos = startAbstand;
+      if(startWirkrichtung != ENUMWirkrichtung_gegen && forward) {
+        newPos = startAbstand + distance;
+      }
+      else if(startWirkrichtung != ENUMWirkrichtung_gegen && !forward) {
+        newPos = startAbstand - distance;
+      }
+      else if(startWirkrichtung == ENUMWirkrichtung_gegen && forward) {
+        newPos = startAbstand - distance;
+      }
+      else if(startWirkrichtung == ENUMWirkrichtung_gegen && !forward) {
+        newPos = startAbstand + distance;
+      }
+
+      if(newPos >= 0 && newPos <= edgeLength) { // new position is on the same edge
+        TGUID edge_id = startEdge.getIdentitaet();
+        Punkt_Objekt target = new local Punkt_Objekt();
+        Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+        List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+        tkgroup.setID_TOP_Kante(edge_id);
+        tkgroup.setAbstand(newPos);
+        tkgroup.setWirkrichtung(Just(startWirkrichtung));
+        tkgrouplist = appendright(tkgrouplist, tkgroup);
+        target.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+        returnval = target;
+      }
+      else if(length(klist) > 1) {
+        TOP_Kante nextEdge = nth(klist, 1);
+        TGUID nextEdgeId = nextEdge.getIdentitaet();
+        TMeter nextEdgeLength = nextEdge.getTOP_Kante_Allg_TOP_Laenge();
+        TGUID src_knoten_a = startEdge.getID_TOP_Knoten_A();
+        TGUID src_knoten_b = startEdge.getID_TOP_Knoten_B();
+        TGUID dst_knoten_a = nextEdge.getID_TOP_Knoten_A();
+        TGUID dst_knoten_b = nextEdge.getID_TOP_Knoten_B();
+        if(startWirkrichtung != ENUMWirkrichtung_gegen && forward && src_knoten_b == dst_knoten_a) {
+          TMeter remainingDistance = distance - (edgeLength - startAbstand);
+          Punkt_Objekt newStart = new local Punkt_Objekt();
+          Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+          List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+          tkgroup.setID_TOP_Kante(nextEdgeId);
+          tkgroup.setAbstand(0);
+          tkgroup.setWirkrichtung(Just(ENUMWirkrichtung_in));
+          tkgrouplist = appendright(tkgrouplist, tkgroup);
+          newStart.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+          returnval = this.calculatePositionOnPath(m, newStart, tail(klist), remainingDistance, True);
+        }
+        else if(startWirkrichtung != ENUMWirkrichtung_gegen && forward && src_knoten_b == dst_knoten_b) {
+          TMeter remainingDistance = distance - (edgeLength - startAbstand);
+          Punkt_Objekt newStart = new local Punkt_Objekt();
+          Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+          List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+          tkgroup.setID_TOP_Kante(nextEdgeId);
+          tkgroup.setAbstand(nextEdgeLength);
+          tkgroup.setWirkrichtung(Just(ENUMWirkrichtung_gegen));
+          tkgrouplist = appendright(tkgrouplist, tkgroup);
+          newStart.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+          returnval = this.calculatePositionOnPath(m, newStart, tail(klist), remainingDistance, True);
+        }
+        else if(startWirkrichtung != ENUMWirkrichtung_gegen && !forward && src_knoten_a == dst_knoten_b) {
+          TMeter remainingDistance = distance - startAbstand;
+          Punkt_Objekt newStart = new local Punkt_Objekt();
+          Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+          List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+          tkgroup.setID_TOP_Kante(nextEdgeId);
+          tkgroup.setAbstand(nextEdgeLength);
+          tkgroup.setWirkrichtung(Just(ENUMWirkrichtung_in));
+          tkgrouplist = appendright(tkgrouplist, tkgroup);
+          newStart.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+          returnval = this.calculatePositionOnPath(m, newStart, tail(klist), remainingDistance, False);
+        }
+        else if(startWirkrichtung != ENUMWirkrichtung_gegen && !forward && src_knoten_a == dst_knoten_a) {
+          TMeter remainingDistance = distance - startAbstand;
+          Punkt_Objekt newStart = new local Punkt_Objekt();
+          Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+          List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+          tkgroup.setID_TOP_Kante(nextEdgeId);
+          tkgroup.setAbstand(0);
+          tkgroup.setWirkrichtung(Just(ENUMWirkrichtung_gegen));
+          tkgrouplist = appendright(tkgrouplist, tkgroup);
+          newStart.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+          returnval = this.calculatePositionOnPath(m, newStart, tail(klist), remainingDistance, False);
+        }
+        else if(startWirkrichtung == ENUMWirkrichtung_gegen && forward && src_knoten_a == dst_knoten_b) {
+          TMeter remainingDistance = distance - startAbstand;
+          Punkt_Objekt newStart = new local Punkt_Objekt();
+          Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+          List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+          tkgroup.setID_TOP_Kante(nextEdgeId);
+          tkgroup.setAbstand(nextEdgeLength);
+          tkgroup.setWirkrichtung(Just(ENUMWirkrichtung_gegen));
+          tkgrouplist = appendright(tkgrouplist, tkgroup);
+          newStart.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+          returnval = this.calculatePositionOnPath(m, newStart, tail(klist), remainingDistance, True);
+        }
+        else if(startWirkrichtung == ENUMWirkrichtung_gegen && forward && src_knoten_a == dst_knoten_a) {
+          TMeter remainingDistance = distance - startAbstand;
+          Punkt_Objekt newStart = new local Punkt_Objekt();
+          Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+          List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+          tkgroup.setID_TOP_Kante(nextEdgeId);
+          tkgroup.setAbstand(0);
+          tkgroup.setWirkrichtung(Just(ENUMWirkrichtung_in));
+          tkgrouplist = appendright(tkgrouplist, tkgroup);
+          newStart.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+          returnval = this.calculatePositionOnPath(m, newStart, tail(klist), remainingDistance, True);
+        }
+        else if(startWirkrichtung == ENUMWirkrichtung_gegen && !forward && src_knoten_b == dst_knoten_a) {
+          TMeter remainingDistance = distance - (edgeLength - startAbstand);
+          Punkt_Objekt newStart = new local Punkt_Objekt();
+          Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+          List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+          tkgroup.setID_TOP_Kante(nextEdgeId);
+          tkgroup.setAbstand(0);
+          tkgroup.setWirkrichtung(Just(ENUMWirkrichtung_gegen));
+          tkgrouplist = appendright(tkgrouplist, tkgroup);
+          newStart.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+          returnval = this.calculatePositionOnPath(m, newStart, tail(klist), remainingDistance, False);
+        }
+        else if(startWirkrichtung == ENUMWirkrichtung_gegen && !forward && src_knoten_b == dst_knoten_b) {
+          TMeter remainingDistance = distance - (edgeLength - startAbstand);
+          Punkt_Objekt newStart = new local Punkt_Objekt();
+          Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+          List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+          tkgroup.setID_TOP_Kante(nextEdgeId);
+          tkgroup.setAbstand(nextEdgeLength);
+          tkgroup.setWirkrichtung(Just(ENUMWirkrichtung_in));
+          tkgrouplist = appendright(tkgrouplist, tkgroup);
+          newStart.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+          returnval = this.calculatePositionOnPath(m, newStart, tail(klist), remainingDistance, False);
+        }
+      }
+    }
+    return returnval;
+  }
+
+
+
+
+  // positiver Wert fuer distance bedeutet vorwaerts bezogen auf die Wirkrichtung des Punkt_Objektes startpos, negativer Wert rueckwaerts (Wirkrichtung "beide" wird behandelt wie Wirkrichtung "in")
+  List<Punkt_Objekt> calculatePosition(Map<TGUID, PlanProObject> m, Punkt_Objekt startpos, TMeter distance) {
+    List<Punkt_Objekt> returnval = Nil;
+    List<Punkt_Objekt_TOP_Kante> startkantenlist = startpos.getPunkt_Objekt_TOP_Kante();
+    Punkt_Objekt_TOP_Kante startTopKantenGroup = nth(startkantenlist, 0); // Take the first element (only one reference edge)
+    TGUID startGuid = startTopKantenGroup.getID_TOP_Kante();
+    TMeter startAbstand =  startTopKantenGroup.getAbstand();
+    Maybe<TWirkrichtung> startWirkrichtungMaybe = startTopKantenGroup.getWirkrichtung();
+    TWirkrichtung startWirkrichtung = fromJust(startWirkrichtungMaybe);
+    TOP_Kante startEdge = null;
+    PlanProObject temp = lookupDefault(m, startGuid, Objecttype_Unknown);
+    case temp {
+      Objecttype_TOP_Kante(o) =>  {
+                                    startEdge = o;
+                                  }
+      _ => { startEdge = null; }
+    }
+    if(startEdge != null) {
+      TMeter edgeLength = startEdge.getTOP_Kante_Allg_TOP_Laenge();
+      TMeter newPos = startAbstand;
+      if(startWirkrichtung != ENUMWirkrichtung_gegen) {
+        newPos = startAbstand + distance;
+      }
+      else {
+        newPos = startAbstand - distance;
+      }
+
+      if(newPos >= 0 && newPos <= edgeLength) { // new position is on the same edge
+        TGUID edge_id = startEdge.getIdentitaet();
+        Punkt_Objekt target = new local Punkt_Objekt();
+        Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+        List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+        tkgroup.setID_TOP_Kante(edge_id);
+        tkgroup.setAbstand(newPos);
+        tkgroup.setWirkrichtung(Just(startWirkrichtung));
+        tkgrouplist = appendright(tkgrouplist, tkgroup);
+        target.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+        returnval = appendright(returnval, target);
+      }
+      else {
+        TMeter remainingDistance = distance;
+        Bool direction = True;
+        if(newPos < 0 && startWirkrichtung != ENUMWirkrichtung_gegen) { // continue on previous edge
+          remainingDistance = distance + startAbstand;
+          direction = False;
+        }
+        else if(newPos < 0 && startWirkrichtung == ENUMWirkrichtung_gegen) { // continue on previous edge
+          remainingDistance = distance - startAbstand;
+          direction = False;
+        }
+        else if(newPos > edgeLength && startWirkrichtung != ENUMWirkrichtung_gegen) { // continue on following edge
+          remainingDistance = distance - (edgeLength - startAbstand);
+          direction = True;
+        }
+        else if(newPos > edgeLength && startWirkrichtung == ENUMWirkrichtung_gegen) { // continue on following edge
+          remainingDistance = distance + (edgeLength - startAbstand);
+          direction = True;
+        }
+        List<Pair<TOP_Kante, Bool>> edgelist = this.getNextTOP_Kante(m, startEdge, direction);
+        Int c = 0;
+        while(c < length(edgelist)) {
+          Pair<TOP_Kante, Bool> edgepair = nth(edgelist, c);
+          TOP_Kante tka = fst(edgepair);
+          TGUID tka_id = tka.getIdentitaet();
+          Bool newdir = snd(edgepair);
+          Punkt_Objekt newStart = new local Punkt_Objekt();
+          Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+          List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+          tkgroup.setID_TOP_Kante(tka_id);
+          if(newdir && remainingDistance < 0) {
+            tkgroup.setAbstand(0);
+            tkgroup.setWirkrichtung(Just(ENUMWirkrichtung_gegen));
+          }
+          else if(newdir && remainingDistance >= 0) {
+            tkgroup.setAbstand(0);
+            tkgroup.setWirkrichtung(Just(ENUMWirkrichtung_in));
+          }
+          else if(!newdir && remainingDistance < 0) {
+            TMeter tka_len = tka.getTOP_Kante_Allg_TOP_Laenge();
+            tkgroup.setAbstand(tka_len);
+            tkgroup.setWirkrichtung(Just(ENUMWirkrichtung_in));
+          }
+          else if(!newdir && remainingDistance >= 0) {
+            TMeter tka_len = tka.getTOP_Kante_Allg_TOP_Laenge();
+            tkgroup.setAbstand(tka_len);
+            tkgroup.setWirkrichtung(Just(ENUMWirkrichtung_gegen));
+          }
+          tkgrouplist = appendright(tkgrouplist, tkgroup);
+          newStart.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+          List<Punkt_Objekt> resultlist = this.calculatePosition(m, newStart, remainingDistance);
+          returnval = concatenate(returnval, resultlist);
+          c = c + 1;
+        }
+      }
+    }
+    return returnval;
+  }
+
+
+
+
+  // forward bedeutet vorwaerts bezogen auf die Wirkrichtung des Punkt_Objektes startpos (Wirkrichtung "beide" wird behandelt wie Wirkrichtung "in")
+  TMeter calculateDistance(Map<TGUID, PlanProObject> m, Punkt_Objekt startpos, Punkt_Objekt endpos, Bool forward) {
+    TMeter returnval = -1;
+    List<Punkt_Objekt_TOP_Kante> startkantenlist = startpos.getPunkt_Objekt_TOP_Kante();
+    Punkt_Objekt_TOP_Kante startTopKantenGroup = nth(startkantenlist, 0); // Take the first element (only one reference edge)
+    TGUID startGuid = startTopKantenGroup.getID_TOP_Kante();
+    TMeter startAbstand =  startTopKantenGroup.getAbstand();
+    Maybe<TWirkrichtung> startWirkrichtungMaybe = startTopKantenGroup.getWirkrichtung();
+    TWirkrichtung startWirkrichtung = fromJust(startWirkrichtungMaybe);
+    List<Punkt_Objekt_TOP_Kante> endkantenlist = endpos.getPunkt_Objekt_TOP_Kante();
+    Punkt_Objekt_TOP_Kante endTopKantenGroup = nth(endkantenlist, 0); // Take the first element (only one reference edge)
+    TGUID endGuid = endTopKantenGroup.getID_TOP_Kante();
+    TMeter endAbstand =  endTopKantenGroup.getAbstand();
+    Maybe<TWirkrichtung> endWirkrichtungMaybe = endTopKantenGroup.getWirkrichtung();
+    TWirkrichtung endWirkrichtung = fromJust(endWirkrichtungMaybe);
+    if(startGuid == endGuid && startWirkrichtung != ENUMWirkrichtung_gegen && forward) { // both positions are on the same edge
+      returnval = endAbstand - startAbstand;
+    }
+    else if(startGuid == endGuid && startWirkrichtung != ENUMWirkrichtung_gegen && !forward) { // both positions are on the same edge
+      returnval = startAbstand - endAbstand;
+    }
+    else if(startGuid == endGuid && startWirkrichtung == ENUMWirkrichtung_gegen && !forward) { // both positions are on the same edge
+      returnval = endAbstand - startAbstand;
+    }
+    else if(startGuid == endGuid && startWirkrichtung == ENUMWirkrichtung_gegen && forward) { // both positions are on the same edge
+      returnval = startAbstand - endAbstand;
+    }
+    else {
+      TOP_Kante startEdge = null;
+      PlanProObject temp = lookupDefault(m, startGuid, Objecttype_Unknown);
+      case temp {
+        Objecttype_TOP_Kante(o) =>  {
+                                      startEdge = o;
+                                    }
+        _ => { startEdge = null; }
+      }
+      if(startEdge != null) {
+        TMeter currentDistance = -1;
+        TMeter remainingDistance = -1;
+        Bool direction = True;
+        if(startWirkrichtung != ENUMWirkrichtung_gegen && forward) {
+          TMeter edgeLength = startEdge.getTOP_Kante_Allg_TOP_Laenge();
+          currentDistance = edgeLength - startAbstand;
+          direction = True;
+        }
+        else if(startWirkrichtung != ENUMWirkrichtung_gegen && !forward) {
+          currentDistance = startAbstand;
+          direction = False;
+        }
+        else if(startWirkrichtung == ENUMWirkrichtung_gegen && forward) {
+          currentDistance = startAbstand;
+          direction = False;
+        }
+        else if(startWirkrichtung == ENUMWirkrichtung_gegen && !forward) {
+          TMeter edgeLength = startEdge.getTOP_Kante_Allg_TOP_Laenge();
+          currentDistance = edgeLength - startAbstand;
+          direction = True;
+        }
+        List<Pair<TOP_Kante, Bool>> edgelist = this.getNextTOP_Kante(m, startEdge, direction);
+        Int c = 0;
+        while(c < length(edgelist)) {
+          Pair<TOP_Kante, Bool> edgepair = nth(edgelist, c);
+          TOP_Kante tka = fst(edgepair);
+          TGUID tka_id = tka.getIdentitaet();
+          Bool newdir = snd(edgepair);
+          Punkt_Objekt newStart = new local Punkt_Objekt();
+          Punkt_Objekt_TOP_Kante tkgroup = new local Punkt_Objekt_TOP_Kante();
+          List<Punkt_Objekt_TOP_Kante> tkgrouplist = Nil;
+          tkgroup.setID_TOP_Kante(tka_id);
+          tkgroup.setWirkrichtung(Just(ENUMWirkrichtung_in));
+          if(newdir) {
+            tkgroup.setAbstand(0);
+          }
+          else {
+            TMeter tka_len = tka.getTOP_Kante_Allg_TOP_Laenge();
+            tkgroup.setAbstand(tka_len);
+          }
+          tkgrouplist = appendright(tkgrouplist, tkgroup);
+          newStart.setPunkt_Objekt_TOP_Kante(tkgrouplist);
+          TMeter tempdist = this.calculateDistance(m, newStart, endpos, newdir);
+          if((remainingDistance < 0 && tempdist >= 0) || (remainingDistance >= 0 && tempdist >= 0 && tempdist < remainingDistance)) {
+            remainingDistance = tempdist;
+          }
+          c = c + 1;
+        }
+        if(remainingDistance >= 0) {
+          returnval = currentDistance + remainingDistance;
+        }
+      }
+    }
+    return returnval;
+  }
+}
+

@@ -1,0 +1,1094 @@
+module Geodaten;
+
+export *;
+import * from BasisTypen;
+import * from Basisobjekte;
+import * from Metaobject;
+
+
+// Enums
+data ENUMArt_Besonders = ENUMArt_Besonders_unused | ENUMArt_Besonders_Ende_Bestdig | ENUMArt_Besonders_sonstige | ENUMArt_Besonders_Verbindung;
+
+data ENUMGEO_Form = ENUMGEO_Form_unused | ENUMGEO_Form_Bloss_einfach_geschwungen | ENUMGEO_Form_Km_Sprung | ENUMGEO_Form_sonstige | ENUMGEO_Form_Blosskurve | ENUMGEO_Form_Bogen | ENUMGEO_Form_Gerade | ENUMGEO_Form_Klothoide | ENUMGEO_Form_Uebergangsbogen_S_Form | ENUMGEO_Form_Richtgerade_Knick_am_Ende_200_gon | ENUMGEO_Form_S_Form_einfach_geschwungen;
+
+data ENUMHSystem = ENUMHSystem_unused | ENUMHSystem_DHHN_12 | ENUMHSystem_DHHN_85 | ENUMHSystem_DHHN_92 | ENUMHSystem_HN_56 | ENUMHSystem_HN_76 | ENUMHSystem_sonstige;
+
+data ENUMOertlichkeit_Art = ENUMOertlichkeit_Art_unused | ENUMOertlichkeit_Art_Abzw | ENUMOertlichkeit_Art_Abzw_Anst | ENUMOertlichkeit_Art_Abzw_Awanst | ENUMOertlichkeit_Art_Anst_Bk | ENUMOertlichkeit_Art_Awanst_Bk | ENUMOertlichkeit_Art_Bf_Abzw | ENUMOertlichkeit_Art_Bft_Abzw | ENUMOertlichkeit_Art_Hp_Abzw | ENUMOertlichkeit_Art_Hp_Abzw_Anst | ENUMOertlichkeit_Art_Hp_Abzw_Awanst | ENUMOertlichkeit_Art_Hp_Anst | ENUMOertlichkeit_Art_Hp_Anst_Bk | ENUMOertlichkeit_Art_Hp_Awanst | ENUMOertlichkeit_Art_Hp_Awanst_Bk | ENUMOertlichkeit_Art_Hp_Bft | ENUMOertlichkeit_Art_Hp_Bk | ENUMOertlichkeit_Art_Hp_Dkst | ENUMOertlichkeit_Art_Hp_Uest | ENUMOertlichkeit_Art_Hp_Uest_Anst | ENUMOertlichkeit_Art_Hp_Uest_Awanst | ENUMOertlichkeit_Art_sonstige | ENUMOertlichkeit_Art_Uest | ENUMOertlichkeit_Art_Uest_Anst | ENUMOertlichkeit_Art_Uest_Awanst | ENUMOertlichkeit_Art_Anst | ENUMOertlichkeit_Art_Awanst | ENUMOertlichkeit_Art_Bf | ENUMOertlichkeit_Art_Bft | ENUMOertlichkeit_Art_Bk | ENUMOertlichkeit_Art_BZ | ENUMOertlichkeit_Art_Dkst | ENUMOertlichkeit_Art_Hp | ENUMOertlichkeit_Art_Sbk | ENUMOertlichkeit_Art_Strw;
+
+data ENUMPlan_Quelle = ENUMPlan_Quelle_unused | ENUMPlan_Quelle_GIS | ENUMPlan_Quelle_GND | ENUMPlan_Quelle_Ivl | ENUMPlan_Quelle_Ivmg | ENUMPlan_Quelle_Kopie | ENUMPlan_Quelle_Neutrassierung | ENUMPlan_Quelle_sonstige | ENUMPlan_Quelle_GND_autokorr | ENUMPlan_Quelle_GND_mankorr;
+
+data ENUMTB_Art = ENUMTB_Art_unused | ENUMTB_Art_Bruecke | ENUMTB_Art_Durchlass | ENUMTB_Art_Schutzwand | ENUMTB_Art_sonstige | ENUMTB_Art_Tunnel;
+
+data ENUMTOP_Anschluss = ENUMTOP_Anschluss_unused | ENUMTOP_Anschluss_Ende | ENUMTOP_Anschluss_Ende_Bestdig | ENUMTOP_Anschluss_Links | ENUMTOP_Anschluss_Rechts | ENUMTOP_Anschluss_Schnitt | ENUMTOP_Anschluss_sonstige | ENUMTOP_Anschluss_Spitze | ENUMTOP_Anschluss_Verbindung;
+
+data ENUMTP_Art = ENUMTP_Art_unused | ENUMTP_Art_Gebaeude | ENUMTP_Art_Mast | ENUMTP_Art_sonstige;
+
+data ENUMV_Profil_Art = ENUMV_Profil_Art_unused | ENUMV_Profil_Art_ETCS | ENUMV_Profil_Art_konventionell | ENUMV_Profil_Art_Neitec | ENUMV_Profil_Art_sonstige | ENUMV_Profil_Art_windabhaengig;
+
+
+
+// Functions to print the enum values
+def String printArt_Besonders(ENUMArt_Besonders e) =
+  case e {
+    ENUMArt_Besonders_unused => "";
+    ENUMArt_Besonders_Ende_Bestdig => "Ende_Bestdig";
+    ENUMArt_Besonders_sonstige => "sonstige";
+    ENUMArt_Besonders_Verbindung => "Verbindung";
+  };
+
+def String printGEO_Form(ENUMGEO_Form e) =
+  case e {
+    ENUMGEO_Form_unused => "";
+    ENUMGEO_Form_Bloss_einfach_geschwungen => "Bloss_einfach_geschwungen";
+    ENUMGEO_Form_Km_Sprung => "Km_Sprung";
+    ENUMGEO_Form_sonstige => "sonstige";
+    ENUMGEO_Form_Blosskurve => "Blosskurve";
+    ENUMGEO_Form_Bogen => "Bogen";
+    ENUMGEO_Form_Gerade => "Gerade";
+    ENUMGEO_Form_Klothoide => "Klothoide";
+    ENUMGEO_Form_Uebergangsbogen_S_Form => "Uebergangsbogen_S_Form";
+    ENUMGEO_Form_Richtgerade_Knick_am_Ende_200_gon => "Richtgerade_Knick_am_Ende_200_gon";
+    ENUMGEO_Form_S_Form_einfach_geschwungen => "S_Form_einfach_geschwungen";
+  };
+
+def String printHSystem(ENUMHSystem e) =
+  case e {
+    ENUMHSystem_unused => "";
+    ENUMHSystem_DHHN_12 => "DHHN_12";
+    ENUMHSystem_DHHN_85 => "DHHN_85";
+    ENUMHSystem_DHHN_92 => "DHHN_92";
+    ENUMHSystem_HN_56 => "HN_56";
+    ENUMHSystem_HN_76 => "HN_76";
+    ENUMHSystem_sonstige => "sonstige";
+  };
+
+def String printOertlichkeit_Art(ENUMOertlichkeit_Art e) =
+  case e {
+    ENUMOertlichkeit_Art_unused => "";
+    ENUMOertlichkeit_Art_Abzw => "Abzw";
+    ENUMOertlichkeit_Art_Abzw_Anst => "Abzw_Anst";
+    ENUMOertlichkeit_Art_Abzw_Awanst => "Abzw_Awanst";
+    ENUMOertlichkeit_Art_Anst_Bk => "Anst_Bk";
+    ENUMOertlichkeit_Art_Awanst_Bk => "Awanst_Bk";
+    ENUMOertlichkeit_Art_Bf_Abzw => "Bf_Abzw";
+    ENUMOertlichkeit_Art_Bft_Abzw => "Bft_Abzw";
+    ENUMOertlichkeit_Art_Hp_Abzw => "Hp_Abzw";
+    ENUMOertlichkeit_Art_Hp_Abzw_Anst => "Hp_Abzw_Anst";
+    ENUMOertlichkeit_Art_Hp_Abzw_Awanst => "Hp_Abzw_Awanst";
+    ENUMOertlichkeit_Art_Hp_Anst => "Hp_Anst";
+    ENUMOertlichkeit_Art_Hp_Anst_Bk => "Hp_Anst_Bk";
+    ENUMOertlichkeit_Art_Hp_Awanst => "Hp_Awanst";
+    ENUMOertlichkeit_Art_Hp_Awanst_Bk => "Hp_Awanst_Bk";
+    ENUMOertlichkeit_Art_Hp_Bft => "Hp_Bft";
+    ENUMOertlichkeit_Art_Hp_Bk => "Hp_Bk";
+    ENUMOertlichkeit_Art_Hp_Dkst => "Hp_Dkst";
+    ENUMOertlichkeit_Art_Hp_Uest => "Hp_Uest";
+    ENUMOertlichkeit_Art_Hp_Uest_Anst => "Hp_Uest_Anst";
+    ENUMOertlichkeit_Art_Hp_Uest_Awanst => "Hp_Uest_Awanst";
+    ENUMOertlichkeit_Art_sonstige => "sonstige";
+    ENUMOertlichkeit_Art_Uest => "Uest";
+    ENUMOertlichkeit_Art_Uest_Anst => "Uest_Anst";
+    ENUMOertlichkeit_Art_Uest_Awanst => "Uest_Awanst";
+    ENUMOertlichkeit_Art_Anst => "Anst";
+    ENUMOertlichkeit_Art_Awanst => "Awanst";
+    ENUMOertlichkeit_Art_Bf => "Bf";
+    ENUMOertlichkeit_Art_Bft => "Bft";
+    ENUMOertlichkeit_Art_Bk => "Bk";
+    ENUMOertlichkeit_Art_BZ => "BZ";
+    ENUMOertlichkeit_Art_Dkst => "Dkst";
+    ENUMOertlichkeit_Art_Hp => "Hp";
+    ENUMOertlichkeit_Art_Sbk => "Sbk";
+    ENUMOertlichkeit_Art_Strw => "Strw";
+
+  };
+
+def String printPlan_Quelle(ENUMPlan_Quelle e) =
+  case e {
+    ENUMPlan_Quelle_unused => "";
+    ENUMPlan_Quelle_GIS => "GIS";
+    ENUMPlan_Quelle_GND => "GND";
+    ENUMPlan_Quelle_Ivl => "Ivl";
+    ENUMPlan_Quelle_Ivmg => "Ivmg";
+    ENUMPlan_Quelle_Kopie => "Kopie";
+    ENUMPlan_Quelle_Neutrassierung => "Neutrassierung";
+    ENUMPlan_Quelle_sonstige => "sonstige";
+    ENUMPlan_Quelle_GND_autokorr => "GND_autokorr";
+    ENUMPlan_Quelle_GND_mankorr => "GND_mankorr";
+  };
+
+def String printTB_Art(ENUMTB_Art e) =
+  case e {
+    ENUMTB_Art_unused => "";
+    ENUMTB_Art_Bruecke => "Bruecke";
+    ENUMTB_Art_Durchlass => "Durchlass";
+    ENUMTB_Art_Schutzwand => "Schutzwand";
+    ENUMTB_Art_sonstige => "sonstige";
+    ENUMTB_Art_Tunnel => "Tunnel";
+  };
+
+def String printTOP_Anschluss(ENUMTOP_Anschluss e) =
+  case e {
+    ENUMTOP_Anschluss_unused => "";
+    ENUMTOP_Anschluss_Ende => "Ende";
+    ENUMTOP_Anschluss_Ende_Bestdig => "Ende_Bestdig";
+    ENUMTOP_Anschluss_Links => "Links";
+    ENUMTOP_Anschluss_Rechts => "Rechts";
+    ENUMTOP_Anschluss_Schnitt => "Schnitt";
+    ENUMTOP_Anschluss_sonstige => "sonstige";
+    ENUMTOP_Anschluss_Spitze => "Spitze";
+    ENUMTOP_Anschluss_Verbindung => "Verbindung";
+  };
+
+def String printTP_Art(ENUMTP_Art e) =
+  case e {
+    ENUMTP_Art_unused => "";
+    ENUMTP_Art_Gebaeude => "Gebaeude";
+    ENUMTP_Art_Mast => "Mast";
+    ENUMTP_Art_sonstige => "sonstige";
+  };
+
+def String printV_Profil_Art(ENUMV_Profil_Art e) =
+  case e {
+    ENUMV_Profil_Art_unused => "";
+    ENUMV_Profil_Art_ETCS => "ETCS";
+    ENUMV_Profil_Art_konventionell => "konventionell";
+    ENUMV_Profil_Art_Neitec => "Neitec";
+    ENUMV_Profil_Art_sonstige => "sonstige";
+    ENUMV_Profil_Art_windabhaengig => "windabhaengig"; // Original PlanPro value has a umlaut mark!
+  };
+
+
+
+//GEO_Kante
+interface GEO_Kante extends Basis_Objekt {
+  Maybe<TMeter> getGEO_Kante_Allg_GEO_Radius_A();
+  Unit setGEO_Kante_Allg_GEO_Radius_A(Maybe<TMeter> r);
+  Maybe<TMeter> getGEO_Kante_Allg_GEO_Radius_B();
+  Unit setGEO_Kante_Allg_GEO_Radius_B(Maybe<TMeter> r);
+  Maybe<Decimal> getGEO_Kante_Allg_GEO_Richtungswinkel();
+  Unit setGEO_Kante_Allg_GEO_Richtungswinkel(Maybe<Decimal> w);
+  ENUMPlan_Quelle getGEO_Kante_Allg_Plan_Quelle();
+  Unit setGEO_Kante_Allg_Plan_Quelle(ENUMPlan_Quelle p);
+  TMeter getGEO_Kante_Allg_GEO_Laenge();
+  Unit setGEO_Kante_Allg_GEO_Laenge(TMeter l);
+  Maybe<ENUMGEO_Form> getGEO_Kante_Allg_GEO_Form();
+  Unit setGEO_Kante_Allg_GEO_Form(Maybe<ENUMGEO_Form> f);
+  TGUID getID_GEO_Art();
+  Unit setID_GEO_Art(TGUID i);
+  TGUID getID_GEO_Knoten_A();
+  Unit setID_GEO_Knoten_A(TGUID i);
+  TGUID getID_GEO_Knoten_B();
+  Unit setID_GEO_Knoten_B(TGUID i);
+
+}
+
+//GEO_Knoten
+interface GEO_Knoten extends Basis_Objekt {
+  Maybe<TText> getGEO_PAD();
+  Unit setGEO_PAD(Maybe<TText> p);
+}
+
+//GEO_Punkt
+interface GEO_Punkt extends Basis_Objekt {
+  ENUMPlan_Quelle getGEO_Punkt_Allg_Plan_Quelle();
+  Unit setGEO_Punkt_Allg_Plan_Quelle(ENUMPlan_Quelle p);
+  Decimal getGEO_Punkt_Allg_GK_X();
+  Unit setGEO_Punkt_Allg_GK_X(Decimal x);
+  Decimal getGEO_Punkt_Allg_GK_Y();
+  Unit setGEO_Punkt_Allg_GK_Y(Decimal y);
+  Maybe<Decimal> getGEO_Punkt_Allg_GK_Z();
+  Unit setGEO_Punkt_Allg_GK_Z(Maybe<Decimal> z);
+  Maybe<TZeichenkette> getGEO_Punkt_Allg_GEO_KoordinatenSystem_LSys();
+  Unit setGEO_Punkt_Allg_GEO_KoordinatenSystem_LSys(Maybe<TZeichenkette> k);
+  Maybe<TZeichenkette> getGEO_Punkt_Allg_GEO_KoordinatenSystem_Sonstige();
+  Unit setGEO_Punkt_Allg_GEO_KoordinatenSystem_Sonstige(Maybe<TZeichenkette> k);
+  Maybe<TGUID> getID_GEO_Knoten();
+  Unit setID_GEO_Knoten(Maybe<TGUID> i);
+}
+
+//Geschwindigkeitsprofil
+interface Geschwindigkeitsprofil extends Bereich_Objekt {
+  TGeschwindigkeit getGeschwindigkeitsprofil_Allg_Geschwindigkeit();
+  Unit setGeschwindigkeitsprofil_Allg_Geschwindigkeit(TGeschwindigkeit g);
+  ENUMV_Profil_Art getGeschwindigkeitsprofil_Allg_V_Profil_Art();
+  Unit setGeschwindigkeitsprofil_Allg_V_Profil_Art(ENUMV_Profil_Art p);
+  TWirkrichtung getGeschwindigkeitsprofil_Allg_Wirkrichtung();
+  Unit setGeschwindigkeitsprofil_Allg_Wirkrichtung(TWirkrichtung w);
+}
+
+//Hoehenpunkt
+interface Hoehenpunkt extends Punkt_Objekt {
+  Maybe<TText> getHoehenpunkt_Allg_GEO_PAD();
+  Unit setHoehenpunkt_Allg_GEO_PAD(Maybe<TText> p);
+  Maybe<Date> getHoehenpunkt_Allg_Hoehenpunkt_Datum();
+  Unit setHoehenpunkt_Allg_Hoehenpunkt_Datum(Maybe<Date> d);
+  Decimal getHoehenpunkt_Allg_Hoehenpunkt_Hoehe();
+  Unit setHoehenpunkt_Allg_Hoehenpunkt_Hoehe(Decimal h);
+  Maybe<ENUMHSystem> getHoehenpunkt_Allg_HSystem();
+  Unit setHoehenpunkt_Allg_HSystem(Maybe<ENUMHSystem> s);
+  Maybe<ENUMPlan_Quelle> getHoehenpunkt_Allg_Plan_Quelle();
+  Unit setHoehenpunkt_Allg_Plan_Quelle(Maybe<ENUMPlan_Quelle> p);
+}
+
+//Oertlichkeit
+interface Oertlichkeit extends Basis_Objekt {
+  Maybe<TGUID> getID_Oertlichkeit();
+  Unit setID_Oertlichkeit(Maybe<TGUID> i);
+  List<TGUID> getID_Strecke_Punkt();
+  Unit setID_Strecke_Punkt(List<TGUID> i);
+  Maybe<TText> getOertlichkeit_Allg_Oertlichkeit_Abkuerzung();
+  Unit setOertlichkeit_Allg_Oertlichkeit_Abkuerzung(Maybe<TText> a);
+  Maybe<ENUMOertlichkeit_Art> getOertlichkeit_Allg_Oertlichkeit_Art();
+  Unit setOertlichkeit_Allg_Oertlichkeit_Art(Maybe<ENUMOertlichkeit_Art> a);
+  Maybe<Date> getOertlichkeit_Allg_Oertlichkeit_Gueltig_Ab();
+  Unit setOertlichkeit_Allg_Oertlichkeit_Gueltig_Ab(Maybe<Date> d);
+  Maybe<Date> getOertlichkeit_Allg_Oertlichkeit_Gueltig_Bis();
+  Unit setOertlichkeit_Allg_Oertlichkeit_Gueltig_Bis(Maybe<Date> d);
+  Maybe<TText> getOertlichkeit_Allg_Oertlichkeit_Kurzname();
+  Unit setOertlichkeit_Allg_Oertlichkeit_Kurzname(Maybe<TText> k);
+  TText getOertlichkeit_Allg_Oertlichkeit_Langname();
+  Unit setOertlichkeit_Allg_Oertlichkeit_Langname(TText l);
+}
+
+//Strecke
+interface Strecke extends Bereich_Objekt {
+  TZeichenkette getBezeichnung_Bezeichnung_Strecke();
+  Unit setBezeichnung_Bezeichnung_Strecke(TZeichenkette b);
+}
+
+//Strecke_Punkt
+interface Strecke_Punkt extends Basis_Objekt {
+  Maybe<TGUID> getID_GEO_Knoten();
+  Unit setID_GEO_Knoten(Maybe<TGUID> i);
+  TGUID getID_Strecke();
+  Unit setID_Strecke(TGUID i);
+  TMeter getStrecke_Meter();
+  Unit setStrecke_Meter(TMeter m);
+}
+
+//Technischer_Bereich
+interface Technischer_Bereich extends Bereich_Objekt {
+  Maybe<ENUMTB_Art> getTB_Art();
+  Unit setTB_Art(Maybe<ENUMTB_Art> a);
+  TFreiText getTB_Beschreibung();
+  Unit setTB_Beschreibung(TFreiText b);
+}
+
+//Technischer_Punkt
+interface Technischer_Punkt extends Punkt_Objekt {
+  Maybe<ENUMTP_Art> getTP_Art();
+  Unit setTP_Art(Maybe<ENUMTP_Art> a);
+  TFreiText getTP_Beschreibung();
+  Unit setTP_Beschreibung(TFreiText b);
+}
+
+//TOP_Kante
+interface TOP_Kante extends Basis_Objekt {
+  TGUID getID_TOP_Knoten_A();
+  Unit setID_TOP_Knoten_A(TGUID i);
+  TGUID getID_TOP_Knoten_B();
+  Unit setID_TOP_Knoten_B(TGUID i);
+  TMeter getTOP_Kante_Allg_TOP_Laenge();
+  Unit setTOP_Kante_Allg_TOP_Laenge(TMeter l);
+  ENUMTOP_Anschluss getTOP_Kante_Allg_TOP_Anschluss_A();
+  Unit setTOP_Kante_Allg_TOP_Anschluss_A(ENUMTOP_Anschluss a);
+  ENUMTOP_Anschluss getTOP_Kante_Allg_TOP_Anschluss_B();
+  Unit setTOP_Kante_Allg_TOP_Anschluss_B(ENUMTOP_Anschluss a);
+}
+
+//TOP_Knoten
+interface TOP_Knoten extends Basis_Objekt {
+  TGUID getID_GEO_Knoten();
+  Unit setID_GEO_Knoten(TGUID i);
+  Maybe<ENUMArt_Besonders> getTOP_Knoten_Allg_Art_Besonders();
+  Unit setTOP_Knoten_Allg_Art_Besonders(Maybe<ENUMArt_Besonders> a);
+  Maybe<TText> getTOP_Knoten_Allg_Knotenname();
+  Unit setTOP_Knoten_Allg_Knotenname(Maybe<TText> n);
+}
+
+//Ueberhoehung
+interface Ueberhoehung extends Punkt_Objekt {
+  Maybe<TText> getUeberhoehung_Allg_GEO_PAD();
+  Unit setUeberhoehung_Allg_GEO_PAD(Maybe<TText> p);
+  Maybe<ENUMPlan_Quelle> getUeberhoehung_Allg_Plan_Quelle();
+  Unit setUeberhoehung_Allg_Plan_Quelle(Maybe<ENUMPlan_Quelle> p);
+  Maybe<Date> getUeberhoehung_Allg_Ueberhoehung_Datum();
+  Unit setUeberhoehung_Allg_Ueberhoehung_Datum(Maybe<Date> d);
+  Decimal getUeberhoehung_Allg_Ueberhoehung_Hoehe();
+  Unit setUeberhoehung_Allg_Ueberhoehung_Hoehe(Decimal h);
+}
+
+
+
+
+
+
+class GEO_KanteImpl implements GEO_Kante {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Basis_Objekt
+  List<TGUID> m_ID_Bearbeitungsvermerk = Nil;
+  Maybe<TText> m_ObjektreferenzenDB_GDI_Referenz = Nothing;
+  Maybe<TText> m_ObjektreferenzenTechnischer_Platz = Nothing;
+  Maybe<ENUMObjektzustand_Besonders> m_Basis_Objekt_Allg_Objektzustand_Besonders = Nothing;
+  Maybe<TGUID> m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = Nothing;
+  Maybe<Date> m_Basis_Objekt_Allg_Datum_Regelwerk = Nothing;
+
+  // Fields from GEO_Kante
+  Maybe<TMeter> m_GEO_Kante_Allg_GEO_Radius_A = Nothing;
+  Maybe<TMeter> m_GEO_Kante_Allg_GEO_Radius_B = Nothing;
+  Maybe<Decimal> m_GEO_Kante_Allg_GEO_Richtungswinkel = Nothing;
+  ENUMPlan_Quelle m_GEO_Kante_Allg_Plan_Quelle = ENUMPlan_Quelle_unused;
+  TMeter m_GEO_Kante_Allg_GEO_Laenge = 0;
+  Maybe<ENUMGEO_Form> m_GEO_Kante_Allg_GEO_Form = Nothing;
+  TGUID m_ID_GEO_Art = "";
+  TGUID m_ID_GEO_Knoten_A = "";
+  TGUID m_ID_GEO_Knoten_B = "";
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_GEO_Kante; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Basis_Objekt
+  List<TGUID> getID_Bearbeitungsvermerk() { return m_ID_Bearbeitungsvermerk; }
+  Unit setID_Bearbeitungsvermerk(List<TGUID> i) { m_ID_Bearbeitungsvermerk = i; }
+  Maybe<TText> getObjektreferenzenDB_GDI_Referenz() { return m_ObjektreferenzenDB_GDI_Referenz; }
+  Unit setObjektreferenzenDB_GDI_Referenz(Maybe<TText> r) { m_ObjektreferenzenDB_GDI_Referenz = r; }
+  Maybe<TText> getObjektreferenzenTechnischer_Platz() { return m_ObjektreferenzenTechnischer_Platz; }
+  Unit setObjektreferenzenTechnischer_Platz(Maybe<TText> p) { m_ObjektreferenzenTechnischer_Platz = p; }
+  Maybe<ENUMObjektzustand_Besonders> getBasis_Objekt_Allg_Objektzustand_Besonders() { return m_Basis_Objekt_Allg_Objektzustand_Besonders; }
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(Maybe<ENUMObjektzustand_Besonders> o) { m_Basis_Objekt_Allg_Objektzustand_Besonders = o; }
+  Maybe<TGUID> getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders() { return m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders; }
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(Maybe<TGUID> i) { m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = i; }
+  Maybe<Date> getBasis_Objekt_Allg_Datum_Regelwerk() { return m_Basis_Objekt_Allg_Datum_Regelwerk; }
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Maybe<Date> d) { m_Basis_Objekt_Allg_Datum_Regelwerk = d; }
+
+  // Methods from GEO_Kante
+  Maybe<TMeter> getGEO_Kante_Allg_GEO_Radius_A() { return m_GEO_Kante_Allg_GEO_Radius_A; }
+  Unit setGEO_Kante_Allg_GEO_Radius_A(Maybe<TMeter> r) { m_GEO_Kante_Allg_GEO_Radius_A = r; }
+  Maybe<TMeter> getGEO_Kante_Allg_GEO_Radius_B() { return m_GEO_Kante_Allg_GEO_Radius_B; }
+  Unit setGEO_Kante_Allg_GEO_Radius_B(Maybe<TMeter> r) { m_GEO_Kante_Allg_GEO_Radius_B = r; }
+  Maybe<Decimal> getGEO_Kante_Allg_GEO_Richtungswinkel() { return m_GEO_Kante_Allg_GEO_Richtungswinkel; }
+  Unit setGEO_Kante_Allg_GEO_Richtungswinkel(Maybe<Decimal> w) { m_GEO_Kante_Allg_GEO_Richtungswinkel = w; }
+  ENUMPlan_Quelle getGEO_Kante_Allg_Plan_Quelle() { return m_GEO_Kante_Allg_Plan_Quelle; }
+  Unit setGEO_Kante_Allg_Plan_Quelle(ENUMPlan_Quelle p) { m_GEO_Kante_Allg_Plan_Quelle = p; }
+  TMeter getGEO_Kante_Allg_GEO_Laenge() { return m_GEO_Kante_Allg_GEO_Laenge; }
+  Unit setGEO_Kante_Allg_GEO_Laenge(TMeter l) { m_GEO_Kante_Allg_GEO_Laenge = l; }
+  Maybe<ENUMGEO_Form> getGEO_Kante_Allg_GEO_Form() { return m_GEO_Kante_Allg_GEO_Form; }
+  Unit setGEO_Kante_Allg_GEO_Form(Maybe<ENUMGEO_Form> f) { m_GEO_Kante_Allg_GEO_Form = f; }
+  TGUID getID_GEO_Art() { return m_ID_GEO_Art; }
+  Unit setID_GEO_Art(TGUID i) { m_ID_GEO_Art = i; }
+  TGUID getID_GEO_Knoten_A() { return m_ID_GEO_Knoten_A; }
+  Unit setID_GEO_Knoten_A(TGUID i) { m_ID_GEO_Knoten_A = i; }
+  TGUID getID_GEO_Knoten_B() { return m_ID_GEO_Knoten_B; }
+  Unit setID_GEO_Knoten_B(TGUID i) { m_ID_GEO_Knoten_B = i; }
+}
+
+class GEO_KnotenImpl implements GEO_Knoten {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Basis_Objekt
+  List<TGUID> m_ID_Bearbeitungsvermerk = Nil;
+  Maybe<TText> m_ObjektreferenzenDB_GDI_Referenz = Nothing;
+  Maybe<TText> m_ObjektreferenzenTechnischer_Platz = Nothing;
+  Maybe<ENUMObjektzustand_Besonders> m_Basis_Objekt_Allg_Objektzustand_Besonders = Nothing;
+  Maybe<TGUID> m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = Nothing;
+  Maybe<Date> m_Basis_Objekt_Allg_Datum_Regelwerk = Nothing;
+
+  // Fields from GEO_Knoten
+  Maybe<TText> m_GEO_PAD = Nothing;
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_GEO_Knoten; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Basis_Objekt
+  List<TGUID> getID_Bearbeitungsvermerk() { return m_ID_Bearbeitungsvermerk; }
+  Unit setID_Bearbeitungsvermerk(List<TGUID> i) { m_ID_Bearbeitungsvermerk = i; }
+  Maybe<TText> getObjektreferenzenDB_GDI_Referenz() { return m_ObjektreferenzenDB_GDI_Referenz; }
+  Unit setObjektreferenzenDB_GDI_Referenz(Maybe<TText> r) { m_ObjektreferenzenDB_GDI_Referenz = r; }
+  Maybe<TText> getObjektreferenzenTechnischer_Platz() { return m_ObjektreferenzenTechnischer_Platz; }
+  Unit setObjektreferenzenTechnischer_Platz(Maybe<TText> p) { m_ObjektreferenzenTechnischer_Platz = p; }
+  Maybe<ENUMObjektzustand_Besonders> getBasis_Objekt_Allg_Objektzustand_Besonders() { return m_Basis_Objekt_Allg_Objektzustand_Besonders; }
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(Maybe<ENUMObjektzustand_Besonders> o) { m_Basis_Objekt_Allg_Objektzustand_Besonders = o; }
+  Maybe<TGUID> getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders() { return m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders; }
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(Maybe<TGUID> i) { m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = i; }
+  Maybe<Date> getBasis_Objekt_Allg_Datum_Regelwerk() { return m_Basis_Objekt_Allg_Datum_Regelwerk; }
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Maybe<Date> d) { m_Basis_Objekt_Allg_Datum_Regelwerk = d; }
+
+  // Methods from GEO_Knoten
+  Maybe<TText> getGEO_PAD() { return m_GEO_PAD; }
+  Unit setGEO_PAD(Maybe<TText> p) { m_GEO_PAD = p; }
+}
+
+class GEO_PunktImpl implements GEO_Punkt {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Basis_Objekt
+  List<TGUID> m_ID_Bearbeitungsvermerk = Nil;
+  Maybe<TText> m_ObjektreferenzenDB_GDI_Referenz = Nothing;
+  Maybe<TText> m_ObjektreferenzenTechnischer_Platz = Nothing;
+  Maybe<ENUMObjektzustand_Besonders> m_Basis_Objekt_Allg_Objektzustand_Besonders = Nothing;
+  Maybe<TGUID> m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = Nothing;
+  Maybe<Date> m_Basis_Objekt_Allg_Datum_Regelwerk = Nothing;
+
+  // Fields from GEO_Punkt
+  ENUMPlan_Quelle m_GEO_Punkt_Allg_Plan_Quelle = ENUMPlan_Quelle_unused;
+  Decimal m_GEO_Punkt_Allg_GK_X = 0;
+  Decimal m_GEO_Punkt_Allg_GK_Y = 0;
+  Maybe<Decimal> m_GEO_Punkt_Allg_GK_Z = Nothing;
+  Maybe<TZeichenkette> m_GEO_Punkt_Allg_GEO_KoordinatenSystem_LSys = Nothing;
+  Maybe<TZeichenkette> m_GEO_Punkt_Allg_GEO_KoordinatenSystem_Sonstige = Nothing;
+  Maybe<TGUID> m_ID_GEO_Knoten = Nothing;
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_GEO_Punkt; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Basis_Objekt
+  List<TGUID> getID_Bearbeitungsvermerk() { return m_ID_Bearbeitungsvermerk; }
+  Unit setID_Bearbeitungsvermerk(List<TGUID> i) { m_ID_Bearbeitungsvermerk = i; }
+  Maybe<TText> getObjektreferenzenDB_GDI_Referenz() { return m_ObjektreferenzenDB_GDI_Referenz; }
+  Unit setObjektreferenzenDB_GDI_Referenz(Maybe<TText> r) { m_ObjektreferenzenDB_GDI_Referenz = r; }
+  Maybe<TText> getObjektreferenzenTechnischer_Platz() { return m_ObjektreferenzenTechnischer_Platz; }
+  Unit setObjektreferenzenTechnischer_Platz(Maybe<TText> p) { m_ObjektreferenzenTechnischer_Platz = p; }
+  Maybe<ENUMObjektzustand_Besonders> getBasis_Objekt_Allg_Objektzustand_Besonders() { return m_Basis_Objekt_Allg_Objektzustand_Besonders; }
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(Maybe<ENUMObjektzustand_Besonders> o) { m_Basis_Objekt_Allg_Objektzustand_Besonders = o; }
+  Maybe<TGUID> getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders() { return m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders; }
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(Maybe<TGUID> i) { m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = i; }
+  Maybe<Date> getBasis_Objekt_Allg_Datum_Regelwerk() { return m_Basis_Objekt_Allg_Datum_Regelwerk; }
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Maybe<Date> d) { m_Basis_Objekt_Allg_Datum_Regelwerk = d; }
+
+  // Methods from GEO_Punkt
+  ENUMPlan_Quelle getGEO_Punkt_Allg_Plan_Quelle() { return m_GEO_Punkt_Allg_Plan_Quelle; }
+  Unit setGEO_Punkt_Allg_Plan_Quelle(ENUMPlan_Quelle p) { m_GEO_Punkt_Allg_Plan_Quelle = p; }
+  Decimal getGEO_Punkt_Allg_GK_X() { return m_GEO_Punkt_Allg_GK_X; }
+  Unit setGEO_Punkt_Allg_GK_X(Decimal x) { m_GEO_Punkt_Allg_GK_X = x; }
+  Decimal getGEO_Punkt_Allg_GK_Y() { return m_GEO_Punkt_Allg_GK_Y; }
+  Unit setGEO_Punkt_Allg_GK_Y(Decimal y) { m_GEO_Punkt_Allg_GK_Y = y; }
+  Maybe<Decimal> getGEO_Punkt_Allg_GK_Z() { return m_GEO_Punkt_Allg_GK_Z; }
+  Unit setGEO_Punkt_Allg_GK_Z(Maybe<Decimal> z) { m_GEO_Punkt_Allg_GK_Z = z; }
+  Maybe<TZeichenkette> getGEO_Punkt_Allg_GEO_KoordinatenSystem_LSys() { return m_GEO_Punkt_Allg_GEO_KoordinatenSystem_LSys; }
+  Unit setGEO_Punkt_Allg_GEO_KoordinatenSystem_LSys(Maybe<TZeichenkette> k) { m_GEO_Punkt_Allg_GEO_KoordinatenSystem_LSys = k; }
+  Maybe<TZeichenkette> getGEO_Punkt_Allg_GEO_KoordinatenSystem_Sonstige() { return m_GEO_Punkt_Allg_GEO_KoordinatenSystem_Sonstige; }
+  Unit setGEO_Punkt_Allg_GEO_KoordinatenSystem_Sonstige(Maybe<TZeichenkette> k) { m_GEO_Punkt_Allg_GEO_KoordinatenSystem_Sonstige = k; }
+  Maybe<TGUID> getID_GEO_Knoten() { return m_ID_GEO_Knoten; }
+  Unit setID_GEO_Knoten(Maybe<TGUID> i) { m_ID_GEO_Knoten = i; }
+}
+
+class GeschwindigkeitsprofilImpl implements Geschwindigkeitsprofil {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Basis_Objekt
+  List<TGUID> m_ID_Bearbeitungsvermerk = Nil;
+  Maybe<TText> m_ObjektreferenzenDB_GDI_Referenz = Nothing;
+  Maybe<TText> m_ObjektreferenzenTechnischer_Platz = Nothing;
+  Maybe<ENUMObjektzustand_Besonders> m_Basis_Objekt_Allg_Objektzustand_Besonders = Nothing;
+  Maybe<TGUID> m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = Nothing;
+  Maybe<Date> m_Basis_Objekt_Allg_Datum_Regelwerk = Nothing;
+
+  // Fields from Bereich_Objekt
+  List<Bereich_Objekt_Teilbereich> m_Bereich_Objekt_Teilbereich = Nil;
+
+  // Fields from Geschwindigkeitsprofil
+  TGeschwindigkeit m_Geschwindigkeitsprofil_Allg_Geschwindigkeit = 0;
+  ENUMV_Profil_Art m_Geschwindigkeitsprofil_Allg_V_Profil_Art = ENUMV_Profil_Art_sonstige;
+  TWirkrichtung m_Geschwindigkeitsprofil_Allg_Wirkrichtung = ENUMWirkrichtung_beide;
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_Geschwindigkeitsprofil; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Basis_Objekt
+  List<TGUID> getID_Bearbeitungsvermerk() { return m_ID_Bearbeitungsvermerk; }
+  Unit setID_Bearbeitungsvermerk(List<TGUID> i) { m_ID_Bearbeitungsvermerk = i; }
+  Maybe<TText> getObjektreferenzenDB_GDI_Referenz() { return m_ObjektreferenzenDB_GDI_Referenz; }
+  Unit setObjektreferenzenDB_GDI_Referenz(Maybe<TText> r) { m_ObjektreferenzenDB_GDI_Referenz = r; }
+  Maybe<TText> getObjektreferenzenTechnischer_Platz() { return m_ObjektreferenzenTechnischer_Platz; }
+  Unit setObjektreferenzenTechnischer_Platz(Maybe<TText> p) { m_ObjektreferenzenTechnischer_Platz = p; }
+  Maybe<ENUMObjektzustand_Besonders> getBasis_Objekt_Allg_Objektzustand_Besonders() { return m_Basis_Objekt_Allg_Objektzustand_Besonders; }
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(Maybe<ENUMObjektzustand_Besonders> o) { m_Basis_Objekt_Allg_Objektzustand_Besonders = o; }
+  Maybe<TGUID> getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders() { return m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders; }
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(Maybe<TGUID> i) { m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = i; }
+  Maybe<Date> getBasis_Objekt_Allg_Datum_Regelwerk() { return m_Basis_Objekt_Allg_Datum_Regelwerk; }
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Maybe<Date> d) { m_Basis_Objekt_Allg_Datum_Regelwerk = d; }
+
+  // Methods from Bereich_Objekt
+  List<Bereich_Objekt_Teilbereich> getBereich_Objekt_Teilbereich() { return m_Bereich_Objekt_Teilbereich; }
+  Unit setBereich_Objekt_Teilbereich(List<Bereich_Objekt_Teilbereich> b) { m_Bereich_Objekt_Teilbereich = b; }
+
+  // Methods from Geschwindigkeitsprofil
+  TGeschwindigkeit getGeschwindigkeitsprofil_Allg_Geschwindigkeit() { return m_Geschwindigkeitsprofil_Allg_Geschwindigkeit; }
+  Unit setGeschwindigkeitsprofil_Allg_Geschwindigkeit(TGeschwindigkeit g) { m_Geschwindigkeitsprofil_Allg_Geschwindigkeit = g; }
+  ENUMV_Profil_Art getGeschwindigkeitsprofil_Allg_V_Profil_Art() { return m_Geschwindigkeitsprofil_Allg_V_Profil_Art; }
+  Unit setGeschwindigkeitsprofil_Allg_V_Profil_Art(ENUMV_Profil_Art p) { m_Geschwindigkeitsprofil_Allg_V_Profil_Art = p; }
+  TWirkrichtung getGeschwindigkeitsprofil_Allg_Wirkrichtung() { return m_Geschwindigkeitsprofil_Allg_Wirkrichtung; }
+  Unit setGeschwindigkeitsprofil_Allg_Wirkrichtung(TWirkrichtung w) { m_Geschwindigkeitsprofil_Allg_Wirkrichtung = w; }
+}
+
+class HoehenpunktImpl implements Hoehenpunkt {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Basis_Objekt
+  List<TGUID> m_ID_Bearbeitungsvermerk = Nil;
+  Maybe<TText> m_ObjektreferenzenDB_GDI_Referenz = Nothing;
+  Maybe<TText> m_ObjektreferenzenTechnischer_Platz = Nothing;
+  Maybe<ENUMObjektzustand_Besonders> m_Basis_Objekt_Allg_Objektzustand_Besonders = Nothing;
+  Maybe<TGUID> m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = Nothing;
+  Maybe<Date> m_Basis_Objekt_Allg_Datum_Regelwerk = Nothing;
+
+  // Fields from Punkt_Objekt
+  List<Punkt_Objekt_Strecke> m_Punkt_Objekt_Strecke = Nil;
+  List<Punkt_Objekt_TOP_Kante> m_Punkt_Objekt_TOP_Kante = Nil;
+
+  // Fields from Hoehenpunkt
+  Maybe<TText> m_Hoehenpunkt_Allg_GEO_PAD = Nothing;
+  Maybe<Date> m_Hoehenpunkt_Allg_Hoehenpunkt_Datum = Nothing;
+  Decimal m_Hoehenpunkt_Allg_Hoehenpunkt_Hoehe = 0;
+  Maybe<ENUMHSystem> m_Hoehenpunkt_Allg_HSystem = Nothing;
+  Maybe<ENUMPlan_Quelle> m_Hoehenpunkt_Allg_Plan_Quelle = Nothing;
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_Hoehenpunkt; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Basis_Objekt
+  List<TGUID> getID_Bearbeitungsvermerk() { return m_ID_Bearbeitungsvermerk; }
+  Unit setID_Bearbeitungsvermerk(List<TGUID> i) { m_ID_Bearbeitungsvermerk = i; }
+  Maybe<TText> getObjektreferenzenDB_GDI_Referenz() { return m_ObjektreferenzenDB_GDI_Referenz; }
+  Unit setObjektreferenzenDB_GDI_Referenz(Maybe<TText> r) { m_ObjektreferenzenDB_GDI_Referenz = r; }
+  Maybe<TText> getObjektreferenzenTechnischer_Platz() { return m_ObjektreferenzenTechnischer_Platz; }
+  Unit setObjektreferenzenTechnischer_Platz(Maybe<TText> p) { m_ObjektreferenzenTechnischer_Platz = p; }
+  Maybe<ENUMObjektzustand_Besonders> getBasis_Objekt_Allg_Objektzustand_Besonders() { return m_Basis_Objekt_Allg_Objektzustand_Besonders; }
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(Maybe<ENUMObjektzustand_Besonders> o) { m_Basis_Objekt_Allg_Objektzustand_Besonders = o; }
+  Maybe<TGUID> getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders() { return m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders; }
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(Maybe<TGUID> i) { m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = i; }
+  Maybe<Date> getBasis_Objekt_Allg_Datum_Regelwerk() { return m_Basis_Objekt_Allg_Datum_Regelwerk; }
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Maybe<Date> d) { m_Basis_Objekt_Allg_Datum_Regelwerk = d; }
+
+  // Methods from Punkt_Objekt
+  List<Punkt_Objekt_Strecke> getPunkt_Objekt_Strecke() { return m_Punkt_Objekt_Strecke; }
+  Unit setPunkt_Objekt_Strecke(List<Punkt_Objekt_Strecke> i) { m_Punkt_Objekt_Strecke = i; }
+  List<Punkt_Objekt_TOP_Kante> getPunkt_Objekt_TOP_Kante() { return m_Punkt_Objekt_TOP_Kante; }
+  Unit setPunkt_Objekt_TOP_Kante(List<Punkt_Objekt_TOP_Kante> a) { m_Punkt_Objekt_TOP_Kante = a; }
+
+  // Methods from Hoehenpunkt
+  Maybe<TText> getHoehenpunkt_Allg_GEO_PAD() { return m_Hoehenpunkt_Allg_GEO_PAD; }
+  Unit setHoehenpunkt_Allg_GEO_PAD(Maybe<TText> p) { m_Hoehenpunkt_Allg_GEO_PAD = p; }
+  Maybe<Date> getHoehenpunkt_Allg_Hoehenpunkt_Datum() { return m_Hoehenpunkt_Allg_Hoehenpunkt_Datum; }
+  Unit setHoehenpunkt_Allg_Hoehenpunkt_Datum(Maybe<Date> d) { m_Hoehenpunkt_Allg_Hoehenpunkt_Datum = d; }
+  Decimal getHoehenpunkt_Allg_Hoehenpunkt_Hoehe() { return m_Hoehenpunkt_Allg_Hoehenpunkt_Hoehe; }
+  Unit setHoehenpunkt_Allg_Hoehenpunkt_Hoehe(Decimal h) { m_Hoehenpunkt_Allg_Hoehenpunkt_Hoehe = h; }
+  Maybe<ENUMHSystem> getHoehenpunkt_Allg_HSystem() { return m_Hoehenpunkt_Allg_HSystem; }
+  Unit setHoehenpunkt_Allg_HSystem(Maybe<ENUMHSystem> s) { m_Hoehenpunkt_Allg_HSystem = s; }
+  Maybe<ENUMPlan_Quelle> getHoehenpunkt_Allg_Plan_Quelle() { return m_Hoehenpunkt_Allg_Plan_Quelle; }
+  Unit setHoehenpunkt_Allg_Plan_Quelle(Maybe<ENUMPlan_Quelle> p) { m_Hoehenpunkt_Allg_Plan_Quelle = p; }
+}
+
+class OertlichkeitImpl implements Oertlichkeit {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Basis_Objekt
+  List<TGUID> m_ID_Bearbeitungsvermerk = Nil;
+  Maybe<TText> m_ObjektreferenzenDB_GDI_Referenz = Nothing;
+  Maybe<TText> m_ObjektreferenzenTechnischer_Platz = Nothing;
+  Maybe<ENUMObjektzustand_Besonders> m_Basis_Objekt_Allg_Objektzustand_Besonders = Nothing;
+  Maybe<TGUID> m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = Nothing;
+  Maybe<Date> m_Basis_Objekt_Allg_Datum_Regelwerk = Nothing;
+
+  // Fields from Oertlichkeit
+  Maybe<TGUID> m_ID_Oertlichkeit = Nothing;
+  List<TGUID> m_ID_Strecke_Punkt = Nil;
+  Maybe<TText> m_Oertlichkeit_Allg_Oertlichkeit_Abkuerzung = Nothing;
+  Maybe<ENUMOertlichkeit_Art> m_Oertlichkeit_Allg_Oertlichkeit_Art = Nothing;
+  Maybe<Date> m_Oertlichkeit_Allg_Oertlichkeit_Gueltig_Ab = Nothing;
+  Maybe<Date> m_Oertlichkeit_Allg_Oertlichkeit_Gueltig_Bis = Nothing;
+  Maybe<TText> m_Oertlichkeit_Allg_Oertlichkeit_Kurzname = Nothing;
+  TText m_Oertlichkeit_Allg_Oertlichkeit_Langname = "";
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_Oertlichkeit; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Basis_Objekt
+  List<TGUID> getID_Bearbeitungsvermerk() { return m_ID_Bearbeitungsvermerk; }
+  Unit setID_Bearbeitungsvermerk(List<TGUID> i) { m_ID_Bearbeitungsvermerk = i; }
+  Maybe<TText> getObjektreferenzenDB_GDI_Referenz() { return m_ObjektreferenzenDB_GDI_Referenz; }
+  Unit setObjektreferenzenDB_GDI_Referenz(Maybe<TText> r) { m_ObjektreferenzenDB_GDI_Referenz = r; }
+  Maybe<TText> getObjektreferenzenTechnischer_Platz() { return m_ObjektreferenzenTechnischer_Platz; }
+  Unit setObjektreferenzenTechnischer_Platz(Maybe<TText> p) { m_ObjektreferenzenTechnischer_Platz = p; }
+  Maybe<ENUMObjektzustand_Besonders> getBasis_Objekt_Allg_Objektzustand_Besonders() { return m_Basis_Objekt_Allg_Objektzustand_Besonders; }
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(Maybe<ENUMObjektzustand_Besonders> o) { m_Basis_Objekt_Allg_Objektzustand_Besonders = o; }
+  Maybe<TGUID> getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders() { return m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders; }
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(Maybe<TGUID> i) { m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = i; }
+  Maybe<Date> getBasis_Objekt_Allg_Datum_Regelwerk() { return m_Basis_Objekt_Allg_Datum_Regelwerk; }
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Maybe<Date> d) { m_Basis_Objekt_Allg_Datum_Regelwerk = d; }
+
+  // Methods from Oertlichkeit
+  Maybe<TGUID> getID_Oertlichkeit() { return m_ID_Oertlichkeit; }
+  Unit setID_Oertlichkeit(Maybe<TGUID> i) { m_ID_Oertlichkeit = i; }
+  List<TGUID> getID_Strecke_Punkt() { return m_ID_Strecke_Punkt; }
+  Unit setID_Strecke_Punkt(List<TGUID> i) { m_ID_Strecke_Punkt = i; }
+  Maybe<TText> getOertlichkeit_Allg_Oertlichkeit_Abkuerzung() { return m_Oertlichkeit_Allg_Oertlichkeit_Abkuerzung; }
+  Unit setOertlichkeit_Allg_Oertlichkeit_Abkuerzung(Maybe<TText> a) { m_Oertlichkeit_Allg_Oertlichkeit_Abkuerzung = a; }
+  Maybe<ENUMOertlichkeit_Art> getOertlichkeit_Allg_Oertlichkeit_Art() { return m_Oertlichkeit_Allg_Oertlichkeit_Art; }
+  Unit setOertlichkeit_Allg_Oertlichkeit_Art(Maybe<ENUMOertlichkeit_Art> a) { m_Oertlichkeit_Allg_Oertlichkeit_Art = a; }
+  Maybe<Date> getOertlichkeit_Allg_Oertlichkeit_Gueltig_Ab() { return m_Oertlichkeit_Allg_Oertlichkeit_Gueltig_Ab; }
+  Unit setOertlichkeit_Allg_Oertlichkeit_Gueltig_Ab(Maybe<Date> d) { m_Oertlichkeit_Allg_Oertlichkeit_Gueltig_Ab = d; }
+  Maybe<Date> getOertlichkeit_Allg_Oertlichkeit_Gueltig_Bis() { return m_Oertlichkeit_Allg_Oertlichkeit_Gueltig_Bis; }
+  Unit setOertlichkeit_Allg_Oertlichkeit_Gueltig_Bis(Maybe<Date> d) { m_Oertlichkeit_Allg_Oertlichkeit_Gueltig_Bis = d; }
+  Maybe<TText> getOertlichkeit_Allg_Oertlichkeit_Kurzname() { return m_Oertlichkeit_Allg_Oertlichkeit_Kurzname; }
+  Unit setOertlichkeit_Allg_Oertlichkeit_Kurzname(Maybe<TText> k) { m_Oertlichkeit_Allg_Oertlichkeit_Kurzname = k; }
+  TText getOertlichkeit_Allg_Oertlichkeit_Langname() { return m_Oertlichkeit_Allg_Oertlichkeit_Langname; }
+  Unit setOertlichkeit_Allg_Oertlichkeit_Langname(TText l) { m_Oertlichkeit_Allg_Oertlichkeit_Langname = l; }
+}
+
+class StreckeImpl implements Strecke {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Basis_Objekt
+  List<TGUID> m_ID_Bearbeitungsvermerk = Nil;
+  Maybe<TText> m_ObjektreferenzenDB_GDI_Referenz = Nothing;
+  Maybe<TText> m_ObjektreferenzenTechnischer_Platz = Nothing;
+  Maybe<ENUMObjektzustand_Besonders> m_Basis_Objekt_Allg_Objektzustand_Besonders = Nothing;
+  Maybe<TGUID> m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = Nothing;
+  Maybe<Date> m_Basis_Objekt_Allg_Datum_Regelwerk = Nothing;
+
+  // Fields from Bereich_Objekt
+  List<Bereich_Objekt_Teilbereich> m_Bereich_Objekt_Teilbereich = Nil;
+
+  // Fields from Strecke
+  TZeichenkette m_Bezeichnung_Bezeichnung_Strecke = "";
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_Strecke; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Basis_Objekt
+  List<TGUID> getID_Bearbeitungsvermerk() { return m_ID_Bearbeitungsvermerk; }
+  Unit setID_Bearbeitungsvermerk(List<TGUID> i) { m_ID_Bearbeitungsvermerk = i; }
+  Maybe<TText> getObjektreferenzenDB_GDI_Referenz() { return m_ObjektreferenzenDB_GDI_Referenz; }
+  Unit setObjektreferenzenDB_GDI_Referenz(Maybe<TText> r) { m_ObjektreferenzenDB_GDI_Referenz = r; }
+  Maybe<TText> getObjektreferenzenTechnischer_Platz() { return m_ObjektreferenzenTechnischer_Platz; }
+  Unit setObjektreferenzenTechnischer_Platz(Maybe<TText> p) { m_ObjektreferenzenTechnischer_Platz = p; }
+  Maybe<ENUMObjektzustand_Besonders> getBasis_Objekt_Allg_Objektzustand_Besonders() { return m_Basis_Objekt_Allg_Objektzustand_Besonders; }
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(Maybe<ENUMObjektzustand_Besonders> o) { m_Basis_Objekt_Allg_Objektzustand_Besonders = o; }
+  Maybe<TGUID> getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders() { return m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders; }
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(Maybe<TGUID> i) { m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = i; }
+  Maybe<Date> getBasis_Objekt_Allg_Datum_Regelwerk() { return m_Basis_Objekt_Allg_Datum_Regelwerk; }
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Maybe<Date> d) { m_Basis_Objekt_Allg_Datum_Regelwerk = d; }
+
+  // Methods from Bereich_Objekt
+  List<Bereich_Objekt_Teilbereich> getBereich_Objekt_Teilbereich() { return m_Bereich_Objekt_Teilbereich; }
+  Unit setBereich_Objekt_Teilbereich(List<Bereich_Objekt_Teilbereich> b) { m_Bereich_Objekt_Teilbereich = b; }
+
+  // Methods from Strecke
+  TZeichenkette getBezeichnung_Bezeichnung_Strecke() { return m_Bezeichnung_Bezeichnung_Strecke; }
+  Unit setBezeichnung_Bezeichnung_Strecke(TZeichenkette b) { m_Bezeichnung_Bezeichnung_Strecke = b; }
+}
+
+class Strecke_PunktImpl implements Strecke_Punkt {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Basis_Objekt
+  List<TGUID> m_ID_Bearbeitungsvermerk = Nil;
+  Maybe<TText> m_ObjektreferenzenDB_GDI_Referenz = Nothing;
+  Maybe<TText> m_ObjektreferenzenTechnischer_Platz = Nothing;
+  Maybe<ENUMObjektzustand_Besonders> m_Basis_Objekt_Allg_Objektzustand_Besonders = Nothing;
+  Maybe<TGUID> m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = Nothing;
+  Maybe<Date> m_Basis_Objekt_Allg_Datum_Regelwerk = Nothing;
+
+  // Fields from Strecke_Punkt
+  Maybe<TGUID> m_ID_GEO_Knoten = Nothing;
+  TGUID m_ID_Strecke = "";
+  TMeter m_Strecke_Meter = 0;
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_Strecke_Punkt; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Basis_Objekt
+  List<TGUID> getID_Bearbeitungsvermerk() { return m_ID_Bearbeitungsvermerk; }
+  Unit setID_Bearbeitungsvermerk(List<TGUID> i) { m_ID_Bearbeitungsvermerk = i; }
+  Maybe<TText> getObjektreferenzenDB_GDI_Referenz() { return m_ObjektreferenzenDB_GDI_Referenz; }
+  Unit setObjektreferenzenDB_GDI_Referenz(Maybe<TText> r) { m_ObjektreferenzenDB_GDI_Referenz = r; }
+  Maybe<TText> getObjektreferenzenTechnischer_Platz() { return m_ObjektreferenzenTechnischer_Platz; }
+  Unit setObjektreferenzenTechnischer_Platz(Maybe<TText> p) { m_ObjektreferenzenTechnischer_Platz = p; }
+  Maybe<ENUMObjektzustand_Besonders> getBasis_Objekt_Allg_Objektzustand_Besonders() { return m_Basis_Objekt_Allg_Objektzustand_Besonders; }
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(Maybe<ENUMObjektzustand_Besonders> o) { m_Basis_Objekt_Allg_Objektzustand_Besonders = o; }
+  Maybe<TGUID> getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders() { return m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders; }
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(Maybe<TGUID> i) { m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = i; }
+  Maybe<Date> getBasis_Objekt_Allg_Datum_Regelwerk() { return m_Basis_Objekt_Allg_Datum_Regelwerk; }
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Maybe<Date> d) { m_Basis_Objekt_Allg_Datum_Regelwerk = d; }
+
+  // Methods from Strecke_Punkt
+  Maybe<TGUID> getID_GEO_Knoten() { return m_ID_GEO_Knoten; }
+  Unit setID_GEO_Knoten(Maybe<TGUID> i) { m_ID_GEO_Knoten = i; }
+  TGUID getID_Strecke() { return m_ID_Strecke; }
+  Unit setID_Strecke(TGUID i) { m_ID_Strecke = i; }
+  TMeter getStrecke_Meter() { return m_Strecke_Meter; }
+  Unit setStrecke_Meter(TMeter m) { m_Strecke_Meter = m; }
+}
+
+class Technischer_BereichImpl implements Technischer_Bereich {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Basis_Objekt
+  List<TGUID> m_ID_Bearbeitungsvermerk = Nil;
+  Maybe<TText> m_ObjektreferenzenDB_GDI_Referenz = Nothing;
+  Maybe<TText> m_ObjektreferenzenTechnischer_Platz = Nothing;
+  Maybe<ENUMObjektzustand_Besonders> m_Basis_Objekt_Allg_Objektzustand_Besonders = Nothing;
+  Maybe<TGUID> m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = Nothing;
+  Maybe<Date> m_Basis_Objekt_Allg_Datum_Regelwerk = Nothing;
+
+  // Fields from Bereich_Objekt
+  List<Bereich_Objekt_Teilbereich> m_Bereich_Objekt_Teilbereich = Nil;
+
+  // Fields from Technischer_Bereich
+  Maybe<ENUMTB_Art> m_TB_Art = Nothing;
+  TFreiText m_TB_Beschreibung = "";
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_Technischer_Bereich; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Basis_Objekt
+  List<TGUID> getID_Bearbeitungsvermerk() { return m_ID_Bearbeitungsvermerk; }
+  Unit setID_Bearbeitungsvermerk(List<TGUID> i) { m_ID_Bearbeitungsvermerk = i; }
+  Maybe<TText> getObjektreferenzenDB_GDI_Referenz() { return m_ObjektreferenzenDB_GDI_Referenz; }
+  Unit setObjektreferenzenDB_GDI_Referenz(Maybe<TText> r) { m_ObjektreferenzenDB_GDI_Referenz = r; }
+  Maybe<TText> getObjektreferenzenTechnischer_Platz() { return m_ObjektreferenzenTechnischer_Platz; }
+  Unit setObjektreferenzenTechnischer_Platz(Maybe<TText> p) { m_ObjektreferenzenTechnischer_Platz = p; }
+  Maybe<ENUMObjektzustand_Besonders> getBasis_Objekt_Allg_Objektzustand_Besonders() { return m_Basis_Objekt_Allg_Objektzustand_Besonders; }
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(Maybe<ENUMObjektzustand_Besonders> o) { m_Basis_Objekt_Allg_Objektzustand_Besonders = o; }
+  Maybe<TGUID> getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders() { return m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders; }
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(Maybe<TGUID> i) { m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = i; }
+  Maybe<Date> getBasis_Objekt_Allg_Datum_Regelwerk() { return m_Basis_Objekt_Allg_Datum_Regelwerk; }
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Maybe<Date> d) { m_Basis_Objekt_Allg_Datum_Regelwerk = d; }
+
+  // Methods from Bereich_Objekt
+  List<Bereich_Objekt_Teilbereich> getBereich_Objekt_Teilbereich() { return m_Bereich_Objekt_Teilbereich; }
+  Unit setBereich_Objekt_Teilbereich(List<Bereich_Objekt_Teilbereich> b) { m_Bereich_Objekt_Teilbereich = b; }
+
+  // Methods from Technischer_Bereich
+  Maybe<ENUMTB_Art> getTB_Art() { return m_TB_Art; }
+  Unit setTB_Art(Maybe<ENUMTB_Art> a) { m_TB_Art = a; }
+  TFreiText getTB_Beschreibung() { return m_TB_Beschreibung; }
+  Unit setTB_Beschreibung(TFreiText b) { m_TB_Beschreibung = b; }
+}
+
+class Technischer_PunktImpl implements Technischer_Punkt {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Basis_Objekt
+  List<TGUID> m_ID_Bearbeitungsvermerk = Nil;
+  Maybe<TText> m_ObjektreferenzenDB_GDI_Referenz = Nothing;
+  Maybe<TText> m_ObjektreferenzenTechnischer_Platz = Nothing;
+  Maybe<ENUMObjektzustand_Besonders> m_Basis_Objekt_Allg_Objektzustand_Besonders = Nothing;
+  Maybe<TGUID> m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = Nothing;
+  Maybe<Date> m_Basis_Objekt_Allg_Datum_Regelwerk = Nothing;
+
+  // Fields from Punkt_Objekt
+  List<Punkt_Objekt_Strecke> m_Punkt_Objekt_Strecke = Nil;
+  List<Punkt_Objekt_TOP_Kante> m_Punkt_Objekt_TOP_Kante = Nil;
+
+  // Fields from Technischer_Punkt
+  Maybe<ENUMTP_Art> m_TP_Art = Nothing;
+  TFreiText m_TP_Beschreibung = "";
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_Technischer_Punkt; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Basis_Objekt
+  List<TGUID> getID_Bearbeitungsvermerk() { return m_ID_Bearbeitungsvermerk; }
+  Unit setID_Bearbeitungsvermerk(List<TGUID> i) { m_ID_Bearbeitungsvermerk = i; }
+  Maybe<TText> getObjektreferenzenDB_GDI_Referenz() { return m_ObjektreferenzenDB_GDI_Referenz; }
+  Unit setObjektreferenzenDB_GDI_Referenz(Maybe<TText> r) { m_ObjektreferenzenDB_GDI_Referenz = r; }
+  Maybe<TText> getObjektreferenzenTechnischer_Platz() { return m_ObjektreferenzenTechnischer_Platz; }
+  Unit setObjektreferenzenTechnischer_Platz(Maybe<TText> p) { m_ObjektreferenzenTechnischer_Platz = p; }
+  Maybe<ENUMObjektzustand_Besonders> getBasis_Objekt_Allg_Objektzustand_Besonders() { return m_Basis_Objekt_Allg_Objektzustand_Besonders; }
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(Maybe<ENUMObjektzustand_Besonders> o) { m_Basis_Objekt_Allg_Objektzustand_Besonders = o; }
+  Maybe<TGUID> getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders() { return m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders; }
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(Maybe<TGUID> i) { m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = i; }
+  Maybe<Date> getBasis_Objekt_Allg_Datum_Regelwerk() { return m_Basis_Objekt_Allg_Datum_Regelwerk; }
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Maybe<Date> d) { m_Basis_Objekt_Allg_Datum_Regelwerk = d; }
+
+  // Methods from Punkt_Objekt
+  List<Punkt_Objekt_Strecke> getPunkt_Objekt_Strecke() { return m_Punkt_Objekt_Strecke; }
+  Unit setPunkt_Objekt_Strecke(List<Punkt_Objekt_Strecke> i) { m_Punkt_Objekt_Strecke = i; }
+  List<Punkt_Objekt_TOP_Kante> getPunkt_Objekt_TOP_Kante() { return m_Punkt_Objekt_TOP_Kante; }
+  Unit setPunkt_Objekt_TOP_Kante(List<Punkt_Objekt_TOP_Kante> a) { m_Punkt_Objekt_TOP_Kante = a; }
+
+  // Methods from Technischer_Punkt
+  Maybe<ENUMTP_Art> getTP_Art() { return m_TP_Art; }
+  Unit setTP_Art(Maybe<ENUMTP_Art> a) { m_TP_Art = a; }
+  TFreiText getTP_Beschreibung() { return m_TP_Beschreibung; }
+  Unit setTP_Beschreibung(TFreiText b) { m_TP_Beschreibung = b; }
+}
+
+class TOP_KanteImpl implements TOP_Kante {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Basis_Objekt
+  List<TGUID> m_ID_Bearbeitungsvermerk = Nil;
+  Maybe<TText> m_ObjektreferenzenDB_GDI_Referenz = Nothing;
+  Maybe<TText> m_ObjektreferenzenTechnischer_Platz = Nothing;
+  Maybe<ENUMObjektzustand_Besonders> m_Basis_Objekt_Allg_Objektzustand_Besonders = Nothing;
+  Maybe<TGUID> m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = Nothing;
+  Maybe<Date> m_Basis_Objekt_Allg_Datum_Regelwerk = Nothing;
+
+  // Fields from TOP_Kante
+  TGUID m_ID_TOP_Knoten_A = "";
+  TGUID m_ID_TOP_Knoten_B = "";
+  TMeter m_TOP_Kante_Allg_TOP_Laenge = 0;
+  ENUMTOP_Anschluss m_TOP_Kante_Allg_TOP_Anschluss_A = ENUMTOP_Anschluss_sonstige;
+  ENUMTOP_Anschluss m_TOP_Kante_Allg_TOP_Anschluss_B = ENUMTOP_Anschluss_sonstige;
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_TOP_Kante; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Basis_Objekt
+  List<TGUID> getID_Bearbeitungsvermerk() { return m_ID_Bearbeitungsvermerk; }
+  Unit setID_Bearbeitungsvermerk(List<TGUID> i) { m_ID_Bearbeitungsvermerk = i; }
+  Maybe<TText> getObjektreferenzenDB_GDI_Referenz() { return m_ObjektreferenzenDB_GDI_Referenz; }
+  Unit setObjektreferenzenDB_GDI_Referenz(Maybe<TText> r) { m_ObjektreferenzenDB_GDI_Referenz = r; }
+  Maybe<TText> getObjektreferenzenTechnischer_Platz() { return m_ObjektreferenzenTechnischer_Platz; }
+  Unit setObjektreferenzenTechnischer_Platz(Maybe<TText> p) { m_ObjektreferenzenTechnischer_Platz = p; }
+  Maybe<ENUMObjektzustand_Besonders> getBasis_Objekt_Allg_Objektzustand_Besonders() { return m_Basis_Objekt_Allg_Objektzustand_Besonders; }
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(Maybe<ENUMObjektzustand_Besonders> o) { m_Basis_Objekt_Allg_Objektzustand_Besonders = o; }
+  Maybe<TGUID> getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders() { return m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders; }
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(Maybe<TGUID> i) { m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = i; }
+  Maybe<Date> getBasis_Objekt_Allg_Datum_Regelwerk() { return m_Basis_Objekt_Allg_Datum_Regelwerk; }
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Maybe<Date> d) { m_Basis_Objekt_Allg_Datum_Regelwerk = d; }
+
+  // Methods from TOP_Kante
+  TGUID getID_TOP_Knoten_A() { return m_ID_TOP_Knoten_A; }
+  Unit setID_TOP_Knoten_A(TGUID i) { m_ID_TOP_Knoten_A = i; }
+  TGUID getID_TOP_Knoten_B() { return m_ID_TOP_Knoten_B; }
+  Unit setID_TOP_Knoten_B(TGUID i) { m_ID_TOP_Knoten_B = i; }
+  TMeter getTOP_Kante_Allg_TOP_Laenge() { return m_TOP_Kante_Allg_TOP_Laenge; }
+  Unit setTOP_Kante_Allg_TOP_Laenge(TMeter l) { m_TOP_Kante_Allg_TOP_Laenge = l; }
+  ENUMTOP_Anschluss getTOP_Kante_Allg_TOP_Anschluss_A() { return m_TOP_Kante_Allg_TOP_Anschluss_A; }
+  Unit setTOP_Kante_Allg_TOP_Anschluss_A(ENUMTOP_Anschluss a) { m_TOP_Kante_Allg_TOP_Anschluss_A = a; }
+  ENUMTOP_Anschluss getTOP_Kante_Allg_TOP_Anschluss_B() { return m_TOP_Kante_Allg_TOP_Anschluss_B; }
+  Unit setTOP_Kante_Allg_TOP_Anschluss_B(ENUMTOP_Anschluss a) { m_TOP_Kante_Allg_TOP_Anschluss_B = a; }
+}
+
+class TOP_KnotenImpl implements TOP_Knoten {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Basis_Objekt
+  List<TGUID> m_ID_Bearbeitungsvermerk = Nil;
+  Maybe<TText> m_ObjektreferenzenDB_GDI_Referenz = Nothing;
+  Maybe<TText> m_ObjektreferenzenTechnischer_Platz = Nothing;
+  Maybe<ENUMObjektzustand_Besonders> m_Basis_Objekt_Allg_Objektzustand_Besonders = Nothing;
+  Maybe<TGUID> m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = Nothing;
+  Maybe<Date> m_Basis_Objekt_Allg_Datum_Regelwerk = Nothing;
+
+  // Fields from TOP_Knoten
+  TGUID m_ID_GEO_Knoten = "";
+  Maybe<ENUMArt_Besonders> m_TOP_Knoten_Allg_Art_Besonders = Nothing;
+  Maybe<TText> m_TOP_Knoten_Allg_Knotenname = Nothing;
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_TOP_Knoten; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Basis_Objekt
+  List<TGUID> getID_Bearbeitungsvermerk() { return m_ID_Bearbeitungsvermerk; }
+  Unit setID_Bearbeitungsvermerk(List<TGUID> i) { m_ID_Bearbeitungsvermerk = i; }
+  Maybe<TText> getObjektreferenzenDB_GDI_Referenz() { return m_ObjektreferenzenDB_GDI_Referenz; }
+  Unit setObjektreferenzenDB_GDI_Referenz(Maybe<TText> r) { m_ObjektreferenzenDB_GDI_Referenz = r; }
+  Maybe<TText> getObjektreferenzenTechnischer_Platz() { return m_ObjektreferenzenTechnischer_Platz; }
+  Unit setObjektreferenzenTechnischer_Platz(Maybe<TText> p) { m_ObjektreferenzenTechnischer_Platz = p; }
+  Maybe<ENUMObjektzustand_Besonders> getBasis_Objekt_Allg_Objektzustand_Besonders() { return m_Basis_Objekt_Allg_Objektzustand_Besonders; }
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(Maybe<ENUMObjektzustand_Besonders> o) { m_Basis_Objekt_Allg_Objektzustand_Besonders = o; }
+  Maybe<TGUID> getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders() { return m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders; }
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(Maybe<TGUID> i) { m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = i; }
+  Maybe<Date> getBasis_Objekt_Allg_Datum_Regelwerk() { return m_Basis_Objekt_Allg_Datum_Regelwerk; }
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Maybe<Date> d) { m_Basis_Objekt_Allg_Datum_Regelwerk = d; }
+
+  // Methods from TOP_Knoten
+  TGUID getID_GEO_Knoten() { return m_ID_GEO_Knoten; }
+  Unit setID_GEO_Knoten(TGUID i) { m_ID_GEO_Knoten = i; }
+  Maybe<ENUMArt_Besonders> getTOP_Knoten_Allg_Art_Besonders() { return m_TOP_Knoten_Allg_Art_Besonders; }
+  Unit setTOP_Knoten_Allg_Art_Besonders(Maybe<ENUMArt_Besonders> a) { m_TOP_Knoten_Allg_Art_Besonders = a; }
+  Maybe<TText> getTOP_Knoten_Allg_Knotenname() { return m_TOP_Knoten_Allg_Knotenname; }
+  Unit setTOP_Knoten_Allg_Knotenname(Maybe<TText> n) { m_TOP_Knoten_Allg_Knotenname = n; }
+}
+
+class UeberhoehungImpl implements Ueberhoehung {
+  // Fields from Metaobject
+  Int m_Step = 0;
+
+  // Fields from Ur_Objekt
+  TGUID m_Identitaet = "";
+
+  // Fields from Basis_Objekt
+  List<TGUID> m_ID_Bearbeitungsvermerk = Nil;
+  Maybe<TText> m_ObjektreferenzenDB_GDI_Referenz = Nothing;
+  Maybe<TText> m_ObjektreferenzenTechnischer_Platz = Nothing;
+  Maybe<ENUMObjektzustand_Besonders> m_Basis_Objekt_Allg_Objektzustand_Besonders = Nothing;
+  Maybe<TGUID> m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = Nothing;
+  Maybe<Date> m_Basis_Objekt_Allg_Datum_Regelwerk = Nothing;
+
+  // Fields from Punkt_Objekt
+  List<Punkt_Objekt_Strecke> m_Punkt_Objekt_Strecke = Nil;
+  List<Punkt_Objekt_TOP_Kante> m_Punkt_Objekt_TOP_Kante = Nil;
+
+  // Fields from Ueberhoehung
+  Maybe<TText> m_Ueberhoehung_Allg_GEO_PAD = Nothing;
+  Maybe<ENUMPlan_Quelle> m_Ueberhoehung_Allg_Plan_Quelle = Nothing;
+  Maybe<Date> m_Ueberhoehung_Allg_Ueberhoehung_Datum = Nothing;
+  Decimal m_Ueberhoehung_Allg_Ueberhoehung_Hoehe = 0;
+
+  // Methods from Metaobject
+  ENUMMetaobject_Objecttype getObjecttype() { return ENUMMetaobject_Objecttype_Ueberhoehung; }
+  Int getStep() { return m_Step; }
+  Unit setStep(Int i) { m_Step = i; }
+
+  // Methods from Ur_Objekt
+  TGUID getIdentitaet() { return m_Identitaet; }
+  Unit setIdentitaet(TGUID i) { m_Identitaet = i; }
+
+  // Methods from Basis_Objekt
+  List<TGUID> getID_Bearbeitungsvermerk() { return m_ID_Bearbeitungsvermerk; }
+  Unit setID_Bearbeitungsvermerk(List<TGUID> i) { m_ID_Bearbeitungsvermerk = i; }
+  Maybe<TText> getObjektreferenzenDB_GDI_Referenz() { return m_ObjektreferenzenDB_GDI_Referenz; }
+  Unit setObjektreferenzenDB_GDI_Referenz(Maybe<TText> r) { m_ObjektreferenzenDB_GDI_Referenz = r; }
+  Maybe<TText> getObjektreferenzenTechnischer_Platz() { return m_ObjektreferenzenTechnischer_Platz; }
+  Unit setObjektreferenzenTechnischer_Platz(Maybe<TText> p) { m_ObjektreferenzenTechnischer_Platz = p; }
+  Maybe<ENUMObjektzustand_Besonders> getBasis_Objekt_Allg_Objektzustand_Besonders() { return m_Basis_Objekt_Allg_Objektzustand_Besonders; }
+  Unit setBasis_Objekt_Allg_Objektzustand_Besonders(Maybe<ENUMObjektzustand_Besonders> o) { m_Basis_Objekt_Allg_Objektzustand_Besonders = o; }
+  Maybe<TGUID> getBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders() { return m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders; }
+  Unit setBasis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders(Maybe<TGUID> i) { m_Basis_Objekt_Allg_ID_Anhang_Regelwerk_Besonders = i; }
+  Maybe<Date> getBasis_Objekt_Allg_Datum_Regelwerk() { return m_Basis_Objekt_Allg_Datum_Regelwerk; }
+  Unit setBasis_Objekt_Allg_Datum_Regelwerk(Maybe<Date> d) { m_Basis_Objekt_Allg_Datum_Regelwerk = d; }
+
+  // Methods from Punkt_Objekt
+  List<Punkt_Objekt_Strecke> getPunkt_Objekt_Strecke() { return m_Punkt_Objekt_Strecke; }
+  Unit setPunkt_Objekt_Strecke(List<Punkt_Objekt_Strecke> i) { m_Punkt_Objekt_Strecke = i; }
+  List<Punkt_Objekt_TOP_Kante> getPunkt_Objekt_TOP_Kante() { return m_Punkt_Objekt_TOP_Kante; }
+  Unit setPunkt_Objekt_TOP_Kante(List<Punkt_Objekt_TOP_Kante> a) { m_Punkt_Objekt_TOP_Kante = a; }
+
+  // Methods from Ueberhoehung
+  Maybe<TText> getUeberhoehung_Allg_GEO_PAD() { return m_Ueberhoehung_Allg_GEO_PAD; }
+  Unit setUeberhoehung_Allg_GEO_PAD(Maybe<TText> p) { m_Ueberhoehung_Allg_GEO_PAD = p; }
+  Maybe<ENUMPlan_Quelle> getUeberhoehung_Allg_Plan_Quelle() { return m_Ueberhoehung_Allg_Plan_Quelle; }
+  Unit setUeberhoehung_Allg_Plan_Quelle(Maybe<ENUMPlan_Quelle> p) { m_Ueberhoehung_Allg_Plan_Quelle = p; }
+  Maybe<Date> getUeberhoehung_Allg_Ueberhoehung_Datum() { return m_Ueberhoehung_Allg_Ueberhoehung_Datum; }
+  Unit setUeberhoehung_Allg_Ueberhoehung_Datum(Maybe<Date> d) { m_Ueberhoehung_Allg_Ueberhoehung_Datum = d; }
+  Decimal getUeberhoehung_Allg_Ueberhoehung_Hoehe() { return m_Ueberhoehung_Allg_Ueberhoehung_Hoehe; }
+  Unit setUeberhoehung_Allg_Ueberhoehung_Hoehe(Decimal h) { m_Ueberhoehung_Allg_Ueberhoehung_Hoehe = h; }
+}
+
